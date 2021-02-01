@@ -3,36 +3,27 @@
 import './css/main.scss';
 import './css/bootstrap.css';
 
-import Magazijn from "./magazijn";
-// import DragDrop from "./DragDrop";
+import Festival from './Festival';
 
 window.onload = () => {
-    document.getElementById('kleding_id').onclick = changeScreen;
-    document.getElementById('tier_id').onclick = changeScreen;
-    document.getElementById('decoratie_id').onclick = changeScreen;
+    
 };
 
 class Index {
 
-    #magazijn;
-    #anders;
+    #festival;
 
     constructor() {
-        this.#magazijn = new Magazijn();
-        this.#anders = 12;
+        this.#festival = new Festival();
         this.prepareStorage();
     }
 
-    get magazijn(){
-        return this.#magazijn;
+    get festival(){
+        return this.#festival;
     }
 
-    set magazijn(mag){
-        this.#magazijn = mag;
-    }
-
-    get anders(){
-        return this.#anders;
+    set festival(mag){
+        this.#festival = mag;
     }
 
     prepareStorage() {
@@ -47,19 +38,19 @@ class Index {
 }
 
 const index = new Index();
-index.magazijn = new Magazijn();
+index.festival = new Festival();
 console.log(index.magazijn);
 console.log(index.anders);
 
 
-function changeScreen(){
+// function changeScreen(){
 
-    let newProduct = document.getElementById('new_products_button');
-    let choice_menu = document.getElementById('dropdownMenuButton');
+//     let newProduct = document.getElementById('new_products_button');
+//     let choice_menu = document.getElementById('dropdownMenuButton');
 
-    newProduct.innerText = `Nieuwe ${index.magazijn.current.screenName} menu`;
-    choice_menu.innerText = index.magazijn.current.screenName;
+//     newProduct.innerText = `Nieuwe ${index.magazijn.current.screenName} menu`;
+//     choice_menu.innerText = index.magazijn.current.screenName;
 
-    index.magazijn.current.createDropDownMenu();
-}
+//     index.magazijn.current.createDropDownMenu();
+// }
 
