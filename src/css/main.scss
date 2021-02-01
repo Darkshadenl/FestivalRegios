@@ -1,0 +1,31 @@
+.dragButton {
+  width: 200px;
+  margin-left: 40px;
+  margin-top: 10px;
+}
+
+.dragButtonV2 {
+  width: 170px;
+  height: 70px;
+  font-size: 10px;
+  margin-bottom: 50px;
+  margin-right: 50px;
+}
+
+#choice_menu {
+  background-color: brown;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 200px 200px 200px;
+  padding: 10px;
+}
+.grid-item {
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  height: 100px;
+  padding: 20px;
+  font-size: 30px;
+  text-align: center;
+  background-color: lightcyan;
+}

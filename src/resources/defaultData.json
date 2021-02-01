@@ -1,0 +1,118 @@
+{
+    "Kleding": {
+        "Broeken": {
+            "Naam": "Coole broek",
+            "beschrijving": "Een coole broek van een mooie stof",
+            "inkoopprijs": 10,
+            "minimale voorraad": 5,
+            "huidige voorraad": 2,
+            "kleuren": {
+                "Kleur1": "groen",
+                "Kleur2": "blauw"
+            }
+        },
+        "Sweaters": {
+            "Naam": "Coole Sweater",
+            "beschrijving": "Een coole Sweater van een mooie stof",
+            "inkoopprijs": 10,
+            "minimale voorraad": 5,
+            "huidige voorraad": 2,
+            "kleuren": {
+                "Kleur1": "groen",
+                "Kleur2": "blauw"
+            }
+        },
+        "Jurkjes": {
+            "Naam": "Coole Jurk",
+            "beschrijving": "Een coole Jurk van een mooie stof",
+            "inkoopprijs": 10,
+            "minimale voorraad": 5,
+            "huidige voorraad": 2,
+            "kleuren": {
+                "Kleur1": "groen",
+                "Kleur2": "blauw"
+            }
+        },
+        "Mutsen": {
+            "Naam": "Coole Muts",
+            "beschrijving": "Een coole Muts van een mooie stof",
+            "inkoopprijs": 10,
+            "minimale voorraad": 5,
+            "huidige voorraad": 2,
+            "kleuren": {
+                "Kleur1": "groen",
+                "Kleur2": "blauw"
+            }
+        },
+        "Sportschoenen": {
+            "Naam": "Coole sportschoen",
+            "beschrijving": "Een coole sportschoen van een mooie stof",
+            "inkoopprijs": 10,
+            "minimale voorraad": 5,
+            "huidige voorraad": 2,
+            "kleuren": {
+                "Kleur1": "groen",
+                "Kleur2": "blauw"
+            }
+        }
+    },
+    "Tierlantijn": {
+        "Lamp": {
+            "Naam": "Mooie lamp",
+            "beschrijving": "Een Mooie lamp",
+            "inkoopprijs": 10,
+            "minimale voorraad": 5,
+            "huidige voorraad": 2,
+            "kleuren": {
+                "Kleur1": "groen",
+                "Kleur2": "blauw"
+            }
+        },
+        "Tafel": {
+            "Naam": "Coole Tafel",
+            "beschrijving": "Een Coole Tafel",
+            "inkoopprijs": 10,
+            "minimale voorraad": 5,
+            "huidige voorraad": 2,
+            "kleuren": {
+                "Kleur1": "bruin",
+                "Kleur2": "beige"
+            }
+        }
+    },
+    "Decoratie": {
+        "Heks": {
+            "Naam": "Hermelien",
+            "beschrijving": "Nu hermelien bij jou tuis",
+            "inkoopprijs": 10,
+            "minimale voorraad": 5,
+            "huidige voorraad": 2,
+            "kleuren": {
+                "Kleur1": "blank",
+                "Kleur2": "zwart"
+            }
+        },
+        "Paaseieren": {
+            "Ei1": {
+                "Naam": "Groen ei",
+                "beschrijving": "Paasei",
+                "inkoopprijs": 10,
+                "minimale voorraad": 5,
+                "huidige voorraad": 2,
+                "kleuren": {
+                    "Kleur1": "groen"
+                },
+                "Ei2": {
+                    "Naam": "Zwart ei",
+                    "beschrijving": "Paasei",
+                    "inkoopprijs": 10,
+                    "minimale voorraad": 5,
+                    "huidige voorraad": 2,
+                    "kleuren": {
+                        "Kleur1": "zwart"
+                    }
+                }
+            }
+        }
+    }
+}
