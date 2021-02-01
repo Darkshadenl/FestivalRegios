@@ -3,7 +3,7 @@
 import './css/main.scss';
 import './css/bootstrap.css';
 
-import Festival from './Festival';
+import Festival from './festival';
 
 window.onload = () => {
     
@@ -15,7 +15,7 @@ class Index {
 
     constructor() {
         this.#festival = new Festival();
-        this.prepareStorage();
+        // this.prepareStorage();
     }
 
     get festival(){
