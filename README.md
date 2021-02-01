@@ -1,4 +1,4 @@
-**Magazijn_assessment**
+**Festival_assessment**
 
 **VOORDAT JE BEGINT MET OOK MAAR IETS:**
 
