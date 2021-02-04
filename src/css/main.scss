@@ -1,31 +1,50 @@
-.dragButton {
-  width: 200px;
-  margin-left: 40px;
-  margin-top: 10px;
+.dropZone {
+  border: 2px;
+  height: 100%;
+  width: 100%;
+  border-left-style: solid;
+  border-right-style: solid;
+  padding: 0px !important;
+  margin: 0px !important;
 }
 
-.dragButtonV2 {
-  width: 170px;
-  height: 70px;
-  font-size: 10px;
-  margin-bottom: 50px;
-  margin-right: 50px;
+.dropZoneRow {
+  border: 2px;
+  border-style: solid;
+  height: 40px;
 }
 
-#choice_menu {
-  background-color: brown;
+.tree {
+  background-color: green;
+  width: 30px;
+  height: 30px;
 }
 
-.grid-container {
-  display: grid;
-  grid-template-columns: 200px 200px 200px;
-  padding: 10px;
+.solid-border {
+  border-style: solid !important;
+  border-color: red !important;
 }
-.grid-item {
-  border: 1px solid rgba(0, 0, 0, 0.8);
-  height: 100px;
-  padding: 20px;
-  font-size: 30px;
-  text-align: center;
-  background-color: lightcyan;
+
+.tent {
+  background-color: blue;
+}
+
+.eetkraampje {
+  background-color: red;
+}
+
+.drankkraampje {
+  background-color: yellow;
+}
+
+.boom {
+  background-color: green;
+}
+
+.toilet {
+  background-color: white;
+}
+
+.prullenbak {
+  background-color: green;
 }

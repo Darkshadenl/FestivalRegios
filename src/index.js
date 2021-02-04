@@ -3,7 +3,7 @@
 import './css/main.scss';
 import './css/bootstrap.css';
 
-import Festival from './festival';
+import mainController from './controllers/mainController';
 
 window.onload = () => {
     
@@ -11,37 +11,25 @@ window.onload = () => {
 
 class Index {
 
-    #festival;
+    #mainController;
 
     constructor() {
-        this.#festival = new Festival();
+        this.#mainController = new mainController();
         // this.prepareStorage();
     }
 
-    get festival(){
-        return this.#festival;
-    }
-
-    set festival(mag){
-        this.#festival = mag;
-    }
-
-    prepareStorage() {
-        fetch('./src/resources/defaultData.json')
-            .then((response) => {
-                return response.json();
-            }).then((data) => {
-            localStorage.setItem("items", JSON.stringify(data));
-        });
-    }
+    // prepareStorage() {
+    //     fetch('./src/resources/defaultData.json')
+    //         .then((response) => {
+    //             return response.json();
+    //         }).then((data) => {
+    //         localStorage.setItem("items", JSON.stringify(data));
+    //     });
+    // }
 
 }
 
 const index = new Index();
-index.festival = new Festival();
-console.log(index.magazijn);
-console.log(index.anders);
-
 
 // function changeScreen(){
 

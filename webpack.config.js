@@ -80,7 +80,7 @@ module.exports = {
         }),
         new HtmlWebPackPlugin({
             title: "Magazijn App",
-            template: "./src/Index.html",
+            template: "./src/view/Index.html",
             filename: "./Index.html"
         }),
         new MiniCssExtractPlugin({
