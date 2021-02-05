@@ -126,12 +126,12 @@ export default class regionView {
     piecesCol.appendChild(tree);
   }
 
-  hideRegionView(){
+  hideView(){
     document.getElementsByClassName('regionsContainer')[0].style.display = 'none';
   }
 
-  showRegionView(){
-    document.getElementsByClassName('regionsContainer')[0].style.display = 'inline';
+  showView(){
+    document.getElementsByClassName('regionsContainer')[0].style.display = 'block';
   }
 
   // draggable start

@@ -24,18 +24,20 @@ export default class regionController {
   hideView() {
       this.viewsAvailable.forEach(e => {
           if (e.active){
-              e.hideRegionView()
+              e.hideView()
           }
       })
   }
 
   showView(regionName) {
-    if (regionName == "default") {
+    if (regionName == "default" || regionName == undefined) {
       this.viewsAvailable[0].showRegion();
-    }
-    if (regionName == undefined) {
-      console.log("undefined view");
     } else {
+      this.viewsAvailable.forEach(e => { 
+        if(e.name == regionName){
+          e.showView();
+        }
+      })
     }
   }
 }

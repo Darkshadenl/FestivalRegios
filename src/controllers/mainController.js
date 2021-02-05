@@ -13,7 +13,7 @@ export default class mainController {
     }
 
     switchToRegions(regionName) {
-        // this.#formController.hideView();
+        this.formController.hideView();
         if (regionName == undefined){
             this.regionController.showView("default");
         } else {
