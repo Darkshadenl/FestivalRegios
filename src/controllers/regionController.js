@@ -1,43 +1,37 @@
+import Festival from "../model/festival.js";
 import regionView from "../view/regionView.js";
 import mainController from "./mainController.js";
 
 export default class regionController {
   mainController;
-  viewsAvailable = [];
+  amount_regions = 6
+
+  festival;
+  current_view;
 
   constructor(mainController) {
     this.mainController = mainController;
-    this.viewsAvailable.push(
-      new regionView("Regio 1", 1),
-      new regionView("Regio 2", 2),
-      new regionView("Regio 3", 3),
-      new regionView("Regio 4", 4),
-      new regionView("Regio 5", 5),
-      new regionView("Regio 6", 6)
-    );
-    this.viewsAvailable.forEach((e) => {
-      e.regions = this.viewsAvailable;
-      e.controller = this;
-    });
-  }
-
-  hideView() {
-      this.viewsAvailable.forEach(e => {
-          if (e.active){
-              e.hideView()
-          }
-      })
+    this.festival = new Festival(6);   
   }
 
   showView(id) {
     if (id == "default" || id == undefined) {
-      this.viewsAvailable[0].showRegion();
-    } else {
-      this.viewsAvailable.forEach(e => { 
-        if(e.id == id){
-          e.showView();
-        }
-      })
+      this.current_view = new regionView(this.festival.getDefaultModel(), this);
+      this.current_view.showRegion();
+    } else { 
+      this.current_view.showView();
     }
   }
+
+  hideView() {
+      this.current_view.hideView();
+  }
+
+  switchRegion(id) {   
+    let new_view = new regionView(this.festival.getModel(id), this);
+    this.current_view.cleanForSwitchToRegion();
+    this.current_view = new_view;
+    this.current_view.showRegion();
+  }
+
 }

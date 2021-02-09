@@ -1,72 +1,45 @@
 import regionController from "../controllers/regionController";
 
 export default class regionView {
-  id;
-  name;
+  
+  
   element;
   regions;
   controller;
-  active = false;
+  model;
 
-  tenten = 0;
-  eetkraampjes = 0;
-  drankkraampjes = 0;
-  bomen = 0;
-  toiletten = 0;
-
-  festivalItemsAmounts = {
-    tenten: 0,
-    eetkraampjes: 0,
-    drankkraampjes: 0,
-    bomen: 0,
-    toiletten: 0,
-  };
-
-  constructor(name, id) {
-    this.name = name;
-    this.id = id;
-    this.retrieveDataFromLocalStorage();
-  }
-
-  retrieveDataFromLocalStorage() {
-    let data = JSON.parse(localStorage.getItem(this.id));
-    if (data == null) return;
-    this.name = data[0];
-    this.tenten = data[1];
-    this.eetkraampjes = data[2];
-    this.drankkraampjes = data[3];
-    this.bomen = data[4];
-    this.toiletten = data[5];
-
-    this.festivalItemsAmounts.tenten = data[1];
-    this.festivalItemsAmounts.eetkraampjes = data[2];
-    this.festivalItemsAmounts.drankkraampjes = data[3];
-    this.festivalItemsAmounts.bomen = data[4];
-    this.festivalItemsAmounts.toiletten = data[5];
+  constructor(regionModel, controller) {
+    this.controller = controller;
+    this.model = regionModel;
   }
 
   buildRegionMenuButtons() {
     let regionMenu = document.getElementById("regionMenu");
     let buttons = [];
     let viewNames = [];
-    let int;
-    this.regions.forEach((view) => {
-      viewNames.push(view.name);
-    });
+    
+    let regionModels = this.controller.festival.regions;
+
+    regionModels.forEach(model => {
+      viewNames.push(model.name);
+    })
 
     viewNames.forEach((name) => {
       let button = document.createElement("button");
       button.className = "btn btn-info ml-2";
       button.innerText = name;
       button.addEventListener("click", () => {
-        this.regions.forEach((region) => {
-          if (region.name == button.innerText) {
-            region.switchRegion();
+        regionModels.forEach((model) => {
+          if (model.name == button.innerText) {
+            // let view = new regionView(model);
+            // view.switchRegion();
+            // model.switchRegion();
+            this.controller.switchRegion(model.id);
           }
         });
       });
-
-      if (button.innerText == this.name) {
+      
+      if (button.innerText == this.model.name) {
         button.classList.remove("btn-info");
         button.classList.add("btn-primary");
       }
@@ -78,12 +51,10 @@ export default class regionView {
     });
   }
 
-  switchRegion() {
+  cleanForSwitchToRegion() {
     // clean data of current region
     this.active = false;
     this.cleanRegion();
-    // show new region
-    this.showRegion();
   }
 
   cleanRegion() {
@@ -101,7 +72,7 @@ export default class regionView {
 
   showRegion() {
     // Retrieve data from localstorage.
-    this.retrieveDataFromLocalStorage();
+    this.model.retrieveDataFromLocalStorage();
     // build region menu buttons
     this.buildRegionMenuButtons();
 
@@ -109,10 +80,10 @@ export default class regionView {
     let configureContainer = document.getElementById("configbtnContainer");
     let configBtn = document.createElement("button");
     configBtn.className = "btn btn-dark";
-    configBtn.innerText = "Configureer " + this.name;
+    configBtn.innerText = "Configureer " + this.model.name;
     configBtn.id = "configRegioBtn";
     configBtn.addEventListener("click", () =>
-      this.controller.mainController.switchToForm(this.name, this.id)
+      this.controller.mainController.switchToForm(this.model.name, this.model.id)
     );
     configureContainer.appendChild(configBtn);
 
@@ -159,49 +130,38 @@ export default class regionView {
     container[0].appendChild(dropZoneContainer);
 
     this.createPieces();
-    this.active = true;
   }
 
   createPieces() {
     let piecesCol = document.getElementById("piecesView");
 
-    // create example pieces
-    // let tree = document.createElement('div')
-    // tree.classList.add('tree')
-    // tree.draggable = true;
-    // tree.innerText = 3;
-    // tree.style = 'color: orange';
-    // tree.addEventListener("dragstart", this.dragStart, false);
-
-    for (let x in this.festivalItemsAmounts) {
-      console.log(x);
-      console.log(this.festivalItemsAmounts[x]);
-
-      let col = document.createElement('div');
-      col.classList.add('col');
-      let puzzlePiece = document.createElement('div');
+    for (let x in this.model.festivalItemsAmounts) {
+      let col = document.createElement("div");
+      col.classList.add("col");
+      let puzzlePiece = document.createElement("div");
       puzzlePiece.draggable = true;
-      puzzlePiece.innerText = this.festivalItemsAmounts[x];
+      puzzlePiece.innerText = this.model.festivalItemsAmounts[x];
       puzzlePiece.addEventListener("dragstart", this.dragStart, false);
+      puzzlePiece.addEventListener("dragend", this.dragEnd, false);
 
       switch (x) {
         case "tenten":
-          puzzlePiece.classList.add('tent')
+          puzzlePiece.classList.add("tent");
           break;
         case "eetkraampjes":
-          puzzlePiece.classList.add('eetkraampje')
+          puzzlePiece.classList.add("eetkraampje");
           break;
         case "drankkraampjes":
-          puzzlePiece.classList.add('drankkraampje')
+          puzzlePiece.classList.add("drankkraampje");
           break;
         case "bomen":
-          puzzlePiece.classList.add('boom')
+          puzzlePiece.classList.add("boom");
           break;
         case "toiletten":
-          puzzlePiece.classList.add('toilet')
+          puzzlePiece.classList.add("toilet");
           break;
-          case "prullenbak":
-          puzzlePiece.classList.add('toilet')
+        case "prullenbak":
+          puzzlePiece.classList.add("prullenbak");
           break;
       }
       col.appendChild(puzzlePiece);
@@ -215,7 +175,6 @@ export default class regionView {
   }
 
   showView() {
-    this.retrieveDataFromLocalStorage();
     this.cleanRegion();
     this.showRegion();
     document.getElementsByClassName("regionsContainer")[0].style.display =
@@ -225,7 +184,6 @@ export default class regionView {
   // draggable start
   dragStart(e) {
     e.dataTransfer.setData("type", e.target.classList[0]);
-    e.dataTransfer.setData("amountLeft", e.target.innerText);
   }
 
   // target dragOver
@@ -266,6 +224,19 @@ export default class regionView {
       case "prullenbak":
         e.target.classList.add("prullenbak");
         break;
+    }
+  }
+
+  dragEnd(e) {
+    if (e.dataTransfer.dropEffect !== "none") {
+      // make number go down
+      let amount = parseInt(e.target.innerText);
+      amount -= 1;
+      e.target.innerText = amount;
+      // disable draggable if 0
+      if (amount == 0) {
+        e.target.draggable = false;
+      }
     }
   }
 }

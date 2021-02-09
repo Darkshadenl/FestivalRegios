@@ -2,28 +2,36 @@
 
 export default class Region {
 
-    // #items = ["blauwe sweater", "groene sweater", "paarse sweater"];
-    #name;
+    id;
+    name;
+    openAreas = []
 
-    constructor(name) {
-        this.#name = name;
+    festivalItemsAmounts = {
+        tenten: 0,
+        eetkraampjes: 0,
+        drankkraampjes: 0,
+        bomen: 0,
+        toiletten: 0,
+    };
+
+    constructor(id, name) {
+        this.id = id;
+        this.name = name;
+        this.retrieveDataFromLocalStorage();
     }
 
-    get screenName(){
-        return this.#name;
+    retrieveDataFromLocalStorage() {
+        let data = JSON.parse(localStorage.getItem(this.id));
+        if (data == null) return;
+        this.name = data[0];    
+        this.festivalItemsAmounts.tenten = data[1];
+        this.festivalItemsAmounts.eetkraampjes = data[2];
+        this.festivalItemsAmounts.drankkraampjes = data[3];
+        this.festivalItemsAmounts.bomen = data[4];
+        this.festivalItemsAmounts.toiletten = data[5];
     }
 
-    // get items(){
-    //     return this.#items;
-    // }
 
-    retrieveItems(){
-        let retrieved = () => {
-            return JSON.parse(localStorage.getItem('items'));
-        };
-
-        // return items;
-    }
 
 }
 
