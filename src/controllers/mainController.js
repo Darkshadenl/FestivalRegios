@@ -12,17 +12,17 @@ export default class mainController {
         this.switchToRegions();
     }
 
-    switchToRegions(regionName) {
+    switchToRegions(id) {
         this.formController.hideView();
-        if (regionName == undefined){
-            this.regionController.showView("default");
+        if (id == undefined){
+            this.regionController.showView();
         } else {
-            this.regionController.showView(regionName);
+            this.regionController.showView(id);
         }
     }
 
-    switchToForm(regionName) {          
+    switchToForm(regionName, id) {          
         this.regionController.hideView();
-        this.formController.showView(regionName);
+        this.formController.showView(regionName, id);
     }
 }

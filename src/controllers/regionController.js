@@ -8,12 +8,12 @@ export default class regionController {
   constructor(mainController) {
     this.mainController = mainController;
     this.viewsAvailable.push(
-      new regionView("Regio 1"),
-      new regionView("Regio 2"),
-      new regionView("Regio 3"),
-      new regionView("Regio 4"),
-      new regionView("Regio 5"),
-      new regionView("Regio 6")
+      new regionView("Regio 1", 1),
+      new regionView("Regio 2", 2),
+      new regionView("Regio 3", 3),
+      new regionView("Regio 4", 4),
+      new regionView("Regio 5", 5),
+      new regionView("Regio 6", 6)
     );
     this.viewsAvailable.forEach((e) => {
       e.regions = this.viewsAvailable;
@@ -29,12 +29,12 @@ export default class regionController {
       })
   }
 
-  showView(regionName) {
-    if (regionName == "default" || regionName == undefined) {
+  showView(id) {
+    if (id == "default" || id == undefined) {
       this.viewsAvailable[0].showRegion();
     } else {
       this.viewsAvailable.forEach(e => { 
-        if(e.name == regionName){
+        if(e.id == id){
           e.showView();
         }
       })

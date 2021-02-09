@@ -3,39 +3,24 @@ import formView from "../view/formView";
 export default class formController {
 
     mainController;
-    viewsAvailable = [];
+    current_form;
 
     constructor(mainController){
         this.mainController = mainController;
-        this.viewsAvailable.push(
-            new formView('Regio 1'),
-            new formView('Regio 2'),
-            new formView('Regio 3'),
-            new formView('Regio 4'),
-            new formView('Regio 5'),
-            new formView('Regio 6'),
-        )
-        this.viewsAvailable.forEach(e => {
-            e.controller = this;
-        })
     }
 
-    showView(formName){
-        this.viewsAvailable.forEach(e => {
-            if (e.name == formName){
-                e.showView();
-            }
-        })
+    showView(formName, id){
+        this.current_form = new formView(formName, id);
+        this.current_form.controller = this;
+        this.current_form.showView();
     }
 
     hideView(){
-        this.viewsAvailable.forEach(e => {
-            if (e.active){
-                e.hideView();
-            }
-        })
+        if (this.current_form)
+            this.current_form.hideView();
     }
 
-    
-
+    saveData(id, values){
+      localStorage.setItem(id, JSON.stringify(values))
+    }
 }

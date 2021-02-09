@@ -14,12 +14,6 @@
   height: 40px;
 }
 
-.tree {
-  background-color: green;
-  width: 30px;
-  height: 30px;
-}
-
 .solid-border {
   border-style: solid !important;
   border-color: red !important;
@@ -27,24 +21,30 @@
 
 .tent {
   background-color: blue;
+  color: white;
 }
 
 .eetkraampje {
   background-color: red;
+  color: white;
 }
 
 .drankkraampje {
   background-color: yellow;
+  color: red;
 }
 
 .boom {
   background-color: green;
+  color: white;
 }
 
 .toilet {
-  background-color: white;
+  background-color: orange;
+  color: black;
 }
 
 .prullenbak {
-  background-color: green;
+  background-color: black;
+  color: white;
 }
