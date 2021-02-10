@@ -1,2 +1,1 @@
-export default class DragDrop {
-}
+let dragdropTest = 0;

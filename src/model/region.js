@@ -5,6 +5,7 @@ export default class Region {
     id;
     name;
     openAreas = []
+    gridSpots = []
 
     festivalItemsAmounts = {
         tenten: 0,
@@ -18,6 +19,15 @@ export default class Region {
         this.id = id;
         this.name = name;
         this.retrieveDataFromLocalStorage();
+        this.buildGridData();
+    }
+
+    buildGridData(){
+        for (let y = 0; y < 15; y++) {
+            for (let x = 0; x < 15; x++) {
+                this.gridSpots.push(y, x);
+            }
+        }
     }
 
     retrieveDataFromLocalStorage() {

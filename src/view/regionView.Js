@@ -2,7 +2,6 @@ import regionController from "../controllers/regionController";
 
 export default class regionView {
   
-  
   element;
   regions;
   controller;
@@ -147,21 +146,27 @@ export default class regionView {
       switch (x) {
         case "tenten":
           puzzlePiece.classList.add("tent");
+          puzzlePiece.id = 'tent';
           break;
         case "eetkraampjes":
           puzzlePiece.classList.add("eetkraampje");
+          puzzlePiece.id = 'eetkraampje';
           break;
         case "drankkraampjes":
           puzzlePiece.classList.add("drankkraampje");
+          puzzlePiece.id = 'drankkraampje';
           break;
         case "bomen":
           puzzlePiece.classList.add("boom");
+          puzzlePiece.id = 'boom';
           break;
         case "toiletten":
           puzzlePiece.classList.add("toilet");
+          puzzlePiece.id = 'toilet';
           break;
         case "prullenbak":
           puzzlePiece.classList.add("prullenbak");
+          puzzlePiece.id = 'prullenbak';
           break;
       }
       col.appendChild(puzzlePiece);
@@ -183,7 +188,7 @@ export default class regionView {
 
   // draggable start
   dragStart(e) {
-    e.dataTransfer.setData("type", e.target.classList[0]);
+    e.dataTransfer.setData("type", e.target.id);
   }
 
   // target dragOver
@@ -202,29 +207,47 @@ export default class regionView {
 
   dropEvent(e) {
     e.preventDefault();
-    e.target.classList.remove("solid-border");
     let draggableType = e.dataTransfer.getData("type");
+
+    e.target.classList.remove("solid-border");
+    e.target.draggable = true;
+
+    console.log(draggableType);
 
     switch (draggableType) {
       case "tent":
         e.target.classList.add("tent");
+        e.target.id = 'tentPlaced';
         break;
       case "eetkraampje":
         e.target.classList.add("eetkraampje");
+        e.target.id = 'eetkraampjePlaced';
         break;
       case "drankkraampje":
         e.target.classList.add("drankkraampje");
+        e.target.id = 'drankkraampjePlaced';
         break;
       case "boom":
         e.target.classList.add("boom");
+        e.target.id = 'boomPlaced';
         break;
       case "toilet":
         e.target.classList.add("toilet");
+        e.target.id = 'toiletPlaced';
         break;
       case "prullenbak":
         e.target.classList.add("prullenbak");
+        e.target.id = 'prullenbakPlaced';
         break;
     }
+
+
+    let old_element = e.target;
+    let new_element = old_element.cloneNode(true);
+    old_element.parentNode.replaceChild(new_element, old_element);
+
+    e.target.addEventListener("dragstart", this.dragStart, false);
+
   }
 
   dragEnd(e) {

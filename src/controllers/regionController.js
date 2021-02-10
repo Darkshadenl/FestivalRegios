@@ -4,14 +4,14 @@ import mainController from "./mainController.js";
 
 export default class regionController {
   mainController;
-  amount_regions = 6
+  amount_regions = 6;
 
   festival;
   current_view;
 
   constructor(mainController) {
     this.mainController = mainController;
-    this.festival = new Festival(6);   
+    this.festival = new Festival(this.amount_regions);
   }
 
   showView(id) {

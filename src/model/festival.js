@@ -13,7 +13,6 @@ export default class Festival {
     }
 
     getDefaultModel(){
-        this.regions[0].active = true;
         return this.regions[0];
     }
 
