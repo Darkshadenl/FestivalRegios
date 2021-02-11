@@ -1,22 +1,23 @@
 import regionController from "../controllers/regionController";
+import DragDrop from "../view/DragDrop";
 
 export default class regionView {
-  
+
   element;
   regions;
   controller;
-  model;
+  #dragDrop;
 
-  constructor(regionModel, controller) {
+  constructor(controller) {
     this.controller = controller;
-    this.model = regionModel;
+    this.#dragDrop = new DragDrop(controller, this);
   }
 
   buildRegionMenuButtons() {
     let regionMenu = document.getElementById("regionMenu");
     let buttons = [];
     let viewNames = [];
-    
+
     let regionModels = this.controller.festival.regions;
 
     regionModels.forEach(model => {
@@ -30,24 +31,30 @@ export default class regionView {
       button.addEventListener("click", () => {
         regionModels.forEach((model) => {
           if (model.name == button.innerText) {
-            // let view = new regionView(model);
-            // view.switchRegion();
-            // model.switchRegion();
             this.controller.switchRegion(model.id);
           }
         });
       });
-      
-      if (button.innerText == this.model.name) {
+
+      if (button.innerText == this.controller.current_region.name) {
         button.classList.remove("btn-info");
         button.classList.add("btn-primary");
       }
       buttons.push(button);
     });
 
+    let deleteBox = document.createElement('div');
+    deleteBox.innerText = 'Sleep hier naartoe om te verwijderen';
+    deleteBox.className = 'mt-2 deleteBox';
+    deleteBox.id = 'deleteBox';
+    deleteBox.addEventListener('dragover', (e) => { this.#dragDrop.dragOver(e) }, false);
+    // deleteBox.addEventListener('dragleave', (e) => { this.#dragDrop.dragLeaveDeleteBox(e) }, false);
+    deleteBox.addEventListener('drop', (e) => { this.#dragDrop.deleteBoxDrop(e) }, false)
+
     buttons.forEach((e) => {
       regionMenu.appendChild(e);
     });
+    regionMenu.appendChild(deleteBox);
   }
 
   cleanForSwitchToRegion() {
@@ -65,13 +72,31 @@ export default class regionView {
     while (regionMenuButtons.firstChild) {
       regionMenuButtons.removeChild(regionMenuButtons.lastChild);
     }
-    let configbtn = document.getElementById("configRegioBtn");
-    configbtn.remove();
+
+    let configbtnContainer = document.getElementById("configbtnContainer");
+    while (configbtnContainer.firstChild) {
+      configbtnContainer.removeChild(configbtnContainer.lastChild);
+    }
+
+  }
+
+  lockRegion() {
+    this.controller.current_region.lockRegion();
+    let pieces = document.getElementById('piecesView');
+
+    pieces.childNodes.forEach(e => {
+      if (e.hasChildNodes) {
+        e.childNodes.forEach(f => {
+          f.draggable = false;
+        })
+      }
+    })
+
+    // disable drag drop on grid elements. TODO
+
   }
 
   showRegion() {
-    // Retrieve data from localstorage.
-    this.model.retrieveDataFromLocalStorage();
     // build region menu buttons
     this.buildRegionMenuButtons();
 
@@ -79,12 +104,22 @@ export default class regionView {
     let configureContainer = document.getElementById("configbtnContainer");
     let configBtn = document.createElement("button");
     configBtn.className = "btn btn-dark";
-    configBtn.innerText = "Configureer " + this.model.name;
+    configBtn.innerText = "Configureer " + this.controller.current_region.name;
     configBtn.id = "configRegioBtn";
     configBtn.addEventListener("click", () =>
-      this.controller.mainController.switchToForm(this.model.name, this.model.id)
+      this.controller.mainController.switchToForm(this.controller.current_region.name, this.controller.current_region.id)
     );
     configureContainer.appendChild(configBtn);
+
+    // create lock button
+    let lockBtn = document.createElement('button');
+    lockBtn.className = "btn btn-warning ml-3";
+    lockBtn.id = 'lockRegioBtn';
+    lockBtn.innerText = 'Lock regio';
+    lockBtn.addEventListener('click', () => {
+      this.lockRegion();
+    });
+    configureContainer.appendChild(lockBtn);
 
     // create container for grid/dropzone
     let dropZoneContainer = document.createElement("div");
@@ -106,16 +141,16 @@ export default class regionView {
       let dropZoneRow = document.createElement("div");
       dropZoneRow.className = "row dropZoneRow";
       dropZoneRow.id = "row" + i.toString();
+      dropZoneRow.draggable = false;
 
       for (let i = 0; i < 15; i++) {
         let dropZoneCol = document.createElement("div");
         dropZoneCol.className = "col dropZone";
         dropZoneCol.id = "col" + i.toString();
-
-        dropZoneCol.addEventListener("dragover", this.dragOver, false);
-        dropZoneCol.addEventListener("dragenter", this.dragEnter, false);
-        dropZoneCol.addEventListener("drop", this.dropEvent, false);
-        dropZoneCol.addEventListener("dragleave", this.dragLeave, false);
+        dropZoneCol.draggable = false;
+        dropZoneCol.addEventListener("dragover", (e) => { this.#dragDrop.dragOver(e) }, false);
+        dropZoneCol.addEventListener("drop", (e) => { this.#dragDrop.dropEvent(e) }, false);
+        dropZoneCol.addEventListener("dragleave", (e) => { this.#dragDrop.dragLeave(e) }, false);
 
         dropZoneRow.appendChild(dropZoneCol);
       }
@@ -134,14 +169,14 @@ export default class regionView {
   createPieces() {
     let piecesCol = document.getElementById("piecesView");
 
-    for (let x in this.model.festivalItemsAmounts) {
+    for (let x in this.controller.current_region.festivalItemsAmounts) {
       let col = document.createElement("div");
       col.classList.add("col");
       let puzzlePiece = document.createElement("div");
       puzzlePiece.draggable = true;
-      puzzlePiece.innerText = this.model.festivalItemsAmounts[x];
-      puzzlePiece.addEventListener("dragstart", this.dragStart, false);
-      puzzlePiece.addEventListener("dragend", this.dragEnd, false);
+      puzzlePiece.innerText = this.controller.current_region.festivalItemsAmounts[x];
+      puzzlePiece.addEventListener("dragstart", (e) => { this.#dragDrop.dragStart(e)}, false);
+      puzzlePiece.addEventListener("dragend", (e) => { this.#dragDrop.dragEnd(e)}, false);
 
       switch (x) {
         case "tenten":
@@ -184,82 +219,5 @@ export default class regionView {
     this.showRegion();
     document.getElementsByClassName("regionsContainer")[0].style.display =
       "block";
-  }
-
-  // draggable start
-  dragStart(e) {
-    e.dataTransfer.setData("type", e.target.id);
-  }
-
-  // target dragOver
-  dragOver(e) {
-    e.preventDefault();
-    if (e.target.classList.contains("dropZone")) {
-      e.target.classList.add("solid-border");
-    }
-  }
-
-  dragLeave(e) {
-    e.target.classList.remove("solid-border");
-  }
-
-  dragEnter(e) {}
-
-  dropEvent(e) {
-    e.preventDefault();
-    let draggableType = e.dataTransfer.getData("type");
-
-    e.target.classList.remove("solid-border");
-    e.target.draggable = true;
-
-    console.log(draggableType);
-
-    switch (draggableType) {
-      case "tent":
-        e.target.classList.add("tent");
-        e.target.id = 'tentPlaced';
-        break;
-      case "eetkraampje":
-        e.target.classList.add("eetkraampje");
-        e.target.id = 'eetkraampjePlaced';
-        break;
-      case "drankkraampje":
-        e.target.classList.add("drankkraampje");
-        e.target.id = 'drankkraampjePlaced';
-        break;
-      case "boom":
-        e.target.classList.add("boom");
-        e.target.id = 'boomPlaced';
-        break;
-      case "toilet":
-        e.target.classList.add("toilet");
-        e.target.id = 'toiletPlaced';
-        break;
-      case "prullenbak":
-        e.target.classList.add("prullenbak");
-        e.target.id = 'prullenbakPlaced';
-        break;
-    }
-
-
-    let old_element = e.target;
-    let new_element = old_element.cloneNode(true);
-    old_element.parentNode.replaceChild(new_element, old_element);
-
-    e.target.addEventListener("dragstart", this.dragStart, false);
-
-  }
-
-  dragEnd(e) {
-    if (e.dataTransfer.dropEffect !== "none") {
-      // make number go down
-      let amount = parseInt(e.target.innerText);
-      amount -= 1;
-      e.target.innerText = amount;
-      // disable draggable if 0
-      if (amount == 0) {
-        e.target.draggable = false;
-      }
-    }
   }
 }

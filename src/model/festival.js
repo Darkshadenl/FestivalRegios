@@ -23,6 +23,7 @@ export default class Festival {
                 found_model = e;
             }
         })
+        found_model.retrieveDataFromLocalStorage();
         return found_model;
     }
 

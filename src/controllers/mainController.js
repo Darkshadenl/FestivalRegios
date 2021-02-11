@@ -9,15 +9,15 @@ export default class mainController {
     constructor() {
         this.regionController = new regionController(this);
         this.formController = new formController(this);
-        this.switchToRegions();
+        this.switchToRegions(true);
     }
 
-    switchToRegions(id) {
+    switchToRegions(showDefault) {
         this.formController.hideView();
-        if (id == undefined){
-            this.regionController.showView();
+        if (showDefault){
+            this.regionController.showView(true);
         } else {
-            this.regionController.showView(id);
+            this.regionController.showView();
         }
     }
 

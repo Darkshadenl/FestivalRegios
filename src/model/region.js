@@ -1,5 +1,8 @@
 "use strict";
 
+import Gridspot from "../model/Gridspot"
+import GridItem from "./GridItem";
+
 export default class Region {
 
     id;
@@ -24,10 +27,62 @@ export default class Region {
 
     buildGridData(){
         for (let y = 0; y < 15; y++) {
+            this.gridSpots.push([]);
             for (let x = 0; x < 15; x++) {
-                this.gridSpots.push(y, x);
+                this.gridSpots[y].push(new Gridspot(x, y));
             }
         }
+
+        // give spots neighbour data
+        for (let y = 0; y < 15; y++) {
+            for (let x = 0; x < 15; x++) {
+                // this.gridSpots[y][x].left_spot = (typeof this.gridSpots[y][x - 1] == undefined) ? console.log('undefined' + y + x) :  this.gridSpots[y][x - 1];
+                // this.gridSpots[y][x].right_spot = (typeof this.gridSpots[y][x + 1] == undefined) ? console.log('undefined' + y + x) :  this.gridSpots[y][x + 1];
+                
+                // console.log(this.gridSpots[y][x]);
+
+                console.log(this);
+
+                // if (typeof this.gridSpots[y + 1][x] === undefined){
+                // }
+
+                // try {
+                //     if (typeof this.gridSpots[y + 1][x] === undefined){
+                //     }
+                //     if (typeof this.gridSpots[y + 1][x] == undefined){
+                //     }
+                // } catch (error) {
+                //     console.log('funny');
+                    
+                // }
+                
+
+               
+            }
+        }
+    }
+
+    lockRegion(){
+        for (let y = 0; y < this.gridSpots.length; y++) {
+            this.openAreas.push([]);
+            for (let x = 0; x < this.gridSpots[y].length; x++) {
+                if (this.gridSpots[y][x].isAvailable()){
+                    this.openAreas[y].push(this.gridSpots[y][x]);
+                }
+            }
+        }
+    }
+
+    placeElement(type, col, row){
+
+        // checks for corners and sides
+        // placement in gridspots
+        if (this.gridSpots[row][col].isAvailable()){
+            let newItem = new GridItem(type);
+            let placed = this.gridSpots[row][col].addGridItem(newItem);
+
+        }
+
     }
 
     retrieveDataFromLocalStorage() {

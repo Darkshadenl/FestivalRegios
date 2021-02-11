@@ -8,17 +8,20 @@ export default class regionController {
 
   festival;
   current_view;
+  current_region;
 
   constructor(mainController) {
     this.mainController = mainController;
     this.festival = new Festival(this.amount_regions);
   }
 
-  showView(id) {
-    if (id == "default" || id == undefined) {
-      this.current_view = new regionView(this.festival.getDefaultModel(), this);
+  showView(showDefault) {
+    if (showDefault) {
+      this.current_region = this.festival.getDefaultModel();
+      this.current_view = new regionView(this);
       this.current_view.showRegion();
     } else { 
+      this.current_view.model.retrieveDataFromLocalStorage();
       this.current_view.showView();
     }
   }
@@ -28,7 +31,8 @@ export default class regionController {
   }
 
   switchRegion(id) {   
-    let new_view = new regionView(this.festival.getModel(id), this);
+    this.current_region = this.festival.getModel(id);
+    let new_view = new regionView(this);
     this.current_view.cleanForSwitchToRegion();
     this.current_view = new_view;
     this.current_view.showRegion();

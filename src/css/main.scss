@@ -6,7 +6,6 @@
   border-right-style: solid;
   padding: 0px !important;
   margin: 0px !important;
-  
 }
 
 .dropZoneRow {
@@ -23,29 +22,48 @@
 .tent {
   background-color: blue;
   color: white;
+  background-image: url('../resources/HUISJE.png');
+  background-position: top;
 }
 
 .eetkraampje {
   background-color: red;
   color: white;
+  background-image: url('../resources/HUISJE.png');
+  background-position: top;
 }
 
 .drankkraampje {
   background-color: yellow;
   color: red;
+  background-image: url('../resources/HUISJE.png');
+  background-position: top;
 }
 
 .boom {
   background-color: green;
   color: white;
+  background-image: url('../resources/HUISJE.png');
+  background-position: top;
 }
 
 .toilet {
   background-color: orange;
   color: black;
+  background-image: url('../resources/HUISJE.png');
+  background-position: top;
 }
 
 .prullenbak {
   background-color: black;
   color: white;
+  background-image: url('../resources/HUISJE.png');
+  background-position: top;
 }
+
+.deleteBox{
+  background-color: blue;
+  color: white;
+
+}
+  
