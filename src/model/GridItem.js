@@ -5,7 +5,8 @@ export default class GridItem {
     name;
     type;
     width;
-    hight;
+    height;
+    coordinates = [];
 
     constructor(type) {
         this.type = type;
@@ -13,7 +14,6 @@ export default class GridItem {
     }
 
     determineSize(){
-
         switch (this.type){
             case 'tent':
                 this.width = 3;
@@ -39,9 +39,7 @@ export default class GridItem {
                 this.width = 1;
                 this.height = 3;
                 break;
-            
         }
-
     }
 
 }

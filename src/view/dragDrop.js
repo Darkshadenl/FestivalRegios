@@ -4,6 +4,7 @@ export default class DragDrop {
     #usedDeleteBox = false;
     #deleteBox;
     #regionview;
+    #succesfullPlacement = true;
 
     // #placedClasses = ['tentPlaced', 'eetkraampjePlaced', 'drankkraampjePlaced', 'boomPlaced', 'toiletPlaced', 'prullenbakPlaced']
 
@@ -14,7 +15,7 @@ export default class DragDrop {
 
     // draggable start
     dragStart(e) {
-        if (!this.#deleteBox){
+        if (!this.#deleteBox) {
             this.#deleteBox = document.getElementById('deleteBox');
         }
         e.dataTransfer.setData("type", e.target.id);
@@ -38,55 +39,56 @@ export default class DragDrop {
         // get containers.
         let col = e.target.id;
         let row = e.target.parentNode.id;
-        col = parseInt(col.slice(3, 4));
-        row = parseInt(row.slice(3, 4));
+        let rowPos = col.indexOf('row');
+        col = parseInt(col.slice(3, rowPos));
+        row = parseInt(row.slice(3, row.length));
 
-        console.log(col);
-        console.log(row);
-
-        this.#controller.current_region.placeElement(draggableType, col, row);
+        // place element, return coordinates of other spots to be filled
+        let toBeFilledCoordinates = this.#controller.current_region.placeElement(draggableType, col, row);
 
         e.target.classList.remove("solid-border");
 
-        e.target.draggable = true;
 
         switch (draggableType) {
             case "tent":
-                e.target.classList.add("tent");
-                // e.target.classList.add("tentPlaced");
+                this.fillSpots(toBeFilledCoordinates, 'tent', e.target);
                 break;
             case "eetkraampje":
-                e.target.classList.add("eetkraampje");
-                // e.target.classList.add("eetkraampjePlaced");
+                this.fillSpots(toBeFilledCoordinates, 'eetkraampje', e.target);
                 break;
             case "drankkraampje":
-                e.target.classList.add("drankkraampje");
-                // e.target.classList.add("drankkraampjePlaced");
+                this.fillSpots(toBeFilledCoordinates, 'drankkraampje', e.target);
                 break;
             case "boom":
-                e.target.classList.add("boom");
-                // e.target.classList.add("boomPlaced");
+                this.fillSpots(toBeFilledCoordinates, 'boom', e.target);
                 break;
             case "toilet":
-                e.target.classList.add("toilet");
-                // e.target.classList.add("toiletPlaced");
+                this.fillSpots(toBeFilledCoordinates, 'toilet', e.target);
                 break;
             case "prullenbak":
-                e.target.classList.add("prullenbak");
-                // e.target.classList.add("prullenbakPlaced");
+                this.fillSpots(toBeFilledCoordinates, 'prullenbak', e.target);
                 break;
         }
+    }
 
-        let old_element = e.target;
-        let new_element = old_element.cloneNode(true);
-        old_element.parentNode.replaceChild(new_element, old_element);
-        e.target.addEventListener("dragstart", this.dragStart, false);
+    fillSpots(toBeFilledCoordinates, classTypeString) {
+        if (toBeFilledCoordinates == null) {
+            this.#succesfullPlacement = false;
+            window.alert('Dit item kan niet hier geplaatst worden!');
+        } else {
+            
+            toBeFilledCoordinates.forEach(e => {
+                let xy = 'col' + e.x + 'row' + e.y;
+                let element = document.getElementById(xy);
 
-        
-
-
-
-
+                let old_element = element;
+                let new_element = old_element.cloneNode(true);
+                old_element.parentNode.replaceChild(new_element, old_element);
+                new_element.addEventListener("dragstart", this.dragStart, false);
+                new_element.draggable = true;
+                new_element.classList.add(classTypeString);
+            })
+        }
     }
 
     deleteBoxDrop(e) {
@@ -103,7 +105,7 @@ export default class DragDrop {
     }
 
     dragEnd(e) {
-        if (e.dataTransfer.dropEffect !== "none") {
+        if (this.#succesfullPlacement && e.dataTransfer.dropEffect !== "none") {
             // make number go down
             let amount = parseInt(e.target.innerText);
             amount -= 1;
@@ -112,6 +114,8 @@ export default class DragDrop {
             if (amount == 0) {
                 e.target.draggable = false;
             }
+        } else {
+            this.#succesfullPlacement = true;
         }
     }
 }

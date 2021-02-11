@@ -36,16 +36,26 @@ export default class Region {
         // give spots neighbour data
         for (let y = 0; y < 15; y++) {
             for (let x = 0; x < 15; x++) {
-                let t = x;
-                let r = y;
-                this.gridSpots[y][x].left_spot = (typeof this.gridSpots[r][t - 1] == undefined) ? this.gridSpots[y][x].left_spot = undefined :
-                    this.gridSpots[y][x].left_spot = this.gridSpots[r][t - 1];
-                this.gridSpots[y][x].above_spot = (typeof this.gridSpots[r - 1][t] == undefined) ? this.gridSpots[y][x].above_spot = undefined :
-                    this.gridSpots[y][x].above_spot = this.gridSpots[r - 1][t];
-                this.gridSpots[y][x].bottom_spot = (typeof this.gridSpots[r + 1][t] == undefined) ? this.gridSpots[y][x].bottom_spot = undefined :
-                    this.gridSpots[y][x].bottom_spot = this.gridSpots[r + 1][t];
-                this.gridSpots[y][x].right_spot = (typeof this.gridSpots[r][t + 1] == undefined) ? this.gridSpots[y][x].right_spot = undefined :
-                    this.gridSpots[y][x].right_spot = this.gridSpots[r][t + 1];
+                try {
+                    this.gridSpots[y][x].left_spot = this.gridSpots[y][x - 1];
+                } catch (error) {
+                    this.gridSpots[y][x].left_spot = null;
+                }
+                try {
+                    this.gridSpots[y][x].above_spot = this.gridSpots[y - 1][x];
+                } catch (error) {
+                    this.gridSpots[y][x].above_spot = null;
+                }
+                try {
+                    this.gridSpots[y][x].right_spot = this.gridSpots[y][x + 1];
+                } catch (error) {
+                    this.gridSpots[y][x].right_spot = null;
+                }
+                try {
+                    this.gridSpots[y][x].bottom_spot = this.gridSpots[y + 1][x];
+                } catch (error) {
+                    this.gridSpots[y][x].bottom_spot = null;
+                }
 
             }
         }
@@ -63,15 +73,17 @@ export default class Region {
     }
 
     placeElement(type, col, row) {
-
         // checks for corners and sides
         // placement in gridspots
         if (this.gridSpots[row][col].isAvailable()) {
             let newItem = new GridItem(type);
             let placed = this.gridSpots[row][col].addGridItem(newItem);
-
+            if (placed){
+                return newItem.coordinates;
+            } else {
+                return null;
+            }
         }
-
     }
 
     retrieveDataFromLocalStorage() {

@@ -143,10 +143,10 @@ export default class regionView {
       dropZoneRow.id = "row" + i.toString();
       dropZoneRow.draggable = false;
 
-      for (let i = 0; i < 15; i++) {
+      for (let j = 0; j < 15; j++) {
         let dropZoneCol = document.createElement("div");
         dropZoneCol.className = "col dropZone";
-        dropZoneCol.id = "col" + i.toString();
+        dropZoneCol.id = "col" + j + 'row' + i;
         dropZoneCol.draggable = false;
         dropZoneCol.addEventListener("dragover", (e) => { this.#dragDrop.dragOver(e) }, false);
         dropZoneCol.addEventListener("drop", (e) => { this.#dragDrop.dropEvent(e) }, false);
