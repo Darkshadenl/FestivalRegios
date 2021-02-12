@@ -96,6 +96,19 @@ export default class regionView {
 
   }
 
+  reconfigureGridElement(element) {
+    element.addEventListener("dragover", (e) => { this.#dragDrop.dragOver(e) }, false);
+    element.addEventListener("drop", (e) => { this.#dragDrop.dropEvent(e) }, false);
+    element.addEventListener("dragleave", (e) => { this.#dragDrop.dragLeave(e) }, false);
+    element.draggable = false;
+    element.className = "col dropZone";
+  }
+
+  makeGridPuzzlePiece(element){
+    element.addEventListener("dragstart", (e) => { this.#dragDrop.dragStart(e) }, false);
+    element.addEventListener("dragend", (e) => { this.#dragDrop.dragEnd(e) }, false);
+  }
+
   showRegion() {
     // build region menu buttons
     this.buildRegionMenuButtons();
@@ -164,6 +177,11 @@ export default class regionView {
     container[0].appendChild(dropZoneContainer);
 
     this.createPieces();
+    this.addExistingPieces();
+  }
+
+  addExistingPieces() {
+    // TODO
   }
 
   createPieces() {
@@ -175,27 +193,27 @@ export default class regionView {
       let puzzlePiece = document.createElement("div");
       puzzlePiece.draggable = true;
       puzzlePiece.innerText = this.controller.current_region.festivalItemsAmounts[x];
-      puzzlePiece.addEventListener("dragstart", (e) => { this.#dragDrop.dragStart(e)}, false);
-      puzzlePiece.addEventListener("dragend", (e) => { this.#dragDrop.dragEnd(e)}, false);
+      puzzlePiece.addEventListener("dragstart", (e) => { this.#dragDrop.dragStart(e) }, false);
+      puzzlePiece.addEventListener("dragend", (e) => { this.#dragDrop.dragEnd(e) }, false);
 
       switch (x) {
-        case "tenten":
+        case "tent":
           puzzlePiece.classList.add("tent");
           puzzlePiece.id = 'tent';
           break;
-        case "eetkraampjes":
+        case "eetkraampje":
           puzzlePiece.classList.add("eetkraampje");
           puzzlePiece.id = 'eetkraampje';
           break;
-        case "drankkraampjes":
+        case "drankkraampje":
           puzzlePiece.classList.add("drankkraampje");
           puzzlePiece.id = 'drankkraampje';
           break;
-        case "bomen":
+        case "boom":
           puzzlePiece.classList.add("boom");
           puzzlePiece.id = 'boom';
           break;
-        case "toiletten":
+        case "toilet":
           puzzlePiece.classList.add("toilet");
           puzzlePiece.id = 'toilet';
           break;
@@ -204,6 +222,7 @@ export default class regionView {
           puzzlePiece.id = 'prullenbak';
           break;
       }
+      puzzlePiece.classList.add('puzzlePiece');
       col.appendChild(puzzlePiece);
       piecesCol.appendChild(col);
     }

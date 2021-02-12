@@ -4,7 +4,7 @@ export default class Gridspot {
 
     y; x;
     #peopleAmount;
-    gridItem = null;
+    #gridItem = null;
     #available = true;
     position;
 
@@ -20,6 +20,18 @@ export default class Gridspot {
       this.position = 'x: ' + x + ' y:' + y;
     }
 
+    // returns type of deleted item
+    cleanSpot(){
+        let type = this.#gridItem.type;
+        this.#gridItem = null;
+        this.#available = true;
+        return type;
+    }
+
+    getGridItem(){
+        return this.#gridItem;
+    }
+
     isAvailable(){
         return this.#available;
     }
@@ -32,7 +44,7 @@ export default class Gridspot {
             let height = item.height;
 
             // check if it can be placed. Whichever point of the item you're dragging doesn't matter. It always calculates from the left upper point. 
-            let canBePlaced = this.canItemBePlaced(width - 1, height - 1);
+            let canBePlaced = this.canItemBePlaced(width, height);
             // console.log(canBePlaced);
             
             if (canBePlaced){
@@ -55,7 +67,8 @@ export default class Gridspot {
             this.right_spot.placeItem(width - 1, height, item);
         }
         this.bottom_spot.placeItemBottom(height - 1, item);
-        this.gridItem = item;
+        this.#gridItem = item;
+        this.#available = false;
         item.coordinates.push(this);
     }
 
@@ -66,7 +79,8 @@ export default class Gridspot {
         if (this.bottom_spot != null || this.bottom_spot != undefined){
             this.bottom_spot.placeItemBottom(height - 1, item);
         }
-        this.gridItem = item;
+        this.#gridItem = item;
+        this.#available = false;
         item.coordinates.push(this);
     }
 
@@ -82,6 +96,11 @@ export default class Gridspot {
             free_spot = this.right_spot.canItemBePlaced(width - 1, height);
             free_bottom_spot = this.isBottomFreeSpot(height);
         } 
+
+        if (width == 1 && this.right_spot == null){
+            free_spot = true
+            free_bottom_spot = true;
+        }
         
         if (free_spot == true && free_bottom_spot == true){
             if (this.isAvailable()){
@@ -96,11 +115,15 @@ export default class Gridspot {
         if (height == 0){
             return true;
         }
-        console.log(this.x + ' ' + this.y);
-        console.log(height);
+                
         let free_bottom_spot = -1;
+
         if (this.bottom_spot != null){
             free_bottom_spot = this.bottom_spot.isBottomFreeSpot(height - 1);
+        }
+
+        if (height == 1 && this.bottom_spot == null){
+            free_bottom_spot = true
         }
 
         if (free_bottom_spot == true){

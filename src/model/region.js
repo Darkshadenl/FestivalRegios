@@ -11,11 +11,11 @@ export default class Region {
     gridSpots = []
 
     festivalItemsAmounts = {
-        tenten: 0,
-        eetkraampjes: 0,
-        drankkraampjes: 0,
-        bomen: 0,
-        toiletten: 0,
+        tent: 0,
+        eetkraampje: 0,
+        drankkraampje: 0,
+        boom: 0,
+        toilet: 0,
     };
 
     constructor(id, name) {
@@ -24,6 +24,7 @@ export default class Region {
         this.retrieveDataFromLocalStorage();
         this.buildGridData();
     }
+
 
     buildGridData() {
         for (let y = 0; y < 15; y++) {
@@ -86,15 +87,29 @@ export default class Region {
         }
     }
 
+    // return coordinates of positions to be cleaned
+    removeElement(col, row){
+        let gridSpot = this.gridSpots[row][col];
+        let type;
+        let coordinates = gridSpot.getGridItem().coordinates;
+
+        gridSpot.getGridItem().coordinates.forEach(coordinate => {
+            // remove griditems from gridspots
+            type = this.gridSpots[coordinate['y']][coordinate['x']].cleanSpot();
+        });
+
+        return {coordinates, type};
+    }
+
     retrieveDataFromLocalStorage() {
         let data = JSON.parse(localStorage.getItem(this.id));
         if (data == null) return;
         this.name = data[0];
-        this.festivalItemsAmounts.tenten = data[1];
-        this.festivalItemsAmounts.eetkraampjes = data[2];
-        this.festivalItemsAmounts.drankkraampjes = data[3];
-        this.festivalItemsAmounts.bomen = data[4];
-        this.festivalItemsAmounts.toiletten = data[5];
+        this.festivalItemsAmounts.tent = data[1];
+        this.festivalItemsAmounts.eetkraampje = data[2];
+        this.festivalItemsAmounts.drankkraampje = data[3];
+        this.festivalItemsAmounts.boom = data[4];
+        this.festivalItemsAmounts.toilet = data[5];
     }
 
 
