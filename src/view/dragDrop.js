@@ -138,7 +138,7 @@ export default class DragDrop {
                     }
                 });
                 let new_element = this.cleanElement(element);
-                this.#regionview.reconfigureGridElement(element);
+                this.#regionview.reconfigureGridElement(new_element);
             })
             // update model
             this.#controller.current_region.festivalItemsAmounts[coordinatesAndType['type']] += 1;
@@ -163,6 +163,8 @@ export default class DragDrop {
             if (amount == 0) {
                 e.target.draggable = false;
             }
+
+            this.#controller.UpdateLocalStorage();
         } else {
             this.#succesfullPlacement = true;
         }

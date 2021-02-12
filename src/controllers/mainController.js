@@ -21,7 +21,7 @@ export default class mainController {
         }
     }
 
-    switchToForm(regionName, id) {          
+    switchToForm(regionName, id) {       
         this.regionController.hideView();
         this.formController.showView(regionName, id);
     }

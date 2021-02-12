@@ -38,4 +38,22 @@ export default class regionController {
     this.current_view.showRegion();
   }
 
+  UpdateLocalStorage(){
+    let spots = this.current_region.gridSpots;
+    let items = [];
+
+    spots.forEach(row => {
+      row.forEach(col => {
+        if (!col.isAvailable()){
+          let pos = { 'x': col.x, 'y': col.y, 'type': col.getGridItem().type };
+          items.push(pos);
+        }
+      });
+    })
+
+    items.push(this.current_region.festivalItemsAmounts);
+
+    let id = 'r' + this.current_region.id;
+    localStorage.setItem(id, JSON.stringify(items))
+  }
 }

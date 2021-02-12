@@ -9,8 +9,8 @@ export default class formController {
         this.mainController = mainController;
     }
 
-    showView(formName, id){
-        this.current_form = new formView(formName, id);
+    showView(regionName, id){
+        this.current_form = new formView(regionName, id);
         this.current_form.controller = this;
         this.current_form.showView();
     }
@@ -21,6 +21,6 @@ export default class formController {
     }
 
     saveData(id, values){
-      localStorage.setItem(id, JSON.stringify(values))
+        localStorage.setItem(id, JSON.stringify(values))
     }
 }

@@ -21,10 +21,9 @@ export default class Region {
     constructor(id, name) {
         this.id = id;
         this.name = name;
-        this.retrieveDataFromLocalStorage();
         this.buildGridData();
+        this.retrieveDataFromLocalStorage();
     }
-
 
     buildGridData() {
         for (let y = 0; y < 15; y++) {
@@ -76,6 +75,7 @@ export default class Region {
     placeElement(type, col, row) {
         // checks for corners and sides
         // placement in gridspots
+
         if (this.gridSpots[row][col].isAvailable()) {
             let newItem = new GridItem(type);
             let placed = this.gridSpots[row][col].addGridItem(newItem);
@@ -110,6 +110,11 @@ export default class Region {
         this.festivalItemsAmounts.drankkraampje = data[3];
         this.festivalItemsAmounts.boom = data[4];
         this.festivalItemsAmounts.toilet = data[5];
+
+        let filledSpots = JSON.parse(localStorage.getItem('r' + this.id));
+        filledSpots.forEach(e => {
+            this.placeElement(e.type, e.x, e.y);
+        })
     }
 
 

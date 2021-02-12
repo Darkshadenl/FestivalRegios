@@ -91,9 +91,6 @@ export default class regionView {
         })
       }
     })
-
-    // disable drag drop on grid elements. TODO
-
   }
 
   reconfigureGridElement(element) {
@@ -149,6 +146,9 @@ export default class regionView {
     let gridCol = document.createElement("div");
     gridCol.className = "col";
     gridCol.id = "dropZoneRowContainer";
+
+
+      // AANPASSEN ZODAT DIT HUISJES ETC DRAWED OP HET SCHERM!
 
     for (let i = 0; i < 15; i++) {
       let dropZoneRow = document.createElement("div");
