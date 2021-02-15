@@ -9,6 +9,10 @@ export default class Region {
     name;
     openAreas = []
     gridSpots = []
+    filledSpots;
+    rows = 15;
+    cols = 15;
+    hasPrullenbakken = false;
 
     festivalItemsAmounts = {
         tent: 0,
@@ -16,6 +20,7 @@ export default class Region {
         drankkraampje: 0,
         boom: 0,
         toilet: 0,
+        prullenbak: 0
     };
 
     constructor(id, name) {
@@ -26,16 +31,16 @@ export default class Region {
     }
 
     buildGridData() {
-        for (let y = 0; y < 15; y++) {
+        for (let y = 0; y < this.rows; y++) {
             this.gridSpots.push([]);
-            for (let x = 0; x < 15; x++) {
+            for (let x = 0; x < this.cols; x++) {
                 this.gridSpots[y].push(new Gridspot(x, y));
             }
         }
 
         // give spots neighbour data
-        for (let y = 0; y < 15; y++) {
-            for (let x = 0; x < 15; x++) {
+        for (let y = 0; y < this.rows; y++) {
+            for (let x = 0; x < this.cols; x++) {
                 try {
                     this.gridSpots[y][x].left_spot = this.gridSpots[y][x - 1];
                 } catch (error) {
@@ -61,6 +66,14 @@ export default class Region {
         }
     }
 
+    cleanRegion() {
+        this.gridSpots = [];
+        this.openAreas = [];
+        this.filledSpots = null;
+
+        this.buildGridData();
+    }
+
     lockRegion() {
         for (let y = 0; y < this.gridSpots.length; y++) {
             this.openAreas.push([]);
@@ -79,7 +92,7 @@ export default class Region {
         if (this.gridSpots[row][col].isAvailable()) {
             let newItem = new GridItem(type);
             let placed = this.gridSpots[row][col].addGridItem(newItem);
-            if (placed){
+            if (placed) {
                 return newItem.coordinates;
             } else {
                 return null;
@@ -88,7 +101,7 @@ export default class Region {
     }
 
     // return coordinates of positions to be cleaned
-    removeElement(col, row){
+    removeElement(col, row) {
         let gridSpot = this.gridSpots[row][col];
         let type;
         let coordinates = gridSpot.getGridItem().coordinates;
@@ -98,26 +111,41 @@ export default class Region {
             type = this.gridSpots[coordinate['y']][coordinate['x']].cleanSpot();
         });
 
-        return {coordinates, type};
+        return { coordinates, type };
     }
 
     retrieveDataFromLocalStorage() {
         let data = JSON.parse(localStorage.getItem(this.id));
         if (data == null) return;
-        this.name = data[0];
-        this.festivalItemsAmounts.tent = data[1];
-        this.festivalItemsAmounts.eetkraampje = data[2];
-        this.festivalItemsAmounts.drankkraampje = data[3];
-        this.festivalItemsAmounts.boom = data[4];
-        this.festivalItemsAmounts.toilet = data[5];
 
-        let filledSpots = JSON.parse(localStorage.getItem('r' + this.id));
-        filledSpots.forEach(e => {
+        this.name = data['nameRegion'];
+        this.festivalItemsAmounts.tent = data['Tenten'];
+        this.festivalItemsAmounts.eetkraampje = data['Eetkraampjes'];
+        this.festivalItemsAmounts.drankkraampje = data['Drankkraampjes'];
+        this.festivalItemsAmounts.boom = data['Bomen'];
+        this.festivalItemsAmounts.toilet = data['Toiletten'];
+        this.festivalItemsAmounts.prullenbak = data['Prullenbakken'];
+        this.filledSpots = JSON.parse(localStorage.getItem('r' + this.id));
+        if (!this.hasPrullenbakken) this.placePrullenbakken();
+        if (this.filledSpots == null) return;
+
+        this.filledSpots.forEach(e => {
             this.placeElement(e.type, e.x, e.y);
         })
+
     }
 
-
+    placePrullenbakken() {
+        for (let j = 0; j < this.festivalItemsAmounts.prullenbak - 1; j++) {
+            let done = false;
+            while (!done) {
+                let randomRow = Math.floor(Math.random() * (this.rows));
+                let randomCol = Math.floor(Math.random() * (this.cols));
+                done = this.placeElement('prullenbak', randomCol, randomRow);
+                // console.log(done);
+            }
+        }
+    }
 
 }
 

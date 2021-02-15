@@ -36,7 +36,7 @@ export default class DragDrop {
         e.preventDefault();
         let id = e.dataTransfer.getData("type");
         let element = document.getElementById(id);
-        
+
         if (!element.classList.contains('dropZone')) {
             // get containers.
             let col = e.target.id;
@@ -50,22 +50,22 @@ export default class DragDrop {
 
             switch (id) {
                 case "tent":
-                    this.fillSpots(toBeFilledCoordinates, 'tent', e.target);
+                    this.fillSpots(toBeFilledCoordinates, 'tent');
                     break;
                 case "eetkraampje":
-                    this.fillSpots(toBeFilledCoordinates, 'eetkraampje', e.target);
+                    this.fillSpots(toBeFilledCoordinates, 'eetkraampje');
                     break;
                 case "drankkraampje":
-                    this.fillSpots(toBeFilledCoordinates, 'drankkraampje', e.target);
+                    this.fillSpots(toBeFilledCoordinates, 'drankkraampje');
                     break;
                 case "boom":
-                    this.fillSpots(toBeFilledCoordinates, 'boom', e.target);
+                    this.fillSpots(toBeFilledCoordinates, 'boom');
                     break;
                 case "toilet":
-                    this.fillSpots(toBeFilledCoordinates, 'toilet', e.target);
+                    this.fillSpots(toBeFilledCoordinates, 'toilet');
                     break;
                 case "prullenbak":
-                    this.fillSpots(toBeFilledCoordinates, 'prullenbak', e.target);
+                    this.fillSpots(toBeFilledCoordinates, 'prullenbak');
                     break;
             }
         } else {
@@ -90,6 +90,7 @@ export default class DragDrop {
         if (toBeFilledCoordinates == null) {
             this.#succesfullPlacement = false;
             window.alert('Dit item kan niet hier geplaatst worden!');
+            console.log('fillSpots');
         } else {
             toBeFilledCoordinates.forEach(e => {
                 let xy = 'col' + e.x + 'row' + e.y;
@@ -102,6 +103,7 @@ export default class DragDrop {
         }
     }
 
+    // remove all events from the element so new ones can be placed on it
     cleanElement(element) {
         let old_element = element;
         let new_element = old_element.cloneNode(true);

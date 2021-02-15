@@ -14,14 +14,18 @@ export default class mainController {
 
     switchToRegions(showDefault) {
         this.formController.hideView();
-        if (showDefault){
+        if (showDefault) {
             this.regionController.showView(true);
         } else {
             this.regionController.showView();
         }
     }
 
-    switchToForm(regionName, id) {       
+    cleanRegion() {
+        this.regionController.cleanCurrentRegion();
+    }
+
+    switchToForm(regionName, id) {
         this.regionController.hideView();
         this.formController.showView(regionName, id);
     }

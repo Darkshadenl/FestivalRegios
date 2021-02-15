@@ -1,3 +1,5 @@
+import Sizes from "../enums/sizes"
+
 export default class formView {
   name;
   controller;
@@ -6,6 +8,7 @@ export default class formView {
   formContainer;
   active = false;
   id;
+  maxPrullenbakken = 0;
 
   details = [
     "Tenten",
@@ -16,17 +19,18 @@ export default class formView {
     "Prullenbakken",
   ];
 
-  limits = [10, 6, 4, 10, 5, undefined];
+  limits = [10, 6, 4, 10, 5, this.maxPrullenbakken];
   tentenNumberBox;
   formfields = [];
   iterator = 0;
+  surfaces = {};
 
   constructor(name, id) {
     this.name = name;
     this.id = id;
   }
 
-  showView(){
+  showView() {
     this.active = true;
     this.formScreen = document.getElementsByClassName("formScreen")[0];
     this.formScreen.style.display = "inline";
@@ -64,13 +68,29 @@ export default class formView {
     this.formContainer.appendChild(resBtn);
   }
 
+  // actual creation of new fields (dynamic creation)
   upIterator() {
+    let canContinue = this.determineMaxPrullenbakken();
+    if (!canContinue) return;
+
     if (this.iterator < this.details.length) {
+      let div = document.createElement('div');
       let numberBox = document.createElement("input");
       let textBoxLabl = document.createElement("label");
 
-      textBoxLabl.innerText = this.details[this.iterator] + ":";
-      textBoxLabl.className = "ml-2";
+      if (this.details[this.iterator] == 'Prullenbakken') {
+        textBoxLabl.className = "ml-2";
+        textBoxLabl.innerText = this.details[this.iterator] + ` (max. ${this.maxPrullenbakken}):`;
+        let formElementsToLock = document.getElementsByClassName('formElement');
+        for (const e of formElementsToLock) {
+          e.disabled = true;
+        }
+      } else {
+        textBoxLabl.className = "ml-2";
+        numberBox.className = "ml-2 formElement";
+        textBoxLabl.innerText = this.details[this.iterator] + ":";
+      }
+
       numberBox.id = this.details[this.iterator];
       numberBox.type = "number";
       numberBox.min = "0";
@@ -87,10 +107,11 @@ export default class formView {
         numberBox.max = this.limits[this.iterator];
       }
       textBoxLabl.setAttribute("for", this.details[this.iterator]);
-      numberBox.className = "ml-2";
 
-      this.form.appendChild(textBoxLabl);
-      this.form.appendChild(numberBox);
+      div.appendChild(textBoxLabl);
+      div.appendChild(numberBox);
+
+      this.form.appendChild(div);
       this.formfields.push(numberBox);
       this.iterator = this.iterator + 1;
     } else {
@@ -106,12 +127,48 @@ export default class formView {
     }
   }
 
+  determineMaxPrullenbakken() {
+    if (this.details[this.iterator] == 'Prullenbakken') {
+      // check if all previous fields are filled so max prullenbak can be calculated
+      for (const el of this.formfields) {
+        if (el.value == "" || !el.checkValidity()) {
+          window.alert(
+            "Vul alle velden EN zorg dat je juiste waardes hebt ingevuld om verder te kunnen."
+          );
+          return false;
+        }
+      }
+      // calculate amount prullenbakken to be placed
+      for (const el of this.formfields) {
+        switch (el.id) {
+          case 'Tenten':
+            this.maxPrullenbakken += parseInt(Sizes.surface('tent') * el.value);
+            break;
+          case "Eetkraampjes":
+            this.maxPrullenbakken += parseInt(Sizes.surface('eetkraampje') * el.value);
+            break;
+          case "Drankkraampjes":
+            this.maxPrullenbakken += parseInt(Sizes.surface('drankkraampje') * el.value);
+            break;
+          case "Bomen":
+            this.maxPrullenbakken += parseInt(Sizes.surface('boom') * el.value);
+            break;
+          case "Toiletten":
+            this.maxPrullenbakken += parseInt(Sizes.surface('toilet') * el.value);
+            break;
+        }
+        this.limits[this.limits.length - 1] = this.maxPrullenbakken;
+      }
+    }
+    return true;
+  }
+
   saveForm() {
     let faulty = false;
     this.formfields.forEach((e) => {
       if (!e.checkValidity())
         faulty = true;
-    }) 
+    })
     if (faulty)
       window.alert(
         "Opslaan is niet gelukt. Probeer de waardes naar onder bij te stellen of de lege velden te vullen."
@@ -119,11 +176,14 @@ export default class formView {
     if (!faulty) {
       // save form.
       let allInputs = document.querySelectorAll('#form input');
-      let values = [];
+      // let values = [];
+      let obj = {};
+
       allInputs.forEach(e => {
-        values.push(e.value);
+        obj[e.id] = e.value;
       })
-      this.controller.saveData(this.id, values)
+      this.controller.saveData(this.id, obj)
+      this.controller.mainController.cleanRegion();
       this.controller.mainController.switchToRegions()
       window.alert('Succesvol opgeslagen');
     }
@@ -155,17 +215,17 @@ export default class formView {
     return nextBtn;
   }
 
-  createResBtn(){
+  createResBtn() {
     let resBtn = document.createElement("button");
     resBtn.innerText = "Reset";
     resBtn.id = "ResetBtn";
     resBtn.addEventListener("click", () => {
-      this.handleReset();      
+      this.handleReset();
     });
     return resBtn;
   }
 
-  handleReset(){
+  handleReset() {
     this.hideView();
     this.controller.showView(this.name, this.name);
   }

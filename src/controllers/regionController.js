@@ -20,17 +20,17 @@ export default class regionController {
       this.current_region = this.festival.getDefaultModel();
       this.current_view = new regionView(this);
       this.current_view.showRegion();
-    } else { 
+    } else {
       this.current_region.retrieveDataFromLocalStorage();
       this.current_view.showView();
     }
   }
 
   hideView() {
-      this.current_view.hideView();
+    this.current_view.hideView();
   }
 
-  switchRegion(id) {   
+  switchRegion(id) {
     this.current_region = this.festival.getModel(id);
     let new_view = new regionView(this);
     this.current_view.cleanForSwitchToRegion();
@@ -38,22 +38,36 @@ export default class regionController {
     this.current_view.showRegion();
   }
 
-  UpdateLocalStorage(){
+  cleanCurrentRegion() {
+    this.current_region.cleanRegion();
+  }
+
+  UpdateLocalStorage() {
     let spots = this.current_region.gridSpots;
     let items = [];
+    let festivalItemsAmounts = this.current_region.festivalItemsAmounts;
+    let id = this.current_region.id;
+    let amounts = {
+      Bomen: festivalItemsAmounts.boom,
+      Drankkraampjes: festivalItemsAmounts.drankkraampje,
+      Eetkraampjes: festivalItemsAmounts.eetkraampje,
+      Tenten: festivalItemsAmounts.tent,
+      Toiletten: festivalItemsAmounts.toilet,
+      nameRegion: this.current_region.name,
+      Prullenbakken: festivalItemsAmounts.prullenbak
+    }
 
     spots.forEach(row => {
       row.forEach(col => {
-        if (!col.isAvailable()){
+        if (!col.isAvailable()) {
           let pos = { 'x': col.x, 'y': col.y, 'type': col.getGridItem().type };
           items.push(pos);
         }
       });
     })
 
-    items.push(this.current_region.festivalItemsAmounts);
-
-    let id = 'r' + this.current_region.id;
-    localStorage.setItem(id, JSON.stringify(items))
+    let rid = 'r' + id;
+    localStorage.setItem(rid, JSON.stringify(items))
+    localStorage.setItem(id, JSON.stringify(amounts))
   }
 }

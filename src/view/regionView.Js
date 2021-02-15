@@ -7,6 +7,8 @@ export default class regionView {
   regions;
   controller;
   #dragDrop;
+  rows = 15;
+  cols = 15;
 
   constructor(controller) {
     this.controller = controller;
@@ -101,7 +103,7 @@ export default class regionView {
     element.className = "col dropZone";
   }
 
-  makeGridPuzzlePiece(element){
+  makeGridPuzzlePiece(element) {
     element.addEventListener("dragstart", (e) => { this.#dragDrop.dragStart(e) }, false);
     element.addEventListener("dragend", (e) => { this.#dragDrop.dragEnd(e) }, false);
   }
@@ -147,16 +149,13 @@ export default class regionView {
     gridCol.className = "col";
     gridCol.id = "dropZoneRowContainer";
 
-
-      // AANPASSEN ZODAT DIT HUISJES ETC DRAWED OP HET SCHERM!
-
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < this.rows; i++) {
       let dropZoneRow = document.createElement("div");
       dropZoneRow.className = "row dropZoneRow";
       dropZoneRow.id = "row" + i.toString();
       dropZoneRow.draggable = false;
 
-      for (let j = 0; j < 15; j++) {
+      for (let j = 0; j < this.cols; j++) {
         let dropZoneCol = document.createElement("div");
         dropZoneCol.className = "col dropZone";
         dropZoneCol.id = "col" + j + 'row' + i;
@@ -181,13 +180,57 @@ export default class regionView {
   }
 
   addExistingPieces() {
-    // TODO
+    let existingCoordinates = this.controller.current_region.gridSpots;
+    if (existingCoordinates == null) return;
+
+    existingCoordinates.forEach(row => {
+      row.forEach(col => {
+        let element = col.getGridItem();
+        if (element) {
+          element.coordinates.forEach(e => {
+            switch (element.type) {
+              case "tent":
+                this.fillFilledSpots(e.x, e.y, element.type);
+                break;
+              case "eetkraampje":
+                this.fillFilledSpots(e.x, e.y, element.type);
+                break;
+              case "drankkraampje":
+                this.fillFilledSpots(e.x, e.y, element.type);
+                break;
+              case "boom":
+                this.fillFilledSpots(e.x, e.y, element.type);
+                break;
+              case "toilet":
+                this.fillFilledSpots(e.x, e.y, element.type);
+                break;
+              case "prullenbak":
+                this.fillFilledSpots(e.x, e.y, element.type);
+                break;
+              default:
+                break;
+            }
+          })
+        }
+      })
+    });
+  }
+
+  // adds classes to from localstorage retrieved coordinates
+  fillFilledSpots(x, y, classTypeString) {
+    let xy = 'col' + x + 'row' + y;
+    let element = document.getElementById(xy);
+    let new_element = this.#dragDrop.cleanElement(element);
+    this.makeGridPuzzlePiece(new_element);
+    new_element.draggable = true;
+    new_element.classList.add(classTypeString);
   }
 
   createPieces() {
     let piecesCol = document.getElementById("piecesView");
 
     for (let x in this.controller.current_region.festivalItemsAmounts) {
+      if (x == 'prullenbak') continue;
       let col = document.createElement("div");
       col.classList.add("col");
       let puzzlePiece = document.createElement("div");
@@ -216,10 +259,6 @@ export default class regionView {
         case "toilet":
           puzzlePiece.classList.add("toilet");
           puzzlePiece.id = 'toilet';
-          break;
-        case "prullenbak":
-          puzzlePiece.classList.add("prullenbak");
-          puzzlePiece.id = 'prullenbak';
           break;
       }
       puzzlePiece.classList.add('puzzlePiece');

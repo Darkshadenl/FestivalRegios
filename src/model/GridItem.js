@@ -1,5 +1,7 @@
 "use strict";
 
+import Sizes from "../enums/sizes"
+
 export default class GridItem {
 
     name;
@@ -13,31 +15,31 @@ export default class GridItem {
         this.determineSize();
     }
 
-    determineSize(){
-        switch (this.type){
+    determineSize() {
+        switch (this.type) {
             case 'tent':
-                this.width = 3;
-                this.height = 3;
+                this.width = Sizes[this.type]['width'];
+                this.height = Sizes[this.type]['height'];
                 break;
             case 'eetkraampje':
-                this.width = 1;
-                this.height = 1;
+                this.width = Sizes[this.type]['width'];
+                this.height = Sizes[this.type]['height'];
                 break;
             case 'drankkraampje':
-                this.width = 2;
-                this.height = 1;
+                this.width = Sizes[this.type]['width'];
+                this.height = Sizes[this.type]['height'];
                 break;
             case 'boom':
-                this.width = 1;
-                this.height = 1;
+                this.width = Sizes[this.type]['width'];
+                this.height = Sizes[this.type]['height'];
                 break;
             case 'toilet':
-                this.width = 1;
-                this.height = 3;
+                this.width = Sizes[this.type]['width'];
+                this.height = Sizes[this.type]['height'];
                 break;
             case 'prullenbak':
-                this.width = 1;
-                this.height = 3;
+                this.width = Sizes[this.type]['width'];
+                this.height = Sizes[this.type]['height'];
                 break;
         }
     }

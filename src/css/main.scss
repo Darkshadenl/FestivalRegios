@@ -19,51 +19,53 @@
   border-color: red !important;
 }
 
+.puzzlePiece {
+  height: 50px !important;
+}
+
 .tent {
   background-color: blue;
   color: white;
-  background-image: url('../resources/HUISJE.png');
+  background-image: url("../resources/HUISJE.png");
   background-position: top;
 }
 
 .eetkraampje {
   background-color: red;
   color: white;
-  background-image: url('../resources/HUISJE.png');
+  background-image: url("../resources/HUISJE.png");
   background-position: top;
 }
 
 .drankkraampje {
   background-color: yellow;
   color: red;
-  background-image: url('../resources/HUISJE.png');
+  background-image: url("../resources/HUISJE.png");
   background-position: top;
 }
 
 .boom {
   background-color: green;
   color: white;
-  background-image: url('../resources/HUISJE.png');
+  background-image: url("../resources/HUISJE.png");
   background-position: top;
 }
 
 .toilet {
   background-color: orange;
   color: black;
-  background-image: url('../resources/HUISJE.png');
+  background-image: url("../resources/HUISJE.png");
   background-position: top;
 }
 
 .prullenbak {
   background-color: black;
   color: white;
-  background-image: url('../resources/HUISJE.png');
+  background-image: url("../resources/HUISJE.png");
   background-position: top;
 }
 
-.deleteBox{
+.deleteBox {
   background-color: blue;
   color: white;
-
 }
-  
