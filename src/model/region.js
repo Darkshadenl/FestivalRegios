@@ -145,6 +145,7 @@ export default class Region {
                 // console.log(done);
             }
         }
+        this.hasPrullenbakken = true;
     }
 
 }

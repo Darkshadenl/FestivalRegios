@@ -260,6 +260,9 @@ export default class regionView {
           puzzlePiece.classList.add("toilet");
           puzzlePiece.id = 'toilet';
           break;
+        default:
+          console.log(x);
+          break;
       }
       puzzlePiece.classList.add('puzzlePiece');
       col.appendChild(puzzlePiece);
