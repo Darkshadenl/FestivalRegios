@@ -68,7 +68,11 @@ export default class regionController {
     })
 
     let rid = 'r' + id;
+    let lid = 'locked' + id;
     localStorage.setItem(rid, JSON.stringify(items))
     localStorage.setItem(id, JSON.stringify(amounts))
+    localStorage.setItem(lid, JSON.stringify({
+      'locked': this.current_region.isLocked
+    }));
   }
 }

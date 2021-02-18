@@ -13,6 +13,7 @@ export default class Region {
     rows = 15;
     cols = 15;
     hasPrullenbakken = false;
+    isLocked = false;
 
     festivalItemsAmounts = {
         tent: 0,
@@ -83,6 +84,7 @@ export default class Region {
                 }
             }
         }
+        this.isLocked = true;
     }
 
     placeElement(type, col, row) {
@@ -126,6 +128,13 @@ export default class Region {
         this.festivalItemsAmounts.toilet = data['Toiletten'];
         this.festivalItemsAmounts.prullenbak = data['Prullenbakken'];
         this.filledSpots = JSON.parse(localStorage.getItem('r' + this.id));
+
+        data = JSON.parse(localStorage.getItem('locked' + this.id));
+        if (data == null) {
+            this.isLocked = false;
+        } else {
+            this.isLocked = data['locked'];
+        }
 
         if (this.filledSpots == null) {
             this.placePrullenbakken();

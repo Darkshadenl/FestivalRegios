@@ -84,7 +84,10 @@ export default class regionView {
 
   lockRegion() {
     this.controller.current_region.lockRegion();
+    this.controller.UpdateLocalStorage();
     let pieces = document.getElementById('piecesView');
+    let gridpieces = document.getElementById('dropZoneRowContainer');
+    let lockbtn = document.getElementById('lockRegioBtn');
 
     pieces.childNodes.forEach(e => {
       if (e.hasChildNodes) {
@@ -93,6 +96,16 @@ export default class regionView {
         })
       }
     })
+
+    gridpieces.childNodes.forEach(e => {
+      if (e.hasChildNodes) {
+        e.childNodes.forEach(f => {
+          f.draggable = false;
+        })
+      }
+    })
+
+    lockbtn.innerText = 'Regio gelocked';
   }
 
   reconfigureGridElement(element) {
@@ -177,6 +190,10 @@ export default class regionView {
 
     this.createPieces();
     this.addExistingPieces();
+
+    if (this.controller.current_region.isLocked) {
+      this.lockRegion();
+    }
   }
 
   addExistingPieces() {
