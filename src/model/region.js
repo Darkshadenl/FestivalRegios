@@ -116,7 +116,7 @@ export default class Region {
 
     retrieveDataFromLocalStorage() {
         let data = JSON.parse(localStorage.getItem(this.id));
-        if (data == null) return;
+        if (data == null) return true;
 
         this.name = data['nameRegion'];
         this.festivalItemsAmounts.tent = data['Tenten'];
@@ -126,8 +126,11 @@ export default class Region {
         this.festivalItemsAmounts.toilet = data['Toiletten'];
         this.festivalItemsAmounts.prullenbak = data['Prullenbakken'];
         this.filledSpots = JSON.parse(localStorage.getItem('r' + this.id));
-        if (!this.hasPrullenbakken) this.placePrullenbakken();
-        if (this.filledSpots == null) return;
+
+        if (this.filledSpots == null) {
+            this.placePrullenbakken();
+            return true;
+        }
 
         this.filledSpots.forEach(e => {
             this.placeElement(e.type, e.x, e.y);
@@ -136,13 +139,12 @@ export default class Region {
     }
 
     placePrullenbakken() {
-        for (let j = 0; j < this.festivalItemsAmounts.prullenbak - 1; j++) {
+        for (let j = 0; j < this.festivalItemsAmounts.prullenbak; j++) {
             let done = false;
             while (!done) {
                 let randomRow = Math.floor(Math.random() * (this.rows));
                 let randomCol = Math.floor(Math.random() * (this.cols));
                 done = this.placeElement('prullenbak', randomCol, randomRow);
-                // console.log(done);
             }
         }
         this.hasPrullenbakken = true;

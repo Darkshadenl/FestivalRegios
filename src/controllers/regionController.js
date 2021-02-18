@@ -21,7 +21,8 @@ export default class regionController {
       this.current_view = new regionView(this);
       this.current_view.showRegion();
     } else {
-      this.current_region.retrieveDataFromLocalStorage();
+      let firstTime = this.current_region.retrieveDataFromLocalStorage();
+      if (firstTime) this.UpdateLocalStorage();
       this.current_view.showView();
     }
   }
