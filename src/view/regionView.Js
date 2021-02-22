@@ -20,7 +20,7 @@ export default class regionView {
     let buttons = [];
     let viewNames = [];
 
-    let regionModels = this.controller.festival.regions;
+    let regionModels = this.controller.getRegions();
 
     regionModels.forEach(model => {
       viewNames.push(model.name);
@@ -83,7 +83,7 @@ export default class regionView {
   }
 
   lockRegion() {
-    this.controller.current_region.lockRegion();
+    this.controller.lockCurrentRegion();
     this.controller.UpdateLocalStorage();
     let pieces = document.getElementById('piecesView');
     let gridpieces = document.getElementById('dropZoneRowContainer');
@@ -129,10 +129,10 @@ export default class regionView {
     let configureContainer = document.getElementById("configbtnContainer");
     let configBtn = document.createElement("button");
     configBtn.className = "btn btn-dark";
-    configBtn.innerText = "Configureer " + this.controller.current_region.name;
+    configBtn.innerText = "Configureer " + this.controller.getCurrentRegion().name;
     configBtn.id = "configRegioBtn";
     configBtn.addEventListener("click", () =>
-      this.controller.mainController.switchToForm(this.controller.current_region.name, this.controller.current_region.id)
+      this.controller.switchToForm(this.controller.getCurrentRegion().name, this.controller.getCurrentRegion().id)
     );
     configureContainer.appendChild(configBtn);
 
@@ -191,13 +191,13 @@ export default class regionView {
     this.createPieces();
     this.addExistingPieces();
 
-    if (this.controller.current_region.isLocked) {
+    if (this.controller.getCurrentRegion().isLocked) {
       this.lockRegion();
     }
   }
 
   addExistingPieces() {
-    let existingCoordinates = this.controller.current_region.gridSpots;
+    let existingCoordinates = this.controller.getCurrentRegion().gridSpots;
     if (existingCoordinates == null) return;
 
     existingCoordinates.forEach(row => {
@@ -246,7 +246,7 @@ export default class regionView {
   createPieces() {
     let piecesCol = document.getElementById("piecesView");
 
-    for (let x in this.controller.current_region.festivalItemsAmounts) {
+    for (let x in this.controller.getCurrentRegion().festivalItemsAmounts) {
       if (x == 'prullenbak') continue;
       let col = document.createElement("div");
       col.classList.add("col");

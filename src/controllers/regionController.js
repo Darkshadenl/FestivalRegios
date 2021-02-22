@@ -3,51 +3,67 @@ import regionView from "../view/regionView.js";
 import mainController from "./mainController.js";
 
 export default class regionController {
-  mainController;
+  #mainController;
   amount_regions = 6;
 
-  festival;
-  current_view;
-  current_region;
+  #festival;
+  #current_view;
+  #current_region;
 
   constructor(mainController) {
-    this.mainController = mainController;
-    this.festival = new Festival(this.amount_regions);
+    this.#mainController = mainController;
+    this.#festival = new Festival(this.amount_regions);
   }
 
   showView(showDefault) {
     if (showDefault) {
-      this.current_region = this.festival.getDefaultModel();
-      this.current_view = new regionView(this);
-      this.current_view.showRegion();
+      this.#current_region = this.festival.getDefaultModel();
+      this.#current_view = new regionView(this);
+      this.#current_view.showRegion();
     } else {
       let firstTime = this.current_region.retrieveDataFromLocalStorage();
       if (firstTime) this.UpdateLocalStorage();
-      this.current_view.showView();
+      this.#current_view.showView();
     }
   }
 
+  getRegions() {
+    return this.#festival.regions;
+  }
+
+  getCurrentRegion() {
+    return this.#current_region;
+  }
+
+  lockCurrentRegion() {
+    this.#current_region.lockRegion();
+  }
+
+  switchToForm(regionName, regionId) {
+    this.#mainController.switchToForm(regionName, regionId);
+  }
+
   hideView() {
-    this.current_view.hideView();
+    this.#current_view.hideView();
   }
 
   switchRegion(id) {
-    this.current_region = this.festival.getModel(id);
+    this.#current_region = this.#festival.getModel(id);
     let new_view = new regionView(this);
-    this.current_view.cleanForSwitchToRegion();
-    this.current_view = new_view;
-    this.current_view.showRegion();
+    this.#current_view.cleanForSwitchToRegion();
+    this.#current_view = new_view;
+    this.#current_view.showRegion();
   }
 
   cleanCurrentRegion() {
-    this.current_region.cleanRegion();
+    this.#current_region.cleanRegion();
   }
 
   UpdateLocalStorage() {
-    let spots = this.current_region.gridSpots;
+    let spots = this.#current_region.gridSpots;
     let items = [];
-    let festivalItemsAmounts = this.current_region.festivalItemsAmounts;
-    let id = this.current_region.id;
+    let festivalItemsAmounts = this.#current_region.festivalItemsAmounts;
+    let id = this.#current_region.id;
     let amounts = {
       Bomen: festivalItemsAmounts.boom,
       Drankkraampjes: festivalItemsAmounts.drankkraampje,
@@ -72,7 +88,7 @@ export default class regionController {
     localStorage.setItem(rid, JSON.stringify(items))
     localStorage.setItem(id, JSON.stringify(amounts))
     localStorage.setItem(lid, JSON.stringify({
-      'locked': this.current_region.isLocked
+      'locked': this.#current_region.isLocked
     }));
   }
 }

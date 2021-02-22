@@ -2,8 +2,8 @@ import formView from "../view/formView";
 
 export default class formController {
 
-    mainController;
-    current_form;
+    #mainController;
+    #current_form;
 
     constructor(mainController) {
         this.mainController = mainController;
@@ -18,6 +18,19 @@ export default class formController {
     hideView() {
         if (this.current_form)
             this.current_form.hideView();
+    }
+
+    getCurrentForm() {
+        return this.current_form;
+    }
+
+    switchToRegion() {
+        this.mainController.switchToRegions();
+    }
+
+    cleanAndSwitchToRegion() {
+        this.controller.mainController.cleanRegion();
+        this.switchToRegion();
     }
 
     saveData(id, values) {

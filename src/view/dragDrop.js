@@ -44,7 +44,7 @@ export default class DragDrop {
             let colrow = this.getActualColRow(col, row);
 
             // place element, return coordinates of other spots to be filled
-            let toBeFilledCoordinates = this.#controller.current_region.placeElement(id, colrow['col'], colrow['row']);
+            let toBeFilledCoordinates = this.#controller.getCurrentRegion().placeElement(id, colrow['col'], colrow['row']);
 
             e.target.classList.remove("solid-border");
 
@@ -121,14 +121,14 @@ export default class DragDrop {
 
         if (element.classList.contains('puzzlePiece')) {
             // let nr = parseInt(element.innerText);
-            let amount = parseInt(this.#controller.current_region.festivalItemsAmounts[id]);
+            let amount = parseInt(this.#controller.getCurrentRegion().festivalItemsAmounts[id]);
             amount = amount + 1;
-            this.#controller.current_region.festivalItemsAmounts[id] = amount;
+            this.#controller.getCurrentRegion().festivalItemsAmounts[id] = amount;
         } else if (element.classList.contains('col')) {
             // check data to know which spots to clean
             // clean data
             let colrow = this.getActualColRow(id, parentNodeId);
-            let coordinatesAndType = this.#controller.current_region.removeElement(colrow['col'], colrow['row']);
+            let coordinatesAndType = this.#controller.getCurrentRegion().removeElement(colrow['col'], colrow['row']);
 
             // clean spots
             coordinatesAndType['coordinates'].forEach(coordinate => {
@@ -143,9 +143,9 @@ export default class DragDrop {
                 this.#regionview.reconfigureGridElement(new_element);
             })
             // update model
-            this.#controller.current_region.festivalItemsAmounts[coordinatesAndType['type']] += 1;
+            this.#controller.getCurrentRegion().festivalItemsAmounts[coordinatesAndType['type']] += 1;
             // add to puzzlepieces to be able to placed again
-            let amount = this.#controller.current_region.festivalItemsAmounts[coordinatesAndType['type']];
+            let amount = this.#controller.getCurrentRegion().festivalItemsAmounts[coordinatesAndType['type']];
             let element = document.getElementById(coordinatesAndType['type']);
             element.innerText = amount;
             element.draggable = true;
@@ -156,9 +156,9 @@ export default class DragDrop {
     dragEnd(e) {
         if (this.#succesfullPlacement && e.dataTransfer.dropEffect !== "none") {
             // update model
-            let amount = parseInt(this.#controller.current_region.festivalItemsAmounts[e.target.id]);
+            let amount = parseInt(this.#controller.getCurrentRegion().festivalItemsAmounts[e.target.id]);
             amount -= 1;
-            this.#controller.current_region.festivalItemsAmounts[e.target.id] = amount;
+            this.#controller.getCurrentRegion().festivalItemsAmounts[e.target.id] = amount;
             // update view
             e.target.innerText = amount;
             // disable draggable if 0

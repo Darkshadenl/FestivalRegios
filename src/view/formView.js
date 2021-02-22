@@ -43,7 +43,7 @@ export default class formView {
     // backbtn config
     let backBtn = document.getElementById("backToRegionBtn");
     backBtn.addEventListener("click", () =>
-      this.controller.mainController.switchToRegions()
+      this.controller.switchToRegion()
     );
     backBtn.innerText = "Terug naar " + this.name;
 
@@ -183,8 +183,7 @@ export default class formView {
         obj[e.id] = e.value;
       })
       this.controller.saveData(this.id, obj)
-      this.controller.mainController.cleanRegion();
-      this.controller.mainController.switchToRegions()
+      this.controller.cleanAndSwitchToRegion();
       window.alert('Succesvol opgeslagen');
     }
   }
