@@ -21,7 +21,7 @@ export default class regionController {
       this.#current_view = new regionView(this);
       this.#current_view.showRegion();
     } else {
-      let firstTime = this.current_region.retrieveDataFromLocalStorage();
+      let firstTime = this.#current_region.retrieveDataFromLocalStorage();
       if (firstTime) this.UpdateLocalStorage();
       this.#current_view.showView();
     }
@@ -70,7 +70,7 @@ export default class regionController {
       Eetkraampjes: festivalItemsAmounts.eetkraampje,
       Tenten: festivalItemsAmounts.tent,
       Toiletten: festivalItemsAmounts.toilet,
-      nameRegion: this.current_region.name,
+      nameRegion: this.#current_region.name,
       Prullenbakken: festivalItemsAmounts.prullenbak
     }
 
