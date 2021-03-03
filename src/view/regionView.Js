@@ -38,7 +38,7 @@ export default class regionView {
         });
       });
 
-      if (button.innerText == this.controller.current_region.name) {
+      if (button.innerText == this.controller.getCurrentRegion().name) {
         button.classList.remove("btn-info");
         button.classList.add("btn-primary");
       }
@@ -252,7 +252,7 @@ export default class regionView {
       col.classList.add("col");
       let puzzlePiece = document.createElement("div");
       puzzlePiece.draggable = true;
-      puzzlePiece.innerText = this.controller.current_region.festivalItemsAmounts[x];
+      puzzlePiece.innerText = this.controller.getCurrentRegion().festivalItemsAmounts[x];
       puzzlePiece.addEventListener("dragstart", (e) => { this.#dragDrop.dragStart(e) }, false);
       puzzlePiece.addEventListener("dragend", (e) => { this.#dragDrop.dragEnd(e) }, false);
 

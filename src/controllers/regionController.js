@@ -17,7 +17,7 @@ export default class regionController {
 
   showView(showDefault) {
     if (showDefault) {
-      this.#current_region = this.festival.getDefaultModel();
+      this.#current_region = this.#festival.getDefaultModel();
       this.#current_view = new regionView(this);
       this.#current_view.showRegion();
     } else {
