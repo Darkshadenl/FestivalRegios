@@ -69,3 +69,18 @@
   background-color: blue;
   color: white;
 }
+
+.zIndex {
+  background-color: gray;
+  position: absolute;
+  left: 300px;
+  top: 70px;
+  width: 1300px;
+  height: 850px;
+  z-index: 1;
+}
+
+.detailsTitle {
+  margin-left: 20px;
+  margin-top: 20px;
+}

@@ -1,6 +1,5 @@
 import Festival from "../model/festival.js";
 import regionView from "../view/regionView.js";
-import mainController from "./mainController.js";
 
 export default class regionController {
   #mainController;
@@ -71,24 +70,27 @@ export default class regionController {
       Tenten: festivalItemsAmounts.tent,
       Toiletten: festivalItemsAmounts.toilet,
       nameRegion: this.#current_region.name,
-      Prullenbakken: festivalItemsAmounts.prullenbak
-    }
+      Prullenbakken: festivalItemsAmounts.prullenbak,
+    };
 
-    spots.forEach(row => {
-      row.forEach(col => {
+    spots.forEach((row) => {
+      row.forEach((col) => {
         if (!col.isAvailable()) {
-          let pos = { 'x': col.x, 'y': col.y, 'type': col.getGridItem().type };
+          let pos = { x: col.x, y: col.y, type: col.getGridItem().type };
           items.push(pos);
         }
       });
-    })
+    });
 
-    let rid = 'r' + id;
-    let lid = 'locked' + id;
-    localStorage.setItem(rid, JSON.stringify(items))
-    localStorage.setItem(id, JSON.stringify(amounts))
-    localStorage.setItem(lid, JSON.stringify({
-      'locked': this.#current_region.isLocked
-    }));
+    let rid = "r" + id;
+    let lid = "locked" + id;
+    localStorage.setItem(rid, JSON.stringify(items));
+    localStorage.setItem(id, JSON.stringify(amounts));
+    localStorage.setItem(
+      lid,
+      JSON.stringify({
+        locked: this.#current_region.isLocked,
+      })
+    );
   }
 }

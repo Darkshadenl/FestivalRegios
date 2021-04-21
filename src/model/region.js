@@ -1,15 +1,14 @@
 "use strict";
 
-import Gridspot from "../model/Gridspot"
+import Gridspot from "../model/Gridspot";
 import GridItem from "./GridItem";
 
 export default class Region {
-
     id;
     name;
-    openAreas = []
-    gridSpots = []
-    filledSpots;
+    openAreas = [];
+    gridSpots = [];
+    filledSpots;        // only used to easily fill grid. Use data from this array to access gridspots
     rows = 15;
     cols = 15;
     hasPrullenbakken = false;
@@ -21,7 +20,7 @@ export default class Region {
         drankkraampje: 0,
         boom: 0,
         toilet: 0,
-        prullenbak: 0
+        prullenbak: 0,
     };
 
     constructor(id, name) {
@@ -62,9 +61,12 @@ export default class Region {
                 } catch (error) {
                     this.gridSpots[y][x].bottom_spot = null;
                 }
-
             }
         }
+    }
+
+    isLocked() {
+        return this.isLocked;
     }
 
     cleanRegion() {
@@ -85,6 +87,19 @@ export default class Region {
             }
         }
         this.isLocked = true;
+    }
+
+    isFilled(col, row) {
+        if (this.gridSpots[row][col].isAvailable()){
+            return this.gridSpots[row][col];
+        }
+        return false;
+    }
+
+    getGridSpot(col, row){
+        if (row > 0 && row < 14 && col > 0 && col < 14){
+            return this.gridSpots[row][col];
+        }
     }
 
     placeElement(type, col, row) {
@@ -108,32 +123,32 @@ export default class Region {
         let type;
         let coordinates = gridSpot.getGridItem().coordinates;
 
-        gridSpot.getGridItem().coordinates.forEach(coordinate => {
+        gridSpot.getGridItem().coordinates.forEach((coordinate) => {
             // remove griditems from gridspots
-            type = this.gridSpots[coordinate['y']][coordinate['x']].cleanSpot();
+            type = this.gridSpots[coordinate["y"]][coordinate["x"]].cleanSpot();
         });
 
-        return { coordinates, type };
+        return {coordinates, type};
     }
 
     retrieveDataFromLocalStorage() {
         let data = JSON.parse(localStorage.getItem(this.id));
         if (data == null) return true;
 
-        this.name = data['nameRegion'];
-        this.festivalItemsAmounts.tent = data['Tenten'];
-        this.festivalItemsAmounts.eetkraampje = data['Eetkraampjes'];
-        this.festivalItemsAmounts.drankkraampje = data['Drankkraampjes'];
-        this.festivalItemsAmounts.boom = data['Bomen'];
-        this.festivalItemsAmounts.toilet = data['Toiletten'];
-        this.festivalItemsAmounts.prullenbak = data['Prullenbakken'];
-        this.filledSpots = JSON.parse(localStorage.getItem('r' + this.id));
+        this.name = data["nameRegion"];
+        this.festivalItemsAmounts.tent = data["Tenten"];
+        this.festivalItemsAmounts.eetkraampje = data["Eetkraampjes"];
+        this.festivalItemsAmounts.drankkraampje = data["Drankkraampjes"];
+        this.festivalItemsAmounts.boom = data["Bomen"];
+        this.festivalItemsAmounts.toilet = data["Toiletten"];
+        this.festivalItemsAmounts.prullenbak = data["Prullenbakken"];
+        this.filledSpots = JSON.parse(localStorage.getItem("r" + this.id));
 
-        data = JSON.parse(localStorage.getItem('locked' + this.id));
+        data = JSON.parse(localStorage.getItem("locked" + this.id));
         if (data == null) {
             this.isLocked = false;
         } else {
-            this.isLocked = data['locked'];
+            this.isLocked = data["locked"];
         }
 
         if (this.filledSpots == null) {
@@ -141,23 +156,20 @@ export default class Region {
             return true;
         }
 
-        this.filledSpots.forEach(e => {
+        this.filledSpots.forEach((e) => {
             this.placeElement(e.type, e.x, e.y);
-        })
-
+        });
     }
 
     placePrullenbakken() {
         for (let j = 0; j < this.festivalItemsAmounts.prullenbak; j++) {
             let done = false;
             while (!done) {
-                let randomRow = Math.floor(Math.random() * (this.rows));
-                let randomCol = Math.floor(Math.random() * (this.cols));
-                done = this.placeElement('prullenbak', randomCol, randomRow);
+                let randomRow = Math.floor(Math.random() * this.rows);
+                let randomCol = Math.floor(Math.random() * this.cols);
+                done = this.placeElement("prullenbak", randomCol, randomRow);
             }
         }
         this.hasPrullenbakken = true;
     }
-
 }
-
