@@ -89,25 +89,25 @@ export default class Region {
         this.isLocked = true;
     }
 
+    // If filled returns the gridspot, else false.
     isFilled(col, row) {
-        if (this.gridSpots[row][col].isAvailable()){
+        if (!this.gridSpots[row][col].isAvailable()){
             return this.gridSpots[row][col];
         }
         return false;
     }
 
     getGridSpot(col, row){
-        if (row > 0 && row < 14 && col > 0 && col < 14){
-            return this.gridSpots[row][col];
-        }
+        return this.gridSpots[row][col];
     }
 
-    placeElement(type, col, row) {
+    placeElement(type, col, row, details) {
         // checks for corners and sides
         // placement in gridspots
 
         if (this.gridSpots[row][col].isAvailable()) {
             let newItem = new GridItem(type);
+            newItem.setupDetails(details);
             let placed = this.gridSpots[row][col].addGridItem(newItem);
             if (placed) {
                 return newItem.coordinates;
@@ -157,7 +157,17 @@ export default class Region {
         }
 
         this.filledSpots.forEach((e) => {
-            this.placeElement(e.type, e.x, e.y);
+            const details = {
+                capacity_in_kilo: e.capacity_in_kilo,
+                closes_at: e.closes_at,
+                details: e.details,
+                empty_moment_in_seconds: e.empty_moment_in_seconds,
+                max_visitors: e.max_visitors,
+                opens_at: e.opens_at,
+                toilet_full: e.toilet_full,
+            }
+
+            this.placeElement(e.type, e.x, e.y, details);
         });
     }
 

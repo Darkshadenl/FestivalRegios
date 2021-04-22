@@ -3,7 +3,7 @@ import regionView from "../view/regionView.js";
 
 export default class regionController {
   #mainController;
-  amount_regions = 6;
+  #amount_regions = 6;
 
   #festival;
   #current_view;
@@ -11,7 +11,7 @@ export default class regionController {
 
   constructor(mainController) {
     this.#mainController = mainController;
-    this.#festival = new Festival(this.amount_regions);
+    this.#festival = new Festival(this.#amount_regions);
   }
 
   showView(showDefault) {
@@ -76,7 +76,19 @@ export default class regionController {
     spots.forEach((row) => {
       row.forEach((col) => {
         if (!col.isAvailable()) {
-          let pos = { x: col.x, y: col.y, type: col.getGridItem().type };
+          const gridItem = col.getGridItem();
+          let pos = {
+            x: col.x,
+            y: col.y,
+            type: gridItem.type,
+            details: gridItem.details,
+            max_visitors: gridItem.max_visitors,
+            opens_at: gridItem.opens_at,
+            closes_at: gridItem.closes_at,
+            capacity_in_kilo: gridItem.capacity_in_kilo,
+            empty_moment_in_seconds: gridItem.empty_moment_in_seconds,
+            toilet_full: gridItem.toilet_full,
+          };
           items.push(pos);
         }
       });

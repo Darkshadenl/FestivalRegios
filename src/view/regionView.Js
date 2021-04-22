@@ -1,6 +1,8 @@
 import DragDrop from "../view/DragDrop";
 import extractXYPosition from "../helpers/extractXYPosition"
 import DetailView from "./DetailView";
+import Gridspot from "../model/Gridspot";
+import GridItem from "../model/GridItem";
 
 export default class regionView {
   element;
@@ -127,11 +129,15 @@ export default class regionView {
     const colrow = extractXYPosition(id);
     const filled = this.controller.getCurrentRegion().isFilled(colrow.col, colrow.row);
 
-    if (filled && filled.getGridItem().type !== 'prullenbak'){
-      element.addEventListener('click', (data) => {
-        // if has piece, show details in z index screen
-        this.buildZIndexWindow(data);
-      })
+    if (filled instanceof Gridspot){
+      const gridItem = filled.getGridItem();
+
+      if (gridItem instanceof GridItem && gridItem.type !== "boom") {
+        element.addEventListener('click', (data) => {
+          // if has piece, show details in z index screen
+          this.buildZIndexWindow(data);
+        })
+      }
     }
   }
 
@@ -139,34 +145,9 @@ export default class regionView {
     if (this.ZIndexViewShowing){
       return;
     }
-    let detailView = new DetailView();
+    let detailView = new DetailView(this.controller);
     detailView.buildZIndexWindow(data);
-
-    // let xy = extractXYPosition(data.target.id);
-    // const gridspot = this.controller.getCurrentRegion().getGridSpot(xy.col, xy.row);
-    //
-    // const container = document.getElementsByClassName('regionsContainer')[0];
-    // let div = document.createElement('div');
-    // let title = document.createElement('h1');
-    // title.innerText = "Details";
-    // title.className = "detailsTitle"
-    // div.className = "zIndex";
-    //
-    //
-    // // appending
-    // div.appendChild(title)
-    // container.appendChild(div);
   }
-
-  // extractXYPosition(id){
-  //   let col = id.search('col') + 2;
-  //   let rowFirstPos = id.search('row');
-  //   let rowLastPos = id.search('row') + 2;
-  //   let actualCol = parseInt(id.slice(col + 1, rowFirstPos));
-  //   let actualRow = parseInt(id.slice(rowLastPos + 1, id.length));
-  //
-  //   return { col: actualCol, row: actualRow};
-  // }
 
   reconfigureGridElement(element) {
     element.addEventListener(
@@ -243,6 +224,7 @@ export default class regionView {
     // create container for grid/dropzone
     let dropZoneContainer = document.createElement("div");
     dropZoneContainer.className = "row mt-3 dropZoneContainer";
+    dropZoneContainer.id = "dropZoneDiv";
 
     // create col for pieces
     let piecesCol = document.createElement("div");
