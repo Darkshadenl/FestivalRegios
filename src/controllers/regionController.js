@@ -64,7 +64,9 @@ export default class regionController {
     let festivalItemsAmounts = this.#current_region.festivalItemsAmounts;
     let id = this.#current_region.id;
     let amounts = {
-      Bomen: festivalItemsAmounts.boom,
+      hogeBoom: festivalItemsAmounts.hogeBoom,
+      bredeBoom: festivalItemsAmounts.bredeBoom,
+      schaduwBoom: festivalItemsAmounts.schaduwBoom,
       Drankkraampjes: festivalItemsAmounts.drankkraampje,
       Eetkraampjes: festivalItemsAmounts.eetkraampje,
       Tenten: festivalItemsAmounts.tent,

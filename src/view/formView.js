@@ -14,12 +14,14 @@ export default class formView {
     "Tenten",
     "Eetkraampjes",
     "Drankkraampjes",
-    "Bomen",
     "Toiletten",
+    "schaduwBoom",
+    "hogeBoom",
+    "bredeBoom",
     "Prullenbakken",
   ];
 
-  limits = [10, 6, 4, 10, 5, this.maxPrullenbakken];
+  limits = [10, 6, 4, 5, 3, 3, 3, this.maxPrullenbakken];
   tentenNumberBox;
   formfields = [];
   iterator = 0;
@@ -150,8 +152,17 @@ export default class formView {
           case "Drankkraampjes":
             this.maxPrullenbakken += parseInt(Sizes.surface('drankkraampje') * el.value);
             break;
-          case "Bomen":
-            this.maxPrullenbakken += parseInt(Sizes.surface('boom') * el.value);
+          // case "Bomen":
+          //   this.maxPrullenbakken += parseInt(Sizes.surface('boom') * el.value);
+          //   break;
+          case "hogeBoom":
+            this.maxPrullenbakken += parseInt(Sizes.surface('hogeBoom') * el.value);
+            break;
+          case "bredeBoom":
+            this.maxPrullenbakken += parseInt(Sizes.surface('bredeBoom') * el.value);
+            break;
+          case "schaduwBoom":
+            this.maxPrullenbakken += parseInt(Sizes.surface('schaduwBoom') * el.value);
             break;
           case "Toiletten":
             this.maxPrullenbakken += parseInt(Sizes.surface('toilet') * el.value);

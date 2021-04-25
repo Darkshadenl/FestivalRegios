@@ -44,7 +44,21 @@
   background-position: top;
 }
 
-.boom {
+.hogeBoom {
+  background-color: green;
+  color: black;
+  background-image: url("../resources/HUISJE.png");
+  background-position: top;
+}
+
+.bredeBoom {
+  background-color: green;
+  color: black;
+  background-image: url("../resources/HUISJE.png");
+  background-position: top;
+}
+
+.schaduwBoom {
   background-color: green;
   color: black;
   background-image: url("../resources/HUISJE.png");
@@ -60,7 +74,7 @@
 
 .prullenbak {
   background-color: black;
-  color: black;
+  color: white;
   background-image: url("../resources/HUISJE.png");
   background-position: top;
 }

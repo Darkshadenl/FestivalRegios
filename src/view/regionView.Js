@@ -132,11 +132,13 @@ export default class regionView {
     if (filled instanceof Gridspot){
       const gridItem = filled.getGridItem();
 
-      if (gridItem instanceof GridItem && gridItem.type !== "boom") {
+      if (["hogeBoom", "schaduwBoom", "bredeBoom"].indexOf(gridItem.type) == -1) {
+        console.log(gridItem.type);
+        // gridItem instanceof GridItem &&
         element.addEventListener('click', (data) => {
           // if has piece, show details in z index screen
           this.buildZIndexWindow(data);
-        })
+        });
       }
     }
   }
@@ -229,6 +231,7 @@ export default class regionView {
     // create col for pieces
     let piecesCol = document.createElement("div");
     piecesCol.className = "col-4 pieces";
+    piecesCol.id = "pieces";
     let tree = document.createElement("div");
     tree.className = "row";
     tree.id = "piecesView";
@@ -309,7 +312,13 @@ export default class regionView {
               case "drankkraampje":
                 this.fillFilledSpots(e.x, e.y, element.type);
                 break;
-              case "boom":
+              case "hogeBoom":
+                this.fillFilledSpots(e.x, e.y, element.type);
+                break;
+              case "bredeBoom":
+                this.fillFilledSpots(e.x, e.y, element.type);
+                break;
+              case "schaduwBoom":
                 this.fillFilledSpots(e.x, e.y, element.type);
                 break;
               case "toilet":
@@ -340,10 +349,14 @@ export default class regionView {
   createPieces() {
     let piecesCol = document.getElementById("piecesView");
 
+    let amount = 0;
+
     for (let x in this.controller.getCurrentRegion().festivalItemsAmounts) {
-      if (x == "prullenbak") continue;
+      if (x == "hogeBoom" || x == "schaduwBoom" || x == "bredeBoom") continue;
+      amount++;
       let col = document.createElement("div");
       col.classList.add("col");
+
       let puzzlePiece = document.createElement("div");
       puzzlePiece.draggable = true;
       puzzlePiece.innerText = this.controller.getCurrentRegion().festivalItemsAmounts[
@@ -377,9 +390,21 @@ export default class regionView {
           puzzlePiece.classList.add("drankkraampje");
           puzzlePiece.id = "drankkraampje";
           break;
-        case "boom":
-          puzzlePiece.classList.add("boom");
-          puzzlePiece.id = "boom";
+        case "hogeBoom":
+          puzzlePiece.classList.add("hogeBoom");
+          puzzlePiece.id = "hogeBoom";
+          break;
+        case "schaduwBoom":
+          puzzlePiece.classList.add("schaduwBoom");
+          puzzlePiece.id = "schaduwBoom";
+          break;
+        case "bredeBoom":
+          puzzlePiece.classList.add("bredeBoom");
+          puzzlePiece.id = "bredeBoom";
+          break;
+        case "prullenbak":
+          puzzlePiece.classList.add("prullenbak");
+          puzzlePiece.id = "prullenbak";
           break;
         case "toilet":
           puzzlePiece.classList.add("toilet");
@@ -391,7 +416,18 @@ export default class regionView {
       }
       puzzlePiece.classList.add("puzzlePiece");
       col.appendChild(puzzlePiece);
-      piecesCol.appendChild(col);
+      if (amount === 3){
+        let row = document.createElement('div');
+        row.classList.add("row");
+        row.id = "piecesView";
+        row.appendChild(col);
+        const pieces = document.getElementById('pieces');
+        pieces.appendChild(row);
+        piecesCol = row;
+        amount = 0;
+      } else {
+        piecesCol.appendChild(col);
+      }
     }
   }
 

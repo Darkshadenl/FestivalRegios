@@ -11,14 +11,19 @@ export default class Region {
     filledSpots;        // only used to easily fill grid. Use data from this array to access gridspots
     rows = 15;
     cols = 15;
-    hasPrullenbakken = false;
+    // hasPrullenbakken = false;
+    hasBredeBomen = false;
+    hasSchaduwBomen = false;
+    hasHogeBomen = false;
     isLocked = false;
 
     festivalItemsAmounts = {
         tent: 0,
         eetkraampje: 0,
         drankkraampje: 0,
-        boom: 0,
+        hogeBoom: 0,
+        bredeBoom: 0,
+        schaduwBoom: 0,
         toilet: 0,
         prullenbak: 0,
     };
@@ -65,10 +70,6 @@ export default class Region {
         }
     }
 
-    isLocked() {
-        return this.isLocked;
-    }
-
     cleanRegion() {
         this.gridSpots = [];
         this.openAreas = [];
@@ -91,13 +92,13 @@ export default class Region {
 
     // If filled returns the gridspot, else false.
     isFilled(col, row) {
-        if (!this.gridSpots[row][col].isAvailable()){
+        if (!this.gridSpots[row][col].isAvailable()) {
             return this.gridSpots[row][col];
         }
         return false;
     }
 
-    getGridSpot(col, row){
+    getGridSpot(col, row) {
         return this.gridSpots[row][col];
     }
 
@@ -139,20 +140,24 @@ export default class Region {
         this.festivalItemsAmounts.tent = data["Tenten"];
         this.festivalItemsAmounts.eetkraampje = data["Eetkraampjes"];
         this.festivalItemsAmounts.drankkraampje = data["Drankkraampjes"];
-        this.festivalItemsAmounts.boom = data["Bomen"];
+        // this.festivalItemsAmounts.boom = data["Bomen"];
+        this.festivalItemsAmounts.hogeBoom = data["hogeBoom"];
+        this.festivalItemsAmounts.bredeBoom = data["bredeBoom"];
+        this.festivalItemsAmounts.schaduwBoom = data["schaduwBoom"];
         this.festivalItemsAmounts.toilet = data["Toiletten"];
         this.festivalItemsAmounts.prullenbak = data["Prullenbakken"];
         this.filledSpots = JSON.parse(localStorage.getItem("r" + this.id));
 
         data = JSON.parse(localStorage.getItem("locked" + this.id));
-        if (data == null) {
+
+        if (data == null)
             this.isLocked = false;
-        } else {
+        else
             this.isLocked = data["locked"];
-        }
 
         if (this.filledSpots == null) {
-            this.placePrullenbakken();
+            this.placeTrees();
+            // this.placePrullenbakken();
             return true;
         }
 
@@ -165,7 +170,7 @@ export default class Region {
                 max_visitors: e.max_visitors,
                 opens_at: e.opens_at,
                 toilet_full: e.toilet_full,
-            }
+            };
 
             this.placeElement(e.type, e.x, e.y, details);
         });
@@ -181,5 +186,35 @@ export default class Region {
             }
         }
         this.hasPrullenbakken = true;
+    }
+
+    placeTrees() {
+        for (let j = 0; j < this.festivalItemsAmounts.bredeBoom; j++) {
+            let done = false;
+            while (!done) {
+                let randomRow = Math.floor(Math.random() * this.rows);
+                let randomCol = Math.floor(Math.random() * this.cols);
+                done = this.placeElement("bredeBoom", randomCol, randomRow);
+            }
+        }
+        this.hasBredeBomen = true;
+        for (let j = 0; j < this.festivalItemsAmounts.hogeBoom; j++) {
+            let done = false;
+            while (!done) {
+                let randomRow = Math.floor(Math.random() * this.rows);
+                let randomCol = Math.floor(Math.random() * this.cols);
+                done = this.placeElement("hogeBoom", randomCol, randomRow);
+            }
+        }
+        this.hasHogeBomen = true;
+        for (let j = 0; j < this.festivalItemsAmounts.schaduwBoom; j++) {
+            let done = false;
+            while (!done) {
+                let randomRow = Math.floor(Math.random() * this.rows);
+                let randomCol = Math.floor(Math.random() * this.cols);
+                done = this.placeElement("schaduwBoom", randomCol, randomRow);
+            }
+        }
+        this.hasSchaduwBomen = true;
     }
 }

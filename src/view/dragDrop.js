@@ -58,9 +58,15 @@ export default class DragDrop {
                 case "drankkraampje":
                     this.fillSpots(toBeFilledCoordinates, 'drankkraampje');
                     break;
-                case "boom":
-                    this.fillSpots(toBeFilledCoordinates, 'boom');
-                    break;
+                // case "hogeBoom":
+                //     this.fillSpots(toBeFilledCoordinates, 'hogeboom');
+                //     break;
+                // case "bredeBoom":
+                //     this.fillSpots(toBeFilledCoordinates, 'bredeBoom');
+                //     break;
+                // case "schaduwBoom":
+                //     this.fillSpots(toBeFilledCoordinates, 'schaduwBoom');
+                //     break;
                 case "toilet":
                     this.fillSpots(toBeFilledCoordinates, 'toilet');
                     break;

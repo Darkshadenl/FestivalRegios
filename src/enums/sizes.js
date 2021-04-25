@@ -15,9 +15,17 @@ const Sizes = {
         width: 2,
         height: 1,
     },
-    boom: {
+    hogeBoom: {
         width: 1,
         height: 1,
+    },
+    bredeBoom: {
+        width: 1,
+        height: 2,
+    },
+    schaduwBoom: {
+        width: 3,
+        height: 3,
     },
     toilet: {
         width: 1,

@@ -22,6 +22,7 @@ export default class GridItem {
     }
 
     setupDetails(details) {
+        if (!details) return;
         this.details = details.details;
         this.max_visitors = details.max_visitors;
         this.opens_at = details.opens_at;
@@ -45,7 +46,15 @@ export default class GridItem {
                 this.width = Sizes[this.type]['width'];
                 this.height = Sizes[this.type]['height'];
                 break;
-            case 'boom':
+            case 'hogeBoom':
+                this.width = Sizes[this.type]['width'];
+                this.height = Sizes[this.type]['height'];
+                break;
+            case 'bredeBoom':
+                this.width = Sizes[this.type]['width'];
+                this.height = Sizes[this.type]['height'];
+                break;
+            case 'schaduwBoom':
                 this.width = Sizes[this.type]['width'];
                 this.height = Sizes[this.type]['height'];
                 break;
