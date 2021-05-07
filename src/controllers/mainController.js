@@ -13,20 +13,9 @@ export default class mainController {
         this.regionController = new regionController(this);
         this.formController = new formController(this);
         this.APIController = new APIController(this);
-        this.updateWeather(52.021520, 5.050449);
         this.switchToRegions(true);
-
-    }
-
-    updateWeather(lat, lon){
-        this.APIController.getWeatherByLatLon(lat, lon)
-        .then((response) => {
-            this.drawView(response);
-        });
-    }
-
-    drawView(res){
-        console.log(res);
+        
+        // this.APIController.update(52.021520, 5.050449);
     }
 
     switchToRegions(showDefault) {
