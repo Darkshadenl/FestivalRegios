@@ -15,12 +15,12 @@ export default class weatherView {
         this.lon = document.querySelector('#lonWeather');
 
         this.button.addEventListener("click", () => {
-            console.log('Values: lat: ' + this.lat.value + ', lon: ' + this.lon.value);
+            // console.log('Values: lat: ' + this.lat.value + ', lon: ' + this.lon.value);
             controller.update(this.lat.value, this.lon.value);
         });
     }
 
     update(string){
-        this.text.innerText = 'Weather: ' + string;
+        this.text.innerText = 'Weer: ' + string;
     }
 }

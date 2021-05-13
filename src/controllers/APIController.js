@@ -1,4 +1,5 @@
 import weatherView from "../view/weatherView";
+import Weather from "../enums/weather";
 
 export default class APIController {
     
@@ -15,7 +16,6 @@ export default class APIController {
     }
 
     update(lat, lon){
-        console.log('running update')
         this.getWeatherByLatLon(lat, lon)
             .then((response) => {
                 switch (response){
@@ -23,8 +23,8 @@ export default class APIController {
                         console.log('update switch fail!');
                         break;
                     default:
-                        console.log('the result: ' + response)
-                        this.updateView(response);
+                        console.log('Set weather to: ' + Weather.properties[response].name);
+                        this.updateView(Weather.properties[response].name);
                 }
             });
     }
@@ -35,8 +35,9 @@ export default class APIController {
             .then(res =>  res.json())
             .then((res) => {
                 if (res.current.weather[0].main){
-                    console.log(res.current.weather[0]);
-                    return res.current.weather[0].main;
+                    // console.log(res.current.weather[0]);
+                    var value = this.getWeatherType(res.current.weather[0].main)
+                    return value;
                 }
                 else {
                     console.log('Could not get weather!');
@@ -48,6 +49,30 @@ export default class APIController {
                 return 'Fail';
             })
             
+    }
+
+    getWeatherType(string){
+        var returnValue = Weather.NONE;
+        switch (string) {
+            case 'Clouds':
+                returnValue = Weather.BEWOLKT;
+                break;
+            case 'Rain':
+                returnValue = Weather.REGEN;
+                break;
+            case 'Clear':
+                returnValue = Weather.HELDER;
+                break;
+            case 'Snow':
+                returnValue = Weather.SNEEUW;
+                break;
+            case 'Fog':
+                returnValue = Weather.MIST;
+                break;
+            default:
+                returnValue = Weather.NONE;
+        }
+        return returnValue;
     }
 
     updateView(string){
