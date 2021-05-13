@@ -15,7 +15,6 @@ export default class mainController {
         this.APIController = new APIController(this);
         this.switchToRegions(true);
         
-        // this.APIController.update(52.021520, 5.050449);
     }
 
     switchToRegions(showDefault) {
