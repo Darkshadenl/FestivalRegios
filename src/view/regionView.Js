@@ -293,6 +293,16 @@ export default class regionView {
     }
   }
 
+  updatePeople(){
+    let existingCoordinates = this.controller.getCurrentRegion().gridSpots;
+    existingCoordinates.forEach((row) => {
+      row.forEach((col) => {
+        //check amount of people
+        //update view
+      });
+    });
+  }
+
   addExistingPieces() {
     let existingCoordinates = this.controller.getCurrentRegion().gridSpots;
     if (existingCoordinates == null) return;
@@ -335,7 +345,6 @@ export default class regionView {
       });
     });
   }
-
   // adds classes to from localstorage retrieved coordinates
   fillFilledSpots(x, y, classTypeString) {
     let xy = "col" + x + "row" + y;

@@ -1,4 +1,5 @@
 import Festival from "../model/festival.js";
+import People from "../model/people.js";
 import regionView from "../view/regionView.js";
 
 export default class regionController {
@@ -32,6 +33,28 @@ export default class regionController {
 
   getCurrentRegion() {
     return this.#current_region;
+  }
+
+  tickRegion(){
+    //move all people?, foreach gridspot
+
+    //for each queue
+    // -> spawnPeopleOnReqion (queue.amount)
+
+    this.spawnPeopleOnRegion(new People(3));
+  }
+
+  spawnPeopleOnRegion(people){
+    let spots = this.#current_region.gridSpots;
+    spots.forEach((row) => {
+      row.forEach((col) => {
+        if (col.trySpawnPeople(people)){
+          //stops looping when a spot is found
+          console.log("Placed " + people.getAmount() + " people at x: " + col.x + ", y: " + col.y);
+          return;
+        }
+      });
+    });
   }
 
   lockCurrentRegion() {
