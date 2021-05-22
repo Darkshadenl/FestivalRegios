@@ -4,6 +4,7 @@ export default class Gridspot {
 
     y; x;
     #peopleAmount;
+    #peopleCollection = [];
     #gridItem = null;
     #available = true;
     position;
@@ -136,15 +137,34 @@ export default class Gridspot {
         return false;
     }
 
-    addPeople(amount) {
-        if (this.isAvailable()) {
-            this.#peopleAmount += amount;
+    // addPeople(amount) {
+    //     if (this.isAvailable()) {
+    //         this.#peopleAmount += amount;
+    //     }
+    // }
+
+    // peopleAmount() {
+    //     return this.#peopleAmount;
+    // }
+
+    getTotalPeople() {
+        let count = 0;
+        this.#peopleCollection.forEach(people => {
+            count += people.getAmount();
+        })
+        return count;
+    }
+
+    trySpawnPeople(people){
+        //people will only spawn on gridspots with no objects
+        if (this.getGridItem() == null){
+            //max 7 people per gridspot
+            if (people.getAmount() + this.getTotalPeople() <= 7) {
+                this.#peopleCollection.push(people);
+                return true;
+            }
         }
+        return false;
     }
-
-    peopleAmount() {
-        return this.#peopleAmount;
-    }
-
 
 }
