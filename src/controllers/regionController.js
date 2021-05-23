@@ -1,5 +1,6 @@
 import Festival from "../model/festival.js";
 import People from "../model/people.js";
+import Queue from "../model/queue.js";
 import regionView from "../view/regionView.js";
 
 export default class regionController {
@@ -36,12 +37,22 @@ export default class regionController {
   }
 
   tickRegion(){
+    if (this.#current_region.getQueued().count() > 0){
+      this.#current_region.getQueued().forEach(amount => {
+        this.spawnPeopleOnRegion(new People(amount));
+      });
+    }
     //move all people?, foreach gridspot
 
     //for each queue
     // -> spawnPeopleOnReqion (queue.amount)
 
-    this.spawnPeopleOnRegion(new People(3));
+
+    // this.spawnPeopleOnRegion(new People(3));
+  }
+
+  loadQueues(){
+    this.#current_region.queues.push(new Queue(2));
   }
 
   spawnPeopleOnRegion(people){

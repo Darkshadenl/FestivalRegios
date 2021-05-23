@@ -8,6 +8,7 @@ export default class Region {
     name;
     openAreas = [];
     gridSpots = [];
+    queues = [];
     filledSpots;        // only used to easily fill grid. Use data from this array to access gridspots
     rows = 15;
     cols = 15;
@@ -100,6 +101,16 @@ export default class Region {
 
     getGridSpot(col, row) {
         return this.gridSpots[row][col];
+    }
+
+    getQueued(){
+        let persons = [];
+        if (this.queues != null){
+            this.queues.forEach(queue => {
+                persons.push(queue.getQueued());
+            });
+        }
+        return persons;
     }
 
     placeElement(type, col, row, details) {
