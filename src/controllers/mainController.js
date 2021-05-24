@@ -19,7 +19,8 @@ export default class mainController {
         this.APIController = new APIController(this);
         this.switchToRegions(true);
         // this.queueTest()
-        this.gridspotTest();
+        // this.gridspotTest();
+        this.regionController.tickRegion();
     }
 
     queueTest(){
