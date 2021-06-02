@@ -1,5 +1,3 @@
-"use strict"
-
 export { Sizes as default }
 
 const Sizes = {

@@ -114,7 +114,7 @@ export default class regionView {
         btn.className = "ml-4 btn btn-success";
         btn.innerText = "Start sim";
         btn.id = "startSim";
-        btn.addEventListener("click", this.controller.startSim)
+        btn.addEventListener("click", () => { this.controller.startSim() })
         // this.controller.startSim();
         api.appendChild(btn);
 

@@ -31,7 +31,7 @@ export default class RegionController {
     if (this.simulationController == null) {
       this.simulationController = new SimulationController(this);
     }
-    this.simulationController.startSim();
+    this.simulationController.startSim(this);
   }
 
   getCurrentView(){
