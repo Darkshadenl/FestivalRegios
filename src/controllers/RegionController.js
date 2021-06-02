@@ -1,7 +1,6 @@
 import Festival from "../model/Festival.js";
-import Person from "../model/Person.js";
-import Queue from "../model/Queue.js";
 import regionView from "../view/regionView.js";
+import SimulationController from "./SimulationController";
 
 export default class RegionController {
   #mainController;
@@ -26,6 +25,13 @@ export default class RegionController {
       if (firstTime) this.UpdateLocalStorage();
       this.#current_view.showView();
     }
+  }
+
+  startSim(){
+    if (this.simulationController == null) {
+      this.simulationController = new SimulationController(this);
+    }
+    this.simulationController.startSim();
   }
 
   getRegions() {

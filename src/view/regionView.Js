@@ -105,7 +105,14 @@ export default class regionView {
     const piecesDiv = document.getElementById("pieces");
     const canvasDiv = document.createElement("div");
     canvasDiv.className = "mt-4";
+    canvasDiv.id = "canvasDiv";
     piecesDiv.appendChild(canvasDiv);
+    const api = document.getElementById("api");
+    const btn = document.createElement("btn");
+    btn.className = "ml-4 btn btn-danger";
+    btn.innerText = "Start sim";
+    btn.addEventListener("click", this.controller.startSim)
+    api.appendChild(btn);
 
     pieces.childNodes.forEach((e) => {
       if (e.hasChildNodes) {
