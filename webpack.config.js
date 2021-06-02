@@ -5,15 +5,6 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 
 module.exports = {
-    output: {
-        filename: 'bundle.js'       
-    },
-
-    module: {
-        loaders: [
-            { test: /\.jsx?$/, loader: 'babel', }
-        ]
-    },
     entry: {
         main: "./src/index.js",
     },
