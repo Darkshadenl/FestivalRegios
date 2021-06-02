@@ -102,6 +102,10 @@ export default class regionView {
     let pieces = document.getElementById("piecesView");
     let gridpieces = document.getElementById("dropZoneRowContainer");
     let lockbtn = document.getElementById("lockRegioBtn");
+    const piecesDiv = document.getElementById("pieces");
+    const canvasDiv = document.createElement("div");
+    canvasDiv.className = "mt-4";
+    piecesDiv.appendChild(canvasDiv);
 
     pieces.childNodes.forEach((e) => {
       if (e.hasChildNodes) {
