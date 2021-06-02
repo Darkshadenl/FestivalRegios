@@ -34,6 +34,14 @@ export default class RegionController {
     this.simulationController.startSim();
   }
 
+  getCurrentView(){
+      return this.#current_view;
+  }
+
+  getSimulationController(){
+    return this.simulationController;
+  }
+
   getRegions() {
     return this.#festival.regions;
   }
