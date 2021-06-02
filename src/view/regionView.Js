@@ -133,7 +133,6 @@ export default class regionView {
       const gridItem = filled.getGridItem();
 
       if (["hogeBoom", "schaduwBoom", "bredeBoom"].indexOf(gridItem.type) == -1) {
-        console.log(gridItem.type);
         // gridItem instanceof GridItem &&
         element.addEventListener('click', (data) => {
           // if has piece, show details in z index screen

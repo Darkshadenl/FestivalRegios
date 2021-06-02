@@ -1,6 +1,6 @@
 import formView from "../view/formView";
 
-export default class formController {
+export default class FormController {
 
     #mainController;
     #current_form;

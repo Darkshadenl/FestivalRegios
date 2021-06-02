@@ -1,6 +1,6 @@
 "use strict";
 
-import Region from "./region";
+import Region from "./Region";
 
 export default class Festival {
 

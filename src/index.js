@@ -3,7 +3,7 @@
 import './css/main.scss';
 import './css/bootstrap.css';
 
-import mainController from './controllers/mainController';
+import mainController from './controllers/MainController';
 
 // window.onload = () => {
     

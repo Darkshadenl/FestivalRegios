@@ -1,9 +1,9 @@
-import Festival from "../model/festival.js";
-import People from "../model/people.js";
-import Queue from "../model/queue.js";
+import Festival from "../model/Festival.js";
+import Person from "../model/Person.js";
+import Queue from "../model/Queue.js";
 import regionView from "../view/regionView.js";
 
-export default class regionController {
+export default class RegionController {
   #mainController;
   #amount_regions = 6;
 
@@ -34,61 +34,6 @@ export default class regionController {
 
   getCurrentRegion() {
     return this.#current_region;
-  }
-
-  tickRegion(){
-    // if (this.#current_region.getQueued().count() > 0){
-    //   this.#current_region.getQueued().forEach(amount => {
-    //     this.spawnPeopleOnRegion(new People(amount));
-    //   });
-    // }
-    //move all people?, foreach gridspot
-
-    //for each queue
-    // -> spawnPeopleOnReqion (queue.amount)
-
-
-    this.spawnPeopleOnRegion(new People(3));
-    // this.#current_region.getGridSpot(0, 0).trySpawnPeople(new People(4));
-    // this.#current_region.getGridSpot(0, 0).trySpawnPeople(new People(3));
-    // this.printField();
-    // this.#current_region.getGridSpot(0, 0).trySpawnPeople(new People(2));
-    // this.printField();
-  }
-
-  //todo remove
-  printField(){
-    this.printGrid(0,0);
-    this.printGrid(1,0);
-    this.printGrid(2,0);
-  }
-  //todo remove
-  printGrid(col, row){
-    console.log("x: " + col + ", y: " + row + ', people: ' + this.#current_region.getGridSpot(col, row).getTotalPeople())
-  }
-
-  loadQueues(){
-    this.#current_region.queues.push(new Queue(2));
-  }
-
-  spawnPeopleOnRegion(people){
-    let trying = true;
-    let spots = this.#current_region.gridSpots;
-    spots.forEach((row) => {
-      if (trying){
-        row.forEach((col) => {
-          console.log("at: " + col.x + ", " + col.y)
-          if (trying){
-            if (col.trySpawnPeople(people)){
-              //stops looping when a spot is found
-              console.log("Placed " + people.getAmount() + " people at x: " + col.x + ", y: " + col.y);
-              trying = false;
-              return;
-            }
-          }
-        });
-      }
-    });
   }
 
   lockCurrentRegion() {
