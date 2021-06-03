@@ -8,14 +8,14 @@ export default class regionView {
     element;
     regions;
     controller;
-    #dragDrop;
+    dragDrop;
     rows = 15;
     cols = 15;
     ZIndexViewShowing = false;
 
     constructor(controller) {
         this.controller = controller;
-        this.#dragDrop = new DragDrop(controller, this);
+        this.dragDrop = new DragDrop(controller, this);
     }
 
     buildRegionMenuButtons() {
@@ -55,7 +55,7 @@ export default class regionView {
         deleteBox.addEventListener(
             "dragover",
             (e) => {
-                this.#dragDrop.dragOver(e);
+                this.dragDrop.dragOver(e);
             },
             false
         );
@@ -63,7 +63,7 @@ export default class regionView {
         deleteBox.addEventListener(
             "drop",
             (e) => {
-                this.#dragDrop.deleteBoxDrop(e);
+                this.dragDrop.deleteBoxDrop(e);
             },
             false
         );
@@ -189,21 +189,21 @@ export default class regionView {
         element.addEventListener(
             "dragover",
             (e) => {
-                this.#dragDrop.dragOver(e);
+                this.dragDrop.dragOver(e);
             },
             false
         );
         element.addEventListener(
             "drop",
             (e) => {
-                this.#dragDrop.dropEvent(e);
+                this.dragDrop.dropEvent(e);
             },
             false
         );
         element.addEventListener(
             "dragleave",
             (e) => {
-                this.#dragDrop.dragLeave(e);
+                this.dragDrop.dragLeave(e);
             },
             false
         );
@@ -215,14 +215,14 @@ export default class regionView {
         element.addEventListener(
             "dragstart",
             (e) => {
-                this.#dragDrop.dragStart(e);
+                this.dragDrop.dragStart(e);
             },
             false
         );
         element.addEventListener(
             "dragend",
             (e) => {
-                this.#dragDrop.dragEnd(e);
+                this.dragDrop.dragEnd(e);
             },
             false
         );
@@ -289,21 +289,21 @@ export default class regionView {
                 dropZoneCol.addEventListener(
                     "dragover",
                     (e) => {
-                        this.#dragDrop.dragOver(e);
+                        this.dragDrop.dragOver(e);
                     },
                     false
                 );
                 dropZoneCol.addEventListener(
                     "drop",
                     (e) => {
-                        this.#dragDrop.dropEvent(e);
+                        this.dragDrop.dropEvent(e);
                     },
                     false
                 );
                 dropZoneCol.addEventListener(
                     "dragleave",
                     (e) => {
-                        this.#dragDrop.dragLeave(e);
+                        this.dragDrop.dragLeave(e);
                     },
                     false
                 );
@@ -384,7 +384,7 @@ export default class regionView {
     fillFilledSpots(x, y, classTypeString) {
         let xy = "col" + x + "row" + y;
         let element = document.getElementById(xy);
-        let new_element = this.#dragDrop.cleanElement(element);
+        let new_element = this.dragDrop.cleanElement(element);
         this.makeGridPuzzlePiece(new_element);
         new_element.draggable = true;
         new_element.classList.add(classTypeString);
@@ -409,14 +409,14 @@ export default class regionView {
             puzzlePiece.addEventListener(
                 "dragstart",
                 (e) => {
-                    this.#dragDrop.dragStart(e);
+                    this.dragDrop.dragStart(e);
                 },
                 false
             );
             puzzlePiece.addEventListener(
                 "dragend",
                 (e) => {
-                    this.#dragDrop.dragEnd(e);
+                    this.dragDrop.dragEnd(e);
                 },
                 false
             );

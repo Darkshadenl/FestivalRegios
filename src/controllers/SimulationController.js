@@ -1,21 +1,23 @@
-import CanvasView from "../view/Canvas/CanvasView";
+import QueueView from "../view/Canvas/QueueView";
 import Queue from "../model/Queue";
+import randomIntFromInterval from "../helpers/randomIntFromInterval";
 
 export default class SimulationController {
 
     hasRun = false;
-    min_wait = 2000;
-    max_wait = 4000;
+    min_wait = 1000;
+    max_wait = 2000;
     queues = [];
+    view;
 
     constructor(RegionController) {
         this.regionController = RegionController;
-        this.queues = [new Queue(0), new Queue(1), new Queue(2), new Queue(3)];
+        this.queues = [new Queue(0, this), new Queue(1, this), new Queue(2, this), new Queue(3, this)];
     }
 
     startSim() {
         if (!this.hasRun) {
-            this.view = new CanvasView(this);
+            this.view = new QueueView(this);
             this.hasRun = true;
         }
         this.started = true;
@@ -24,27 +26,28 @@ export default class SimulationController {
         this.startRandomPeopleSpawning();
     }
 
-    getModel(queueNr, modelNr) {
-        return this.queues.filter(q => {
-            if (q.id == queueNr) {
-                return q.getGroupModel(modelNr);
-            }
-        });
-    }
-
     startRandomPeopleSpawning() {
-        // TODO: ZORG DAT MODEL LEID QUA BEWEGING VAN ENTITIES
+        if (!this.started) return;
+        console.log("random people spawning");
         let availableQueues = this.queues.filter(q => { if (q.active) return q; })
-        let randomWait = this.randomIntFromInterval(this.min_wait, this.max_wait);
-        let randomAmountPeeps = this.randomIntFromInterval(1, 4);
-        let random = this.randomIntFromInterval(0, availableQueues.length - 1);
+        let randomWait = randomIntFromInterval(this.min_wait, this.max_wait);
+        let randomAmountPeeps = randomIntFromInterval(1, 4);
+        let random = randomIntFromInterval(0, availableQueues.length - 1);
         let group = availableQueues[random].addPeople(randomAmountPeeps);
         this.view.addGroup(random, group);
         setTimeout(() => { this.startRandomPeopleSpawning() }, randomWait);
     }
 
-    randomIntFromInterval(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min)
+    getModel(queueNr, modelNr) {
+        if (queueNr === null) return;
+        if (modelNr === null) return;
+        let m;
+        this.queues.forEach(q => {
+            if (q.id == queueNr) {
+                m = q.getGroupModel(modelNr);
+            }
+        });
+        return m;
     }
 
     stopSim() {
@@ -52,4 +55,9 @@ export default class SimulationController {
         this.started = false;
         this.regionController.getCurrentView().changeButton(this.started);
     }
+
+    placeGroupInRegion(group){
+        this.regionController.getCurrentRegion().placeGroup(group);
+    }
+
 }

@@ -3,10 +3,10 @@
 export default class Gridspot {
 
     y; x;
-    #peopleAmount;
-    #peopleCollection = [];
-    #gridItem = null;
-    #available = true;
+    peopleAmount;
+    peopleCollection = [];
+    gridItem = null;
+    available = true;
     position;
 
     left_spot;
@@ -23,18 +23,18 @@ export default class Gridspot {
 
     // returns type of deleted item
     cleanSpot() {
-        let type = this.#gridItem.type;
-        this.#gridItem = null;
-        this.#available = true;
+        let type = this.gridItem.type;
+        this.gridItem = null;
+        this.available = true;
         return type;
     }
 
     getGridItem() {
-        return this.#gridItem;
+        return this.gridItem;
     }
 
     isAvailable() {
-        return this.#available;
+        return this.available;
     }
 
     /// return true if placed succesfully.
@@ -55,7 +55,7 @@ export default class Gridspot {
                 return false;
             }
         } else {
-            return this.#available;
+            return this.available;
         }
     }
 
@@ -70,8 +70,8 @@ export default class Gridspot {
         if (this.bottom_spot != null || this.bottom_spot != undefined) {
             this.bottom_spot.placeItemBottom(height - 1, item);
         }
-        this.#gridItem = item;
-        this.#available = false;
+        this.gridItem = item;
+        this.available = false;
         item.coordinates.push(this);
     }
 
@@ -82,8 +82,8 @@ export default class Gridspot {
         if (this.bottom_spot != null || this.bottom_spot != undefined) {
             this.bottom_spot.placeItemBottom(height - 1, item);
         }
-        this.#gridItem = item;
-        this.#available = false;
+        this.gridItem = item;
+        this.available = false;
         item.coordinates.push(this);
     }
 

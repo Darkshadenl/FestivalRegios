@@ -103,14 +103,8 @@ export default class Region {
         return this.gridSpots[row][col];
     }
 
-    getQueued(){
-        let persons = [];
-        if (this.queues != null){
-            this.queues.forEach(queue => {
-                persons.push(queue.getQueued());
-            });
-        }
-        return persons;
+    placeGroup(group){
+
     }
 
     placeElement(type, col, row, details) {

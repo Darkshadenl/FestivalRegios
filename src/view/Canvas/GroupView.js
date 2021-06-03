@@ -1,15 +1,20 @@
 export default class GroupView {
 
+    x;
+    y;
+    id;
+    toBeRemoved = false;
+
     constructor(model) {
-        this.id = model.id();
-        this.x = model.x();
-        this.y = model.y();
-        this.speed = 0.9;
+        this.id = model.id;
+        this.x = model.x;
+        this.y = model.y;
         this.image = new Image();
         this.image.src = this.determineImage(model.size);
     }
 
     refreshData(model) {
+        this.toBeRemoved = model.toBeRemoved;
         this.x = model.x;
         this.y = model.y;
     }
@@ -27,13 +32,8 @@ export default class GroupView {
         }
     }
 
-    pause(){
-        this.speed = 0;
-    }
-
     draw(c){
         c.save();
-        this.x += this.speed;
         c.drawImage(this.image, this.x, this.y);
         c.restore();
     }
@@ -41,6 +41,5 @@ export default class GroupView {
     update(ctx){
         this.draw(ctx);
     }
-
 
 }

@@ -186,7 +186,7 @@ export default class formView {
       );
     if (!faulty) {
       // save form.
-      let allInputs = document.querySelectorAll('#form input');
+      let allInputs = document.querySelectorAll('form input');
       // let values = [];
       let obj = {};
 

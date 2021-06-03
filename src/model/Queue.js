@@ -1,53 +1,87 @@
 import Group from "./Group";
 import GroupView from "../view/Canvas/GroupView";
+import randomIntFromInterval from "../helpers/randomIntFromInterval";
 
 export default class Queue {
 
     id;
-    max_groups_in_queue = 5;
-    groups = [];
+    max_groups_in_queue = 7;
+    // groups = [];
     groups_in_queue = [];
-    groups_on_field = [];
-    group_amount = 0;
+    removed = [];       // temp
+    group_amount = -1;
     active = true;
+    simController;
+    previous_group = null;
 
-    constructor(id) {
+    constructor(id, simController) {
         this.id = id;
+        this.simController = simController;
     }
 
-    getGroupModel(id){
-        this.groups.filter(g => {
-            if (g.id == id) {
-                return g;
+    getGroupModel(id) {
+        let m;
+        this.groups_in_queue.some(e => {
+            if (e && e.id === id) {
+                m = e;
+                return true;
             }
-        })
+        });
+        m.moveUpdate();
+        return m;
     }
 
     addPeople(amount) {
+        this.cleanup();
         if (this.groups_in_queue.length < this.max_groups_in_queue) {
-            let x;
+            let group;
             this.group_amount += 1;
+            let id = this.group_amount;
             switch (this.id) {
                 case 0:
-                    x = new Group(amount, 10, 5, this.group_amount);
+                    group = new Group(amount, 10, 5, this, id);
                     break;
                 case 1:
-                    x = new Group(amount, 10, 50, this.group_amount);
+                    group = new Group(amount, 10, 50, this, id);
                     break;
                 case 2:
-                    x = new Group(amount, 10, 90, this.group_amount);
+                    group = new Group(amount, 10, 90, this, id);
                     break;
                 case 3:
-                    x = new Group(amount, 10, 140, this.group_amount);
+                    group = new Group(amount, 10, 140, this, id);
                     break;
                 default:
                     console.log("No correct id");
                     break;
             }
-            this.groups.push(x);
-            this.groups_in_queue.push(x);
-            return x;
+            if (this.previous_group !== null) {
+                console.log(`linked ${this.previous_group.id}`);
+                console.log(this.previous_group);
+                group.previous_group = this.previous_group;
+            }
+            this.groups_in_queue[id] = group;
+            this.previous_group = group;
+            return group;
         }
+        return null;
     }
 
+    handleGroup(group) {
+        let waitTime = randomIntFromInterval(1000, 3000);
+        setTimeout(() => {
+            group.unpause();
+        }, waitTime);
+        // this.simController.placeGroupInRegion(group);
+    }
+
+    cleanup() {
+        for (let i = 0; i < this.groups_in_queue.length; i++) {
+            if (!this.groups_in_queue[i]) continue;
+            let g = this.groups_in_queue[i];
+            if (g.toBeRemoved === true) {
+                this.groups_in_queue.splice(i, 1);
+                // this.groups_in_queue[i] = null;
+            }
+        }
+    }
 }
