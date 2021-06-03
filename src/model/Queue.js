@@ -33,7 +33,8 @@ export default class Queue {
 
     addPeople(amount) {
         this.cleanup();
-        if (this.groups_in_queue.length < this.max_groups_in_queue) {
+        console.log(this.groups_in_queue);
+        if (Object.keys(this.groups_in_queue).length < this.max_groups_in_queue) {
             let group;
             this.group_amount += 1;
             let id = this.group_amount;
@@ -55,10 +56,9 @@ export default class Queue {
                     break;
             }
             if (this.previous_group !== null) {
-                console.log(`linked ${this.previous_group.id}`);
-                console.log(this.previous_group);
-                group.previous_group = this.previous_group;
+                this.previous_group.setPreviousGroup(group);
             }
+
             this.groups_in_queue[id] = group;
             this.previous_group = group;
             return group;
@@ -76,11 +76,9 @@ export default class Queue {
 
     cleanup() {
         for (let i = 0; i < this.groups_in_queue.length; i++) {
-            if (!this.groups_in_queue[i]) continue;
             let g = this.groups_in_queue[i];
-            if (g.toBeRemoved === true) {
+            if (g === undefined || g.toBeRemoved === true || g === null) {
                 this.groups_in_queue.splice(i, 1);
-                // this.groups_in_queue[i] = null;
             }
         }
     }

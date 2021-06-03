@@ -34,7 +34,8 @@ export default class FormController {
     }
 
     saveData(id, values) {
-        localStorage.setItem(id, JSON.stringify(values))
-        localStorage.removeItem('r' + id)
+        localStorage.setItem(id, JSON.stringify(values));
+        localStorage.removeItem('r' + id);
+        localStorage.removeItem('locked' + id);
     }
 }

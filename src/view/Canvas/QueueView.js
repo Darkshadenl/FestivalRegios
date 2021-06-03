@@ -38,6 +38,11 @@ export default class QueueView {
         this.queue_3_groups = [];
     }
 
+    cleanup(){
+        const div = document.getElementById("canvasDiv");
+        div.childNodes.forEach(e => e.remove());
+    }
+
     addGroup(queueNr, groupObject) {
         if (!groupObject) return;
         switch (queueNr) {
@@ -73,22 +78,13 @@ export default class QueueView {
         if (QgroupView.toBeRemoved === true) {
             this.removeFromQueue(queueId, QgroupView);
         } else {
-            // console.log(`ID:${QgroupView.id}  Remove:${QgroupView.toBeRemoved}`);
-            // try {
-                let model = this.simController.getModel(queueId, QgroupView.id);
-                QgroupView.refreshData(model);
-                QgroupView.update(this.ctx);
-            // } catch (e){
-            //     console.log(e);
-            //     console.log(queueId);
-            //     console.log(QgroupView.id);
-            //     throw "Error";
-            // }
-
+            let model = this.simController.getModel(queueId, QgroupView.id);
+            QgroupView.refreshData(model);
+            QgroupView.update(this.ctx);
         }
     }
 
-    removeFromQueue(qId, QgroupView){
+    removeFromQueue(qId, QgroupView) {
         let queue = this.determineQueue(qId);
         for (let i = 0; i < queue.length; i++) {
             if (!queue[i]) continue;
@@ -99,7 +95,7 @@ export default class QueueView {
         }
     }
 
-    determineQueue(qId){
+    determineQueue(qId) {
         switch (qId) {
             case 0:
                 return this.queue_0_groups;

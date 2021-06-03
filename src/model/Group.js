@@ -5,7 +5,7 @@ export default class Group {
     x;
     y;
     queue;
-    def_speed = 1.5
+    def_speed = 0.9;
     speed = this.def_speed;
     previous_group = null;
     temp_wait_x_range = [];
@@ -23,10 +23,11 @@ export default class Group {
     }
 
     moveUpdate() {
+        // console.log(`moveUpdate ${this.id}  ${this.x}`);
         this.shouldPause();
         this.checkReachedDesk();
         this.x += this.speed;
-        if (this.x > 340) {
+        if (this.x > 330) {
             this.toBeRemoved = true;
         }
     }
@@ -34,8 +35,9 @@ export default class Group {
     checkReachedDesk(){
         if (this.x > 320 && !this.checked){
             this.pause();
-            if (this.previous_group != null)
+            if (this.previous_group !== null){
                 this.previous_group.setToBePaused(this.x);
+            }
             this.queue.handleGroup(this);
             this.checked = true;
         }
@@ -44,20 +46,18 @@ export default class Group {
     shouldPause() {
         if (this.toBePaused) {
             if (this.x >= this.temp_wait_x_range['a'] && this.x <= this.temp_wait_x_range['b']){
-                console.log(this.previous_group)
-                if (this.previous_group)
-                    this.previous_group.setToBePaused(this.x);
                 this.pause();
+                if (this.previous_group){
+                    this.previous_group.setToBePaused(this.x);
+                }
             }
         }
     }
 
     setToBePaused(x_of_next){
-        console.log('Pausing prev group');
         this.toBePaused = true;
         this.temp_wait_x_range['a'] = x_of_next - 50;
-        this.temp_wait_x_range['b'] = x_of_next - 5;
-        this.shouldPause();
+        this.temp_wait_x_range['b'] = x_of_next - 10;
     }
 
     // either get paused by other group, or paused by queue.
@@ -73,6 +73,11 @@ export default class Group {
         if (this.previous_group !== null){
             this.previous_group.unpause();
         }
+    }
+
+    setPreviousGroup(group){
+        if (group === null) throw 'group is null';
+        this.previous_group = group;
     }
 
 }

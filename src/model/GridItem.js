@@ -5,9 +5,9 @@ export default class GridItem {
     name;
     type;
     details = "";
-    max_visitors = "";
-    opens_at = "";
-    closes_at = "";
+    max_visitors = "100";
+    opens_at = "13:00";
+    closes_at = "21:00";
     capacity_in_kilo = "";
     empty_moment_in_seconds = 30;
     toilet_full = false;

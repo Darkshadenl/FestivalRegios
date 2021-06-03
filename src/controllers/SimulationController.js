@@ -4,26 +4,40 @@ import randomIntFromInterval from "../helpers/randomIntFromInterval";
 
 export default class SimulationController {
 
-    hasRun = false;
     min_wait = 1000;
     max_wait = 2000;
     queues = [];
     view;
 
+    people = 0;
+    available_queuenr = 0;
+
     constructor(RegionController) {
         this.regionController = RegionController;
-        this.queues = [new Queue(0, this), new Queue(1, this), new Queue(2, this), new Queue(3, this)];
     }
 
     startSim() {
-        if (!this.hasRun) {
-            this.view = new QueueView(this);
-            this.hasRun = true;
-        }
+        this.disableBtns();
+        this.view = new QueueView(this);
+        this.queues = [new Queue(0, this), new Queue(1, this), new Queue(2, this), new Queue(3, this)];
         this.started = true;
         this.regionController.getCurrentView().changeButton(this.started);
         this.view.startSimulationDraw();
         this.startRandomPeopleSpawning();
+    }
+
+    disableBtns(){
+        let regionMenu = document.getElementById('regionMenu');
+        let configBtnDiv = document.getElementById('configbtnContainer');
+        regionMenu.childNodes.forEach(c => c.disabled = true);
+        configBtnDiv.childNodes.forEach(c => c.disabled = true);
+    }
+
+    enableBtns(){
+        let regionMenu = document.getElementById('regionMenu');
+        let configBtnDiv = document.getElementById('configbtnContainer');
+        regionMenu.childNodes.forEach(c => c.disabled = false);
+        configBtnDiv.childNodes.forEach(c => c.disabled = false);
     }
 
     startRandomPeopleSpawning() {
@@ -32,9 +46,9 @@ export default class SimulationController {
         let availableQueues = this.queues.filter(q => { if (q.active) return q; })
         let randomWait = randomIntFromInterval(this.min_wait, this.max_wait);
         let randomAmountPeeps = randomIntFromInterval(1, 4);
-        let random = randomIntFromInterval(0, availableQueues.length - 1);
-        let group = availableQueues[random].addPeople(randomAmountPeeps);
-        this.view.addGroup(random, group);
+        // queueNr = randomIntFromInterval(0, availableQueues.length - 1);
+        let group = availableQueues[this.available_queuenr].addPeople(randomAmountPeeps);
+        this.view.addGroup(this.available_queuenr, group);       // TODO change to random
         setTimeout(() => { this.startRandomPeopleSpawning() }, randomWait);
     }
 
@@ -54,6 +68,9 @@ export default class SimulationController {
         cancelAnimationFrame(this.view.animateId);
         this.started = false;
         this.regionController.getCurrentView().changeButton(this.started);
+        this.view.cleanup();
+        this.view = null;
+        this.enableBtns();
     }
 
     placeGroupInRegion(group){
