@@ -1,18 +1,23 @@
 "use strict";
 
+import randomInt from "../helpers/randomInt";
+
 export default class Gridspot {
 
-    y; x;
+    x;
+    y;
     peopleAmount;
-    peopleCollection = [];
+    max_peopleAmount = 7;
     gridItem = null;
+    simulationItems = [];
     available = true;
+    available_for_groups = true;
     position;
 
-    left_spot;
-    right_spot;
-    above_spot;
-    bottom_spot;
+    left_spot = null;
+    right_spot = null;
+    above_spot = null;
+    bottom_spot = null;
 
     // y = row, col = x
     constructor(x, y) {
@@ -29,12 +34,100 @@ export default class Gridspot {
         return type;
     }
 
+    moveGroups(){
+        console.log('moving groups');
+        this.simulationItems.forEach(group => {
+            let shouldMove = group.shouldIMove();
+            shouldMove = true; // TODO remove
+            if (shouldMove) {
+                let randomGridSpotNeighbour = this.getRandomNeighbour();
+                console.log(`Current pos: x:${this.x} y:${this.y}`);
+                console.log(`Random neighbour: x:${randomGridSpotNeighbour.x} y:${randomGridSpotNeighbour.y}`);
+                let moved = false;
+                let count = 0;
+                while (!moved) {
+                    moved = randomGridSpotNeighbour.addGroup(group);
+
+                    if (moved){
+                        console.log(`Moved! ${this.x} ${this.y}`);
+                        this.removeSimulationItem(group);
+                        return randomGridSpotNeighbour;
+                    }
+                    count += 1;
+                    if (count === 5)
+                        moved = true;
+                }
+            }
+        })
+        return null;
+    }
+
+    getRandomNeighbour(){
+        const neighBours = [this.left_spot, this.right_spot, this.above_spot, this.bottom_spot];
+        let chosen = false;
+        while (!chosen) {
+            let random = randomInt(0, neighBours.length);
+            if (neighBours[random] != null){
+                chosen = neighBours[random];
+            }
+        }
+        return chosen;
+    }
+
     getGridItem() {
         return this.gridItem;
     }
 
     isAvailable() {
         return this.available;
+    }
+
+    isAvailableForGroups(){
+        return this.available_for_groups;
+    }
+
+    addGroup(group){
+        if (this.isAvailableForGroups()) {
+            const fits = this.checkIfNewGroupFits(group);
+            if (fits){
+                if (group.id === 1) {
+                    console.log(`Found new gridspot for group 1.`);
+                }
+                this.simulationItems.push(group);
+                group.setGridSpot(this);
+                if (this.getCountPeople() >= this.max_peopleAmount) {
+                    this.available_for_groups = false;
+                }
+                return true;
+            }
+        } else {
+            return this.isAvailableForGroups();
+        }
+    }
+
+    checkIfNewGroupFits(item){
+        return this.getCountPeople() + item.size <= 7;
+    }
+
+    removeSimulationItem(s){
+        for (let i = 0; i < Object.keys(this.simulationItems).length; i++) {
+            if (this.simulationItems[i] === s) {
+                this.simulationItems.splice(i, 1);
+            }
+        }
+    }
+
+    getCountPeople(){
+        let size = 0;
+        this.simulationItems.forEach(e => {
+            size += e.size;
+        })
+        return size;
+    }
+
+    cleanSimulation(){
+        this.simulationItems = [];
+        this.available = true;
     }
 
     /// return true if placed succesfully.
@@ -46,7 +139,6 @@ export default class Gridspot {
 
             // check if it can be placed. Whichever point of the item you're dragging doesn't matter. It always calculates from the left upper point. 
             let canBePlaced = this.canItemBePlaced(width, height);
-            // console.log(canBePlaced);
 
             if (canBePlaced) {
                 this.placeItem(width, height, item);
@@ -55,7 +147,7 @@ export default class Gridspot {
                 return false;
             }
         } else {
-            return this.available;
+            return this.isAvailable();
         }
     }
 

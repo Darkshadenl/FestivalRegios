@@ -1,4 +1,4 @@
-import formView from "../view/formView";
+import FormView from "../view/FormView";
 
 export default class FormController {
 
@@ -10,7 +10,7 @@ export default class FormController {
     }
 
     showView(regionName, id) {
-        this.current_form = new formView(regionName, id);
+        this.current_form = new FormView(regionName, id);
         this.current_form.controller = this;
         this.current_form.showView();
     }

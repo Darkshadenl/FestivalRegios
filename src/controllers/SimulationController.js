@@ -1,16 +1,16 @@
 import QueueView from "../view/Canvas/QueueView";
 import Queue from "../model/Queue";
-import randomIntFromInterval from "../helpers/randomIntFromInterval";
+import randomInt from "../helpers/randomInt";
 
 export default class SimulationController {
 
     min_wait = 1000;
     max_wait = 2000;
-    queues = [];
-    view;
+    queueView;
 
-    people = 0;
-    available_queuenr = 0;
+    available_queues = 4;
+    max_groups_in_region = 0;
+    groups = 0;
 
     constructor(RegionController) {
         this.regionController = RegionController;
@@ -18,63 +18,66 @@ export default class SimulationController {
 
     startSim() {
         this.disableBtns();
-        this.view = new QueueView(this);
-        this.queues = [new Queue(0, this), new Queue(1, this), new Queue(2, this), new Queue(3, this)];
+        this.queueView = new QueueView(this);
+        this.regionController.getCurrentRegion().createQueues(this.available_queues);
         this.started = true;
         this.regionController.getCurrentView().changeButton(this.started);
-        this.view.startSimulationDraw();
+        this.queueView.startSimulationDraw();
         this.startRandomPeopleSpawning();
     }
 
     disableBtns(){
-        let regionMenu = document.getElementById('regionMenu');
-        let configBtnDiv = document.getElementById('configbtnContainer');
-        regionMenu.childNodes.forEach(c => c.disabled = true);
-        configBtnDiv.childNodes.forEach(c => c.disabled = true);
+        document.getElementById('regionMenu').childNodes.forEach(c => c.disabled = true);
+        document.getElementById('configbtnContainer').childNodes.forEach(c => c.disabled = true);
     }
 
     enableBtns(){
-        let regionMenu = document.getElementById('regionMenu');
-        let configBtnDiv = document.getElementById('configbtnContainer');
-        regionMenu.childNodes.forEach(c => c.disabled = false);
-        configBtnDiv.childNodes.forEach(c => c.disabled = false);
+        document.getElementById('regionMenu').childNodes.forEach(c => c.disabled = false);
+        document.getElementById('configbtnContainer').childNodes.forEach(c => c.disabled = false);
     }
 
     startRandomPeopleSpawning() {
         if (!this.started) return;
-        console.log("random people spawning");
-        let availableQueues = this.queues.filter(q => { if (q.active) return q; })
-        let randomWait = randomIntFromInterval(this.min_wait, this.max_wait);
-        let randomAmountPeeps = randomIntFromInterval(1, 4);
-        // queueNr = randomIntFromInterval(0, availableQueues.length - 1);
-        let group = availableQueues[this.available_queuenr].addPeople(randomAmountPeeps);
-        this.view.addGroup(this.available_queuenr, group);       // TODO change to random
+
+        let queueNr = randomInt(1, this.available_queues);
+        console.log(queueNr);
+        let randomAmountPeeps = randomInt(1, 4);
+        let queue = this.regionController.getCurrentRegion().getQueue(queueNr);
+        let group = null;
+        if (queue)
+            group = queue.addGroup(randomAmountPeeps);
+        if (group)
+            this.queueView.addGroup(queue, group);
+
+        this.regionController.getCurrentView().updateSim();
+        let randomWait = randomInt(this.min_wait, this.max_wait);
         setTimeout(() => { this.startRandomPeopleSpawning() }, randomWait);
     }
 
     getModel(queueNr, modelNr) {
         if (queueNr === null) return;
         if (modelNr === null) return;
-        let m;
-        this.queues.forEach(q => {
-            if (q.id == queueNr) {
-                m = q.getGroupModel(modelNr);
-            }
-        });
-        return m;
+        let queue = this.regionController.getCurrentRegion().getQueue(queueNr);
+        return queue.getGroupModel(modelNr);
     }
 
     stopSim() {
-        cancelAnimationFrame(this.view.animateId);
+        cancelAnimationFrame(this.queueView.animateId);
         this.started = false;
+        this.regionController.cleanGroupsFromGrid();
         this.regionController.getCurrentView().changeButton(this.started);
-        this.view.cleanup();
-        this.view = null;
+        this.queueView.cleanup();
+        this.queueView = null;
         this.enableBtns();
     }
 
     placeGroupInRegion(group){
-        this.regionController.getCurrentRegion().placeGroup(group);
+        let gridSpot;
+        if (this.max_groups_in_region === 0 || this.groups < this.max_groups_in_region) {
+            gridSpot = this.regionController.getCurrentRegion().placeGroupRandomlyOnGrid(group);
+            this.groups += 1;
+        }
+        return gridSpot;
     }
 
 }

@@ -10,9 +10,11 @@ export default class RegionController {
   current_view;
   current_region;
 
+  simulationController;
+
   constructor(mainController) {
     this.mainController = mainController;
-    this.festival = new Festival(this.amount_regions);
+    this.festival = new Festival(this.amount_regions, this);
   }
 
   showView(showDefault) {
@@ -32,6 +34,16 @@ export default class RegionController {
       this.simulationController = new SimulationController(this);
     }
     this.simulationController.startSim(this);
+  }
+
+  cleanGroupsFromGrid(){
+    let item = null;
+
+    do {
+      item = this.getCurrentRegion().removeLedgerItem();
+      console.log(item);
+      this.getCurrentView().removeGroupFromGrid(item);
+    } while (item !== undefined)
   }
 
   getCurrentView(){
@@ -123,4 +135,5 @@ export default class RegionController {
       })
     );
   }
+
 }

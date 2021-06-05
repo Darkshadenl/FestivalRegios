@@ -1,4 +1,4 @@
-export default class weatherView {
+export default class WeatherView {
 
     controller;
 

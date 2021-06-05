@@ -1,4 +1,4 @@
-import weatherView from "../view/weatherView";
+import WeatherView from "../view/WeatherView";
 import Weather from "../enums/weather";
 
 export default class APIController {
@@ -12,7 +12,7 @@ export default class APIController {
 
     constructor(mainController){
         this.mainController = mainController;
-        this.weatherView = new weatherView(this);
+        this.weatherView = new WeatherView(this);
     }
 
     update(lat, lon){

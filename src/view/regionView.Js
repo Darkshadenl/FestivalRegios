@@ -1,10 +1,11 @@
-import DragDrop from "../view/DragDrop";
+import DragDrop from "./DragDrop";
 import extractXYPosition from "../helpers/extractXYPosition"
 import DetailView from "./DetailView";
 import Gridspot from "../model/Gridspot";
 import GridItem from "../model/GridItem";
+import {forEach} from "underscore";
 
-export default class regionView {
+export default class RegionView {
     element;
     regions;
     controller;
@@ -327,16 +328,6 @@ export default class regionView {
         }
     }
 
-    updatePeople() {
-        let existingCoordinates = this.controller.getCurrentRegion().gridSpots;
-        existingCoordinates.forEach((row) => {
-            row.forEach((col) => {
-                //check amount of people
-                //update view
-            });
-        });
-    }
-
     addExistingPieces() {
         let existingCoordinates = this.controller.getCurrentRegion().gridSpots;
         if (existingCoordinates == null) return;
@@ -403,9 +394,7 @@ export default class regionView {
 
             let puzzlePiece = document.createElement("div");
             puzzlePiece.draggable = true;
-            puzzlePiece.innerText = this.controller.getCurrentRegion().festivalItemsAmounts[
-                x
-                ];
+            puzzlePiece.innerText = this.controller.getCurrentRegion().festivalItemsAmounts[x];
             puzzlePiece.addEventListener(
                 "dragstart",
                 (e) => {
@@ -420,44 +409,7 @@ export default class regionView {
                 },
                 false
             );
-
-            switch (x) {
-                case "tent":
-                    puzzlePiece.classList.add("tent");
-                    puzzlePiece.id = "tent";
-                    break;
-                case "eetkraampje":
-                    puzzlePiece.classList.add("eetkraampje");
-                    puzzlePiece.id = "eetkraampje";
-                    break;
-                case "drankkraampje":
-                    puzzlePiece.classList.add("drankkraampje");
-                    puzzlePiece.id = "drankkraampje";
-                    break;
-                case "hogeBoom":
-                    puzzlePiece.classList.add("hogeBoom");
-                    puzzlePiece.id = "hogeBoom";
-                    break;
-                case "schaduwBoom":
-                    puzzlePiece.classList.add("schaduwBoom");
-                    puzzlePiece.id = "schaduwBoom";
-                    break;
-                case "bredeBoom":
-                    puzzlePiece.classList.add("bredeBoom");
-                    puzzlePiece.id = "bredeBoom";
-                    break;
-                case "prullenbak":
-                    puzzlePiece.classList.add("prullenbak");
-                    puzzlePiece.id = "prullenbak";
-                    break;
-                case "toilet":
-                    puzzlePiece.classList.add("toilet");
-                    puzzlePiece.id = "toilet";
-                    break;
-                default:
-                    console.log(x);
-                    break;
-            }
+            this.assignClassToPuzzlePiece(x, puzzlePiece);
             puzzlePiece.classList.add("puzzlePiece");
             col.appendChild(puzzlePiece);
             if (amount === 3) {
@@ -475,6 +427,46 @@ export default class regionView {
         }
     }
 
+    assignClassToPuzzlePiece(x, puzzlePiece){
+        switch (x) {
+            case "tent":
+                puzzlePiece.classList.add("tent");
+                puzzlePiece.id = "tent";
+                break;
+            case "eetkraampje":
+                puzzlePiece.classList.add("eetkraampje");
+                puzzlePiece.id = "eetkraampje";
+                break;
+            case "drankkraampje":
+                puzzlePiece.classList.add("drankkraampje");
+                puzzlePiece.id = "drankkraampje";
+                break;
+            case "hogeBoom":
+                puzzlePiece.classList.add("hogeBoom");
+                puzzlePiece.id = "hogeBoom";
+                break;
+            case "schaduwBoom":
+                puzzlePiece.classList.add("schaduwBoom");
+                puzzlePiece.id = "schaduwBoom";
+                break;
+            case "bredeBoom":
+                puzzlePiece.classList.add("bredeBoom");
+                puzzlePiece.id = "bredeBoom";
+                break;
+            case "prullenbak":
+                puzzlePiece.classList.add("prullenbak");
+                puzzlePiece.id = "prullenbak";
+                break;
+            case "toilet":
+                puzzlePiece.classList.add("toilet");
+                puzzlePiece.id = "toilet";
+                break;
+            default:
+                console.log(x);
+                break;
+        }
+    }
+
     hideView() {
         document.getElementsByClassName("regionsContainer")[0].style.display =
             "none";
@@ -485,5 +477,48 @@ export default class regionView {
         this.showRegion();
         document.getElementsByClassName("regionsContainer")[0].style.display =
             "block";
+    }
+
+    updateSim(){
+        const gridSpots = this.controller.getCurrentRegion().gridSpots;
+        const gridSpotsLength = gridSpots.length;
+
+        console.log('Updating sim');
+        for (let i = 0; i < gridSpotsLength - 1; i++) {
+            if (gridSpots[i] == null) continue;
+            for (let j = 0; j < gridSpots[i].length; j++) {
+                if (gridSpots[i][j] == null) continue;
+                if (Object.keys(gridSpots[i][j].simulationItems).length === 0) continue;
+                // console.log(`Gridspot ${gridSpots[i][j].x}, ${gridSpots[i][j].y} simulationitems length = ${Object.keys(gridSpots[i][j].simulationItems).length}`)
+                let xy = 'col' + gridSpots[i][j].x + 'row' + gridSpots[i][j].y;
+                let element = document.getElementById(xy);
+                this.changeGroupPicLocation(gridSpots[i][j], element);
+                let newSpot = gridSpots[i][j].moveGroups();
+                this.controller.getCurrentRegion().updateLedger(gridSpots[i][j], newSpot);
+            }
+        }
+    }
+
+    changeGroupPicLocation(gridSpot, element) {
+        forEach(gridSpot.simulationItems, (e) => {
+            if (e.previousGridSpot) {
+                let prevXY = this.formattedXY(e.previousGridSpot);
+                let prevElement = document.getElementById(prevXY);
+                prevElement.classList.toggle(e.retrieveGroupImageClass(), false);
+            }
+            element.classList.toggle(e.retrieveGroupImageClass(), true);
+        })
+    }
+
+    removeGroupFromGrid(item){
+        let element = document.getElementById(this.formattedXY(item));
+        element.classList.toggle('group1', false);
+        element.classList.toggle('group2', false);
+        element.classList.toggle('group3', false);
+        element.classList.toggle('group4', false);
+    }
+
+    formattedXY(gridspot){
+        return 'col' + gridspot.x + 'row' + gridspot.y;
     }
 }

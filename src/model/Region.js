@@ -1,22 +1,25 @@
-"use strict";
-
 import Gridspot from "../model/Gridspot";
 import GridItem from "./GridItem";
+import {contains, forEach} from "underscore";
+import without from "underscore/modules/without";
+import Queue from "./Queue";
 
 export default class Region {
     id;
     name;
-    openAreas = [];
+    controller;
+    #simulationLedger = [];  // only used for deletion after stop sim
     gridSpots = [];
     queues = [];
     filledSpots;        // only used to easily fill grid. Use data from this array to access gridspots
-    rows = 15;
-    cols = 15;
+
     // hasPrullenbakken = false;
     hasBredeBomen = false;
     hasSchaduwBomen = false;
     hasHogeBomen = false;
     isLocked = false;
+    rows = 15;
+    cols = 15;
 
     festivalItemsAmounts = {
         tent: 0,
@@ -29,11 +32,26 @@ export default class Region {
         prullenbak: 0,
     };
 
-    constructor(id, name) {
+    constructor(id, name, controller) {
+        this.regionController = controller;
         this.id = id;
         this.name = name;
         this.buildGridData();
         this.retrieveDataFromLocalStorage();
+    }
+
+    get simulationLedger(){
+        console.log('Simulationledger accessed');
+        return this.#simulationLedger;
+    }
+
+    set setSimulationLedger(value){
+        this.#simulationLedger = value;
+        console.log(this.#simulationLedger);
+    }
+
+    addToSimulationLedger(item){
+        this.#simulationLedger.push(item);
     }
 
     buildGridData() {
@@ -73,22 +91,30 @@ export default class Region {
 
     cleanRegion() {
         this.gridSpots = [];
-        this.openAreas = [];
+        this.simulationLedger = [];
         this.filledSpots = null;
 
         this.buildGridData();
     }
 
     lockRegion() {
-        for (let y = 0; y < this.gridSpots.length; y++) {
-            this.openAreas.push([]);
-            for (let x = 0; x < this.gridSpots[y].length; x++) {
-                if (this.gridSpots[y][x].isAvailable()) {
-                    this.openAreas[y].push(this.gridSpots[y][x]);
-                }
+        this.isLocked = true;
+    }
+
+    createQueues(amount){
+        while (amount > 0) {
+            this.queues.push(new Queue(amount, this.regionController));
+            amount -= 1;
+        }
+    }
+
+    getQueue(id){
+        for (let i = 0; i < this.queues.length; i++) {
+            if (!this.queues[i]) continue;
+            if (this.queues[i].id === id) {
+                return this.queues[i];
             }
         }
-        this.isLocked = true;
     }
 
     // If filled returns the gridspot, else false.
@@ -103,14 +129,29 @@ export default class Region {
         return this.gridSpots[row][col];
     }
 
-    placeGroup(group){
+    // Gives back a random xy on the grid.
+    // And regionSpot.
+    placeGroupRandomlyOnGrid(group){
+        let done = false;
+        let row = null;
+        let col = null;
+        while (!done) {
+            row = Math.floor(Math.random() * this.rows);
+            col = Math.floor(Math.random() * this.cols);
 
+            if (this.gridSpots[row][col].isAvailable()) {
+                done = this.gridSpots[row][col].addGroup(group);
+                if (done){
+                    this.simulationLedger.push(this.gridSpots[row][col]);
+                }
+            }
+        }
+        return this.gridSpots[row][col];
     }
 
+    // checks for corners and sides
+    // placement in gridspots
     placeElement(type, col, row, details) {
-        // checks for corners and sides
-        // placement in gridspots
-
         if (this.gridSpots[row][col].isAvailable()) {
             let newItem = new GridItem(type);
             newItem.setupDetails(details);
@@ -181,18 +222,6 @@ export default class Region {
         });
     }
 
-    placePrullenbakken() {
-        for (let j = 0; j < this.festivalItemsAmounts.prullenbak; j++) {
-            let done = false;
-            while (!done) {
-                let randomRow = Math.floor(Math.random() * this.rows);
-                let randomCol = Math.floor(Math.random() * this.cols);
-                done = this.placeElement("prullenbak", randomCol, randomRow);
-            }
-        }
-        this.hasPrullenbakken = true;
-    }
-
     placeTrees() {
         for (let j = 0; j < this.festivalItemsAmounts.bredeBoom; j++) {
             let done = false;
@@ -222,4 +251,20 @@ export default class Region {
         }
         this.hasSchaduwBomen = true;
     }
+
+    updateLedger(originalSpot, newSpot){
+        if (newSpot && !contains(this.simulationLedger, newSpot)){
+            this.addToSimulationLedger(newSpot);
+        }
+        if (Object.keys(originalSpot.simulationItems).length === 0) {
+            this.setSimulationLedger = without(this.simulationLedger, originalSpot);
+        }
+    }
+
+    removeLedgerItem(){
+        console.log(this.simulationLedger);
+        let item = this.simulationLedger.pop();
+        return item;
+    }
+
 }

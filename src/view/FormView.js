@@ -1,6 +1,6 @@
 import Sizes from "../enums/sizes"
 
-export default class formView {
+export default class FormView {
   name;
   controller;
   formScreen;

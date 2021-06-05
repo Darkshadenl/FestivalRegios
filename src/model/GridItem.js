@@ -5,7 +5,7 @@ export default class GridItem {
     name;
     type;
     details = "";
-    max_visitors = "100";
+    max_visitors = "63";
     opens_at = "13:00";
     closes_at = "21:00";
     capacity_in_kilo = "";

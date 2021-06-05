@@ -5,10 +5,12 @@ import Region from "./Region";
 export default class Festival {
 
     regions = []
+    controller;
 
-    constructor(amount_regions) {
+    constructor(amount_regions, controller) {
+        this.controller = controller;
         for (let index = 1; index < amount_regions+1; index++) {
-            this.regions.push(new Region(index, 'Regio' + ' ' + index))
+            this.regions.push(new Region(index, 'Regio' + ' ' + index, controller))
         }
     }
 

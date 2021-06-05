@@ -43,19 +43,20 @@ export default class QueueView {
         div.childNodes.forEach(e => e.remove());
     }
 
-    addGroup(queueNr, groupObject) {
+    addGroup(queue, groupObject) {
         if (!groupObject) return;
-        switch (queueNr) {
-            case 0:
+
+        switch (queue.id) {
+            case 1:
                 this.queue_0_groups.push(new GroupView(groupObject));
                 break;
-            case 1:
+            case 2:
                 this.queue_1_groups.push(new GroupView(groupObject));
                 break;
-            case 2:
+            case 3:
                 this.queue_2_groups.push(new GroupView(groupObject));
                 break;
-            case 3:
+            case 4:
                 this.queue_3_groups.push(new GroupView(groupObject));
                 break;
         }
@@ -64,10 +65,10 @@ export default class QueueView {
     startSimulationDraw() {
         this.ctx.clearRect(0, 0, this.cWidth, this.cHeight);
         this.entryPoints.forEach(e => e.update(this.ctx));
-        this.queue_0_groups.forEach(g => this.updateAndRefresh(0, g));
-        this.queue_1_groups.forEach(g => this.updateAndRefresh(1, g));
-        this.queue_2_groups.forEach(g => this.updateAndRefresh(2, g));
-        this.queue_3_groups.forEach(g => this.updateAndRefresh(3, g));
+        this.queue_0_groups.forEach(g => this.updateAndRefresh(1, g));
+        this.queue_1_groups.forEach(g => this.updateAndRefresh(2, g));
+        this.queue_2_groups.forEach(g => this.updateAndRefresh(3, g));
+        this.queue_3_groups.forEach(g => this.updateAndRefresh(4, g));
         this.animateId = requestAnimationFrame(() => {
             this.startSimulationDraw()
         });
@@ -85,6 +86,7 @@ export default class QueueView {
     }
 
     removeFromQueue(qId, QgroupView) {
+        console.log(qId);
         let queue = this.determineQueue(qId);
         for (let i = 0; i < queue.length; i++) {
             if (!queue[i]) continue;
@@ -97,14 +99,14 @@ export default class QueueView {
 
     determineQueue(qId) {
         switch (qId) {
-            case 0:
-                return this.queue_0_groups;
             case 1:
-                return this.queue_1_groups;
+                return this.queue_0_groups;
             case 2:
-                return this.queue_0_groups;
+                return this.queue_1_groups;
             case 3:
-                return this.queue_0_groups;
+                return this.queue_2_groups;
+            case 4:
+                return this.queue_3_groups;
         }
     }
 

@@ -1,3 +1,5 @@
+import randomInt from "../helpers/randomInt";
+
 export default class Group {
 
     id;
@@ -5,14 +7,16 @@ export default class Group {
     x;
     y;
     queue;
-    def_speed = 0.9;
+    def_speed = 3;
     speed = this.def_speed;
-    previous_group = null;
+    previous_group = null;  // used for linking groups in queue
     temp_wait_x_range = [];
-    paused;
-    toBeRemoved= false;
-    toBePaused = false;
-    checked = false;
+    paused;                 // queue stuff
+    toBeRemoved= false;     // queue stuff
+    toBePaused = false;     // queue stuff
+    checked = false;        // queue stuff
+    #current_gridSpot = null;
+    #previous_gridSpot = false;
 
     constructor(size, x, y, queue, id) {
         this.size = size;
@@ -22,8 +26,12 @@ export default class Group {
         this.id = id;
     }
 
+    shouldIMove(){
+        let shouldI = randomInt(0, 1);
+        return shouldI !== 0;
+    }
+
     moveUpdate() {
-        // console.log(`moveUpdate ${this.id}  ${this.x}`);
         this.shouldPause();
         this.checkReachedDesk();
         this.x += this.speed;
@@ -76,8 +84,34 @@ export default class Group {
     }
 
     setPreviousGroup(group){
-        if (group === null) throw 'group is null';
         this.previous_group = group;
+    }
+
+    setGridSpot(gridSpot){
+        if (!gridSpot) return;
+        this.#previous_gridSpot = this.#current_gridSpot;
+        this.#current_gridSpot = gridSpot;
+        if (this.id == 1) {
+            console.log(this.#previous_gridSpot);
+            console.log(this.#current_gridSpot);
+        }
+    }
+
+    get previousGridSpot(){
+        return this.#previous_gridSpot;
+    }
+
+    retrieveGroupImageClass(){
+        switch (this.size) {
+            case 1:
+                return "group1";
+            case 2:
+                return "group2";
+            case 3:
+                return "group3";
+            case 4:
+                return "group4";
+        }
     }
 
 }
