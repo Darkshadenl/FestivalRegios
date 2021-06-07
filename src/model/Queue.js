@@ -82,7 +82,7 @@ export default class Queue {
                 group.unpause();
             }, waitTime);
             this.amount_spawned += 1;
-            group.setGridSpot(this.regionController.getSimulationController().placeGroupInRegion(group));
+            group.setGridSpot(this.regionController.simulationController.placeGroupInRegion(group));
         }
     }
 

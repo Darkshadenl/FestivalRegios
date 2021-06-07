@@ -1,10 +1,8 @@
-"use strict";
-
 import Region from "./Region";
 
 export default class Festival {
 
-    regions = []
+    #regions = []
     controller;
 
     constructor(amount_regions, controller) {
@@ -27,6 +25,14 @@ export default class Festival {
         })
         found_model.retrieveDataFromLocalStorage();
         return found_model;
+    }
+
+    get regions(){
+        return this.#regions;
+    }
+
+    set regions(value){
+        this.#regions = value;
     }
 
 }

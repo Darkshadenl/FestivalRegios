@@ -8,7 +8,7 @@ export default class Region {
     id;
     name;
     controller;
-    #simulationLedger = [];  // only used for deletion after stop sim
+    // #simulationLedger = [];  // only used for deletion after stop sim
     gridSpots = [];
     queues = [];
     filledSpots;        // only used to easily fill grid. Use data from this array to access gridspots
@@ -40,19 +40,30 @@ export default class Region {
         this.retrieveDataFromLocalStorage();
     }
 
-    get simulationLedger(){
-        console.log('Simulationledger accessed');
-        return this.#simulationLedger;
-    }
-
-    set setSimulationLedger(value){
-        this.#simulationLedger = value;
-        console.log(this.#simulationLedger);
-    }
-
-    addToSimulationLedger(item){
-        this.#simulationLedger.push(item);
-    }
+    // get simulationLedger(){
+    //     return this.#simulationLedger;
+    // }
+    //
+    // set setSimulationLedger(value){
+    //     this.#simulationLedger = value;
+    // }
+    //
+    // addToSimulationLedger(item){
+    //     console.log('Pre add to ledger');
+    //     console.log(this.simulationLedger);
+    //     this.#simulationLedger.push(item);
+    //     console.log('Added item to ledger');
+    //     const ledg = this.simulationLedger;
+    //     console.log({ ledg, item});
+    // }
+    //
+    // removeFromSimLedger(value){
+    //     console.log('Pre remove from ledger');
+    //     console.log(this.simulationLedger);
+    //     this.setSimulationLedger = without(this.simulationLedger, value);
+    //     console.log('Post remove from ledger');
+    //     console.log(this.simulationLedger);
+    // }
 
     buildGridData() {
         for (let y = 0; y < this.rows; y++) {
@@ -141,9 +152,9 @@ export default class Region {
 
             if (this.gridSpots[row][col].isAvailable()) {
                 done = this.gridSpots[row][col].addGroup(group);
-                if (done){
-                    this.simulationLedger.push(this.gridSpots[row][col]);
-                }
+                // if (done){
+                //     this.simulationLedger.push(this.gridSpots[row][col]);
+                // }
             }
         }
         return this.gridSpots[row][col];
@@ -252,19 +263,18 @@ export default class Region {
         this.hasSchaduwBomen = true;
     }
 
-    updateLedger(originalSpot, newSpot){
-        if (newSpot && !contains(this.simulationLedger, newSpot)){
-            this.addToSimulationLedger(newSpot);
-        }
-        if (Object.keys(originalSpot.simulationItems).length === 0) {
-            this.setSimulationLedger = without(this.simulationLedger, originalSpot);
-        }
-    }
+    // updateLedger(originalSpot, newSpot){
+    //     if (newSpot && !contains(this.simulationLedger, newSpot)){
+    //         this.addToSimulationLedger(newSpot);
+    //     }
+    //     if (Object.keys(originalSpot.simulationItems).length === 0) {
+    //         this.removeFromSimLedger(originalSpot);
+    //     }
+    // }
 
-    removeLedgerItem(){
-        console.log(this.simulationLedger);
-        let item = this.simulationLedger.pop();
-        return item;
-    }
+    // removeLedgerItem(){
+    //     let item = this.simulationLedger.pop();
+    //     return item;
+    // }
 
 }

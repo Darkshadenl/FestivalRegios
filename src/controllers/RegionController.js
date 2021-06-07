@@ -6,11 +6,11 @@ export default class RegionController {
   mainController;
   amount_regions = 6;
 
-  festival;
-  current_view;
-  current_region;
+  #festival;
+  #current_view;
+  #current_region;
 
-  simulationController;
+  #simulationController;
 
   constructor(mainController) {
     this.mainController = mainController;
@@ -37,29 +37,25 @@ export default class RegionController {
   }
 
   cleanGroupsFromGrid(){
-    let item = null;
-
-    do {
-      item = this.getCurrentRegion().removeLedgerItem();
-      console.log(item);
-      this.getCurrentView().removeGroupFromGrid(item);
-    } while (item !== undefined)
+    // let item = null;
+    // do {
+    //   item = this.getCurrentRegion().removeLedgerItem();
+    //   console.log(item);
+    //   this.getCurrentView().removeGroupFromGrid(item);
+    // } while (item !== undefined)
   }
 
-  getCurrentView(){
-      return this.current_view;
+  updateSim(){
+    const spots = this.current_region.gridSpots;
+    for (let i = 0; i < spots.length; i++) {
+      for (let j = 0; j < spots[i].length; j++) {
+        this.current_view.updateSim(spots[i[j]]);
+      }
+    }
   }
 
-  getSimulationController(){
-    return this.simulationController;
-  }
-
-  getRegions() {
+  get regions() {
     return this.festival.regions;
-  }
-
-  getCurrentRegion() {
-    return this.current_region;
   }
 
   lockCurrentRegion() {
@@ -136,4 +132,36 @@ export default class RegionController {
     );
   }
 
+
+  set current_view(value){
+    this.#current_view = value;
+  }
+
+  get current_view() {
+    return this.#current_view;
+  }
+
+  get current_region() {
+    return this.#current_region;
+  }
+
+  set current_region(value) {
+    this.#current_region = value;
+  }
+
+  get simulationController() {
+    return this.#simulationController;
+  }
+
+  set simulationController(value) {
+    this.#simulationController = value;
+  }
+
+  get festival() {
+    return this.#festival;
+  }
+
+  set festival(value) {
+    this.#festival = value;
+  }
 }

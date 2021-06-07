@@ -24,7 +24,7 @@ export default class RegionView {
         let buttons = [];
         let viewNames = [];
 
-        let regionModels = this.controller.getRegions();
+        let regionModels = this.controller.regions;
 
         regionModels.forEach((model) => {
             viewNames.push(model.name);
@@ -42,7 +42,7 @@ export default class RegionView {
                 });
             });
 
-            if (button.innerText == this.controller.getCurrentRegion().name) {
+            if (button.innerText == this.controller.current_region.name) {
                 button.classList.remove("btn-info");
                 button.classList.add("btn-primary");
             }
@@ -115,7 +115,9 @@ export default class RegionView {
         btn.className = "ml-4 btn btn-success";
         btn.innerText = "Start sim";
         btn.id = "startSim";
-        btn.addEventListener("click", () => { this.controller.startSim() })
+        btn.addEventListener("click", () => {
+            this.controller.startSim()
+        })
         // this.controller.startSim();
         api.appendChild(btn);
 
@@ -139,7 +141,7 @@ export default class RegionView {
         lockbtn.innerText = "Regio gelocked";
     }
 
-    changeButton(started){
+    changeButton(started) {
         const div = document.getElementById("api");
         const btn = document.createElement("btn");
         if (started) {
@@ -147,14 +149,18 @@ export default class RegionView {
             btn.className = "ml-4 btn btn-danger";
             btn.innerText = "Stop sim";
             btn.id = "stopSim";
-            btn.addEventListener('click', () => { this.controller.getSimulationController().stopSim() });
+            btn.addEventListener('click', () => {
+                this.controller.simulationController.stopSim()
+            });
             div.appendChild(btn);
         } else {
             document.getElementById("stopSim").remove();
             btn.className = "ml-4 btn btn-success";
             btn.innerText = "Start sim";
             btn.id = "startSim";
-            btn.addEventListener('click', () => { this.controller.getSimulationController().startSim() });
+            btn.addEventListener('click', () => {
+                this.controller.simulationController.startSim()
+            });
             div.appendChild(btn);
         }
     }
@@ -163,7 +169,7 @@ export default class RegionView {
         // check if gridspot has a piece
         const id = element.id;
         const colrow = extractXYPosition(id);
-        const filled = this.controller.getCurrentRegion().isFilled(colrow.col, colrow.row);
+        const filled = this.controller.current_region.isFilled(colrow.col, colrow.row);
 
         if (filled instanceof Gridspot) {
             const gridItem = filled.getGridItem();
@@ -238,12 +244,12 @@ export default class RegionView {
         let configBtn = document.createElement("button");
         configBtn.className = "btn btn-dark";
         configBtn.innerText =
-            "Configureer " + this.controller.getCurrentRegion().name;
+            "Configureer " + this.controller.current_region.name;
         configBtn.id = "configRegioBtn";
         configBtn.addEventListener("click", () =>
             this.controller.switchToForm(
-                this.controller.getCurrentRegion().name,
-                this.controller.getCurrentRegion().id
+                this.controller.current_region.name,
+                this.controller.current_region.id
             )
         );
         configureContainer.appendChild(configBtn);
@@ -323,13 +329,13 @@ export default class RegionView {
         this.createPieces();
         this.addExistingPieces();
 
-        if (this.controller.getCurrentRegion().isLocked) {
+        if (this.controller.current_region.isLocked) {
             this.lockRegion();
         }
     }
 
     addExistingPieces() {
-        let existingCoordinates = this.controller.getCurrentRegion().gridSpots;
+        let existingCoordinates = this.controller.current_region.gridSpots;
         if (existingCoordinates == null) return;
 
         existingCoordinates.forEach((row) => {
@@ -386,7 +392,7 @@ export default class RegionView {
 
         let amount = 0;
 
-        for (let x in this.controller.getCurrentRegion().festivalItemsAmounts) {
+        for (let x in this.controller.current_region.festivalItemsAmounts) {
             if (x == "hogeBoom" || x == "schaduwBoom" || x == "bredeBoom") continue;
             amount++;
             let col = document.createElement("div");
@@ -394,7 +400,7 @@ export default class RegionView {
 
             let puzzlePiece = document.createElement("div");
             puzzlePiece.draggable = true;
-            puzzlePiece.innerText = this.controller.getCurrentRegion().festivalItemsAmounts[x];
+            puzzlePiece.innerText = this.controller.current_region.festivalItemsAmounts[x];
             puzzlePiece.addEventListener(
                 "dragstart",
                 (e) => {
@@ -427,7 +433,7 @@ export default class RegionView {
         }
     }
 
-    assignClassToPuzzlePiece(x, puzzlePiece){
+    assignClassToPuzzlePiece(x, puzzlePiece) {
         switch (x) {
             case "tent":
                 puzzlePiece.classList.add("tent");
@@ -479,27 +485,20 @@ export default class RegionView {
             "block";
     }
 
-    updateSim(){
-        const gridSpots = this.controller.getCurrentRegion().gridSpots;
-        const gridSpotsLength = gridSpots.length;
-
+    updateSim(gridSpot) {
+        if (!gridSpot) return;
         console.log('Updating sim');
-        for (let i = 0; i < gridSpotsLength - 1; i++) {
-            if (gridSpots[i] == null) continue;
-            for (let j = 0; j < gridSpots[i].length; j++) {
-                if (gridSpots[i][j] == null) continue;
-                if (Object.keys(gridSpots[i][j].simulationItems).length === 0) continue;
-                // console.log(`Gridspot ${gridSpots[i][j].x}, ${gridSpots[i][j].y} simulationitems length = ${Object.keys(gridSpots[i][j].simulationItems).length}`)
-                let xy = 'col' + gridSpots[i][j].x + 'row' + gridSpots[i][j].y;
-                let element = document.getElementById(xy);
-                this.changeGroupPicLocation(gridSpots[i][j], element);
-                let newSpot = gridSpots[i][j].moveGroups();
-                this.controller.getCurrentRegion().updateLedger(gridSpots[i][j], newSpot);
-            }
-        }
+
+        let xy = this.formattedXY(gridSpot);
+        console.log(xy);
+        let element = document.getElementById(xy);
+        this.changeGroupPicLocation(gridSpot, element);
+        gridSpot.moveGroupsRandomly();
+        // this.controller.getCurrentRegion().updateLedger(gridSpots[i][j], newSpot);
     }
 
     changeGroupPicLocation(gridSpot, element) {
+        if (gridSpot.simulationItems.actual_length() < 1) return;
         forEach(gridSpot.simulationItems, (e) => {
             if (e.previousGridSpot) {
                 let prevXY = this.formattedXY(e.previousGridSpot);
@@ -510,7 +509,7 @@ export default class RegionView {
         })
     }
 
-    removeGroupFromGrid(item){
+    removeGroupFromGrid(item) {
         let element = document.getElementById(this.formattedXY(item));
         element.classList.toggle('group1', false);
         element.classList.toggle('group2', false);
@@ -518,7 +517,7 @@ export default class RegionView {
         element.classList.toggle('group4', false);
     }
 
-    formattedXY(gridspot){
-        return 'col' + gridspot.x + 'row' + gridspot.y;
+    formattedXY({x, y}) {
+        return 'col' + x + 'row' + y;
     }
 }

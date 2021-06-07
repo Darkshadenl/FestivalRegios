@@ -24,6 +24,8 @@ export default class Gridspot {
         this.x = x;
         this.y = y;
         this.position = 'x: ' + x + ' y:' + y;
+
+        Array.prototype.actual_length = () => { return Object.keys(this).length }
     }
 
     // returns type of deleted item
@@ -34,8 +36,9 @@ export default class Gridspot {
         return type;
     }
 
-    moveGroups(){
+    moveGroupsRandomly(){
         console.log('moving groups');
+        if (this.simulationItems.actual_length === 0) return;
         this.simulationItems.forEach(group => {
             let shouldMove = group.shouldIMove();
             shouldMove = true; // TODO remove
@@ -51,7 +54,7 @@ export default class Gridspot {
                     if (moved){
                         console.log(`Moved! ${this.x} ${this.y}`);
                         this.removeSimulationItem(group);
-                        return randomGridSpotNeighbour;
+                        moved = true;
                     }
                     count += 1;
                     if (count === 5)
@@ -59,7 +62,7 @@ export default class Gridspot {
                 }
             }
         })
-        return null;
+        // return null;
     }
 
     getRandomNeighbour(){

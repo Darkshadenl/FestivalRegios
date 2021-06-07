@@ -91,10 +91,10 @@ export default class Group {
         if (!gridSpot) return;
         this.#previous_gridSpot = this.#current_gridSpot;
         this.#current_gridSpot = gridSpot;
-        if (this.id == 1) {
-            console.log(this.#previous_gridSpot);
-            console.log(this.#current_gridSpot);
-        }
+        // if (this.id == 1) {
+        //     console.log(this.#previous_gridSpot);
+        //     console.log(this.#current_gridSpot);
+        // }
     }
 
     get previousGridSpot(){

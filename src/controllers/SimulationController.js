@@ -19,9 +19,9 @@ export default class SimulationController {
     startSim() {
         this.disableBtns();
         this.queueView = new QueueView(this);
-        this.regionController.getCurrentRegion().createQueues(this.available_queues);
+        this.regionController.current_region.createQueues(this.available_queues);
         this.started = true;
-        this.regionController.getCurrentView().changeButton(this.started);
+        this.regionController.current_view.changeButton(this.started);
         this.queueView.startSimulationDraw();
         this.startRandomPeopleSpawning();
     }
@@ -40,16 +40,15 @@ export default class SimulationController {
         if (!this.started) return;
 
         let queueNr = randomInt(1, this.available_queues);
-        console.log(queueNr);
         let randomAmountPeeps = randomInt(1, 4);
-        let queue = this.regionController.getCurrentRegion().getQueue(queueNr);
+        let queue = this.regionController.current_region.getQueue(queueNr);
         let group = null;
         if (queue)
             group = queue.addGroup(randomAmountPeeps);
         if (group)
             this.queueView.addGroup(queue, group);
 
-        this.regionController.getCurrentView().updateSim();
+        this.regionController.updateSim();
         let randomWait = randomInt(this.min_wait, this.max_wait);
         setTimeout(() => { this.startRandomPeopleSpawning() }, randomWait);
     }
@@ -57,7 +56,7 @@ export default class SimulationController {
     getModel(queueNr, modelNr) {
         if (queueNr === null) return;
         if (modelNr === null) return;
-        let queue = this.regionController.getCurrentRegion().getQueue(queueNr);
+        let queue = this.regionController.current_region.getQueue(queueNr);
         return queue.getGroupModel(modelNr);
     }
 
@@ -65,7 +64,7 @@ export default class SimulationController {
         cancelAnimationFrame(this.queueView.animateId);
         this.started = false;
         this.regionController.cleanGroupsFromGrid();
-        this.regionController.getCurrentView().changeButton(this.started);
+        this.regionController.current_view.changeButton(this.started);
         this.queueView.cleanup();
         this.queueView = null;
         this.enableBtns();
@@ -74,7 +73,7 @@ export default class SimulationController {
     placeGroupInRegion(group){
         let gridSpot;
         if (this.max_groups_in_region === 0 || this.groups < this.max_groups_in_region) {
-            gridSpot = this.regionController.getCurrentRegion().placeGroupRandomlyOnGrid(group);
+            gridSpot = this.regionController.current_region.placeGroupRandomlyOnGrid(group);
             this.groups += 1;
         }
         return gridSpot;

@@ -86,7 +86,7 @@ export default class QueueView {
     }
 
     removeFromQueue(qId, QgroupView) {
-        console.log(qId);
+        // console.log(qId);
         let queue = this.determineQueue(qId);
         for (let i = 0; i < queue.length; i++) {
             if (!queue[i]) continue;
