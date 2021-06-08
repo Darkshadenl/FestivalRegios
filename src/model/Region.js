@@ -8,7 +8,6 @@ export default class Region {
     id;
     name;
     controller;
-    // #simulationLedger = [];  // only used for deletion after stop sim
     gridSpots = [];
     queues = [];
     filledSpots;        // only used to easily fill grid. Use data from this array to access gridspots
@@ -150,14 +149,28 @@ export default class Region {
             row = Math.floor(Math.random() * this.rows);
             col = Math.floor(Math.random() * this.cols);
 
-            if (this.gridSpots[row][col].isAvailable()) {
+            if (this.gridSpots[row][col].available_for_groups) {
                 done = this.gridSpots[row][col].addGroup(group);
-                // if (done){
-                //     this.simulationLedger.push(this.gridSpots[row][col]);
-                // }
             }
         }
         return this.gridSpots[row][col];
+    }
+
+    getTentPositions(){
+        const positions = [];
+
+        for (let i = 0; i < this.gridSpots.length; i++) {
+            for (let j = 0; j < this.gridSpots[i].length; j++) {
+                if (this.gridSpots[i][j].gridItem) {
+                    let item = this.gridSpots[i][j].gridItem;
+                    if (item.type === 'tent') {
+                        if (!contains(positions, item.coordinates))
+                            positions.push(item.coordinates);
+                    }
+                }
+            }
+        }
+        return positions;
     }
 
     // checks for corners and sides

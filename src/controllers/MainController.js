@@ -4,9 +4,9 @@ import APIController from "./APIController.js";
 
 export default class mainController {
 
-    regionController;
-    formController;
-    APIController;
+    #regionController;
+    #formController;
+    #APIController;
 
     constructor() {
         
@@ -32,5 +32,30 @@ export default class mainController {
     switchToForm(regionName, id) {
         this.regionController.hideView();
         this.formController.showView(regionName, id);
+    }
+
+
+    get regionController() {
+        return this.#regionController;
+    }
+
+    set regionController(value) {
+        this.#regionController = value;
+    }
+
+    get formController() {
+        return this.#formController;
+    }
+
+    set formController(value) {
+        this.#formController = value;
+    }
+
+    get APIController() {
+        return this._APIController;
+    }
+
+    set APIController(value) {
+        this._APIController = value;
     }
 }

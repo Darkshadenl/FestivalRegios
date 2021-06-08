@@ -1,4 +1,5 @@
 import Sizes from "../enums/sizes"
+import {superVerbose} from "../helpers/logger";
 
 export default class GridItem {
 
@@ -12,6 +13,8 @@ export default class GridItem {
     empty_moment_in_seconds = 30;
     toilet_full = false;
 
+    #people_amount = 0;
+
     width;
     height;
     coordinates = [];
@@ -19,6 +22,30 @@ export default class GridItem {
     constructor(type) {
         this.type = type;
         this.determineSize();
+    }
+
+    resetGridItem() {
+        this.people_amount = 0;
+        this.toilet_full = false;
+        this.empty_moment_in_seconds = 30;
+    }
+
+    set people_amount(value) {
+        this.#people_amount = value;
+        if (this.type === "toilet"){
+            superVerbose(`Toilet people amount = ${value}`);
+            if (value > 0) {
+                this.toilet_full = true;
+                superVerbose('setting toilet full to true');
+            } else if (value === 0) {
+                this.toilet_full = false;
+                superVerbose('setting toilet full to false');
+            }
+        }
+    }
+
+    get people_amount() {
+        return this.#people_amount;
     }
 
     setupDetails(details) {

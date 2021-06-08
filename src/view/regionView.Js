@@ -3,7 +3,8 @@ import extractXYPosition from "../helpers/extractXYPosition"
 import DetailView from "./DetailView";
 import Gridspot from "../model/Gridspot";
 import GridItem from "../model/GridItem";
-import {forEach} from "underscore";
+import {contains, forEach, without} from "underscore";
+import {superVerbose, verbose} from "../helpers/logger";
 
 export default class RegionView {
     element;
@@ -13,6 +14,8 @@ export default class RegionView {
     rows = 15;
     cols = 15;
     ZIndexViewShowing = false;
+
+    classes = ["group1", "group2", "group3", "group4", "group5", "group6", "group7"];
 
     constructor(controller) {
         this.controller = controller;
@@ -150,7 +153,7 @@ export default class RegionView {
             btn.innerText = "Stop sim";
             btn.id = "stopSim";
             btn.addEventListener('click', () => {
-                this.controller.simulationController.stopSim()
+                this.controller.resetSim()
             });
             div.appendChild(btn);
         } else {
@@ -159,7 +162,7 @@ export default class RegionView {
             btn.innerText = "Start sim";
             btn.id = "startSim";
             btn.addEventListener('click', () => {
-                this.controller.simulationController.startSim()
+                this.controller.startSim()
             });
             div.appendChild(btn);
         }
@@ -178,6 +181,7 @@ export default class RegionView {
                 // gridItem instanceof GridItem &&
                 element.addEventListener('click', (data) => {
                     // if has piece, show details in z index screen
+                    superVerbose(data);
                     this.buildZIndexWindow(data);
                 });
             }
@@ -486,35 +490,84 @@ export default class RegionView {
     }
 
     updateSim(gridSpot) {
-        if (!gridSpot) return;
-        console.log('Updating sim');
-
         let xy = this.formattedXY(gridSpot);
-        console.log(xy);
         let element = document.getElementById(xy);
         this.changeGroupPicLocation(gridSpot, element);
-        gridSpot.moveGroupsRandomly();
+        // gridSpot.moveGroupsRandomly();
         // this.controller.getCurrentRegion().updateLedger(gridSpots[i][j], newSpot);
     }
 
-    changeGroupPicLocation(gridSpot, element) {
-        if (gridSpot.simulationItems.actual_length() < 1) return;
-        forEach(gridSpot.simulationItems, (e) => {
-            if (e.previousGridSpot) {
-                let prevXY = this.formattedXY(e.previousGridSpot);
-                let prevElement = document.getElementById(prevXY);
-                prevElement.classList.toggle(e.retrieveGroupImageClass(), false);
-            }
-            element.classList.toggle(e.retrieveGroupImageClass(), true);
-        })
+    cleanupSimItem(gridSpot) {
+        let xy = this.formattedXY(gridSpot);
+        let element = document.getElementById(xy);
+        forEach(this.classes, (e) => {
+            element.classList.toggle(e, false); })
     }
 
-    removeGroupFromGrid(item) {
-        let element = document.getElementById(this.formattedXY(item));
-        element.classList.toggle('group1', false);
-        element.classList.toggle('group2', false);
-        element.classList.toggle('group3', false);
-        element.classList.toggle('group4', false);
+    changeGroupPicLocation(gridSpot, element) {
+        let pAmount = gridSpot.getCountPeople();
+        let chosenClass = "";
+
+        if (gridSpot.gridItem === null || !contains(["prullenbak", "eetkraampje", "drankkraampje",
+            "hogeBoom", "bredeBoom", "schaduwBoom", "tent", "toilet"], gridSpot.gridItem.type)) {
+            chosenClass = this.determinePAmount(pAmount, chosenClass);
+        }
+
+        let notSelectedClasses = without(this.classes, chosenClass);
+        if (chosenClass !== "") {
+            element.classList.toggle(chosenClass, true);
+            forEach(notSelectedClasses, c => element.classList.toggle(c, false));
+        } else {
+            forEach(this.classes, c => element.classList.toggle(c, false));
+        }
+    }
+
+    determinePAmount(pAmount, chosenClass) {
+        switch (pAmount) {
+            case 1:
+                chosenClass = "group1";
+                break;
+            case 2:
+                chosenClass = "group2";
+                break;
+            case 3:
+                chosenClass = "group3";
+                break;
+            case 4:
+                chosenClass = "group4";
+                break;
+            case 5:
+                chosenClass = "group5";
+                break;
+            case 6:
+                chosenClass = "group6";
+                break;
+            case 7:
+                chosenClass = "group7";
+                break;
+            default:
+                chosenClass = "";
+        }
+        return chosenClass;
+    }
+
+    flash(item, isGridItem) {
+        let element = document.getElementById(`col${item.x}row${item.y}`);
+
+        if (isGridItem) {
+            if (item.type === "tent")
+                element.classList.toggle("tentFlash", true);
+            else
+                element.classList.toggle("toiletFlash", true);
+        } else {
+            if (item.should_flash)
+                element.classList.toggle("flash", true);
+        }
+        setTimeout(() => {
+            element.classList.toggle("flash", false);
+            element.classList.toggle("tentFlash", false);
+            element.classList.toggle("toiletFlash", false);
+        }, 500);
     }
 
     formattedXY({x, y}) {

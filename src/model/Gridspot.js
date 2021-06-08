@@ -1,17 +1,19 @@
-"use strict";
-
 import randomInt from "../helpers/randomInt";
+import {contains, forEach} from "underscore";
+import log, {verbose} from "../helpers/logger";
+import PathFinding from "../helpers/PathFinding";
 
 export default class Gridspot {
 
     x;
     y;
-    peopleAmount;
+    peopleAmount = 0;
     max_peopleAmount = 7;
     gridItem = null;
     simulationItems = [];
     available = true;
-    available_for_groups = true;
+    #available_for_groups = true;
+    not_available_types = ["prullenbak", "eetkraampje", "drankkraampje", "hogeBoom", "bredeBoom", "schaduwBoom"];
     position;
 
     left_spot = null;
@@ -19,13 +21,30 @@ export default class Gridspot {
     above_spot = null;
     bottom_spot = null;
 
+    should_flash = false;
+    target_spot = null;
+
+    hCost = 0;
+    gCost = 0;
+    parent;
+
     // y = row, col = x
     constructor(x, y) {
         this.x = x;
         this.y = y;
         this.position = 'x: ' + x + ' y:' + y;
 
-        Array.prototype.actual_length = () => { return Object.keys(this).length }
+        Array.prototype.actual_length = function () {
+            return Object.keys(this).length
+        }
+    }
+
+    resetSpotForSim() {
+        this.available_for_groups = true;
+        this.simulationItems = [];
+        this.peopleAmount = 0;
+        if (this.gridItem)
+            this.gridItem.resetGridItem();
     }
 
     // returns type of deleted item
@@ -36,24 +55,22 @@ export default class Gridspot {
         return type;
     }
 
-    moveGroupsRandomly(){
-        console.log('moving groups');
+    moveGroupsRandomly() {
         if (this.simulationItems.actual_length === 0) return;
+        const moved_groups = [];
         this.simulationItems.forEach(group => {
             let shouldMove = group.shouldIMove();
-            shouldMove = true; // TODO remove
             if (shouldMove) {
                 let randomGridSpotNeighbour = this.getRandomNeighbour();
-                console.log(`Current pos: x:${this.x} y:${this.y}`);
-                console.log(`Random neighbour: x:${randomGridSpotNeighbour.x} y:${randomGridSpotNeighbour.y}`);
                 let moved = false;
                 let count = 0;
                 while (!moved) {
                     moved = randomGridSpotNeighbour.addGroup(group);
 
-                    if (moved){
-                        console.log(`Moved! ${this.x} ${this.y}`);
+                    if (moved) {
                         this.removeSimulationItem(group);
+                        this.should_flash = false;
+                        moved_groups.push(group);
                         moved = true;
                     }
                     count += 1;
@@ -62,15 +79,89 @@ export default class Gridspot {
                 }
             }
         })
-        // return null;
+        return moved_groups;
     }
 
-    getRandomNeighbour(){
+    moveGroupsRain(tentPosses) {
+        if (this.simulationItems.actual_length === 0) return;
+        const moved_groups = [];
+        this.simulationItems.forEach(group => {
+            let shouldMove = group.shouldIMove(true);
+            if (shouldMove) {
+                let moved = false;
+                if (!group.path) {
+                    group.path = PathFinding(this, this.determineClosestTent(tentPosses));
+                }
+                if (group.path && group.path.length > 0) {
+                    let count = 0;
+                    while (!moved) {
+                        try {
+                            let spot = group.path.pop();
+                            moved = spot.addGroup(group);
+                            console.log(`Added ${group.id} to ${spot.id}`);
+                        } catch (e) {
+                            console.log(e);
+                            console.log(group.id);
+                            console.log(group.path);
+                            console.log(group);
+                            console.log(this);
+                            throw "error";
+                        }
+                        if (moved) {
+                            this.removeSimulationItem(group);
+                            this.should_flash = false;
+                            moved_groups.push(group);
+                            moved = true;
+                        } else {
+                            group.path = PathFinding(this, this.determineClosestTent(tentPosses));
+                            if (!group.path){
+                                moved = true;
+                                console.log('not movable');
+                            }
+                        }
+                        count += 1;
+                        if (count === 2)
+                            moved = true;
+                    }
+                }
+            }
+        })
+        return moved_groups;
+    }
+
+    determineClosestTent(tentPosses) {
+        if (this.target_spot) return;
+        // check all tent objects.
+        // select closest one.
+        // We'll only check the x val.
+
+        const diff = (a, b) => Math.abs(a - b);
+        const x = this.x;
+        let targetSpot = null;
+        let dist_target_this = 0;
+
+        for (let a = 0; a < tentPosses.length; a++) {
+            for (let t = 0; t < tentPosses[a].length; t++) {
+                if (!targetSpot) {
+                    targetSpot = tentPosses[a][t];
+                    dist_target_this = diff(targetSpot, x);
+                } else {
+                    let difference = diff(tentPosses[a][t].x, x);
+                    targetSpot = difference < dist_target_this ? tentPosses[a][t] : targetSpot;
+                }
+            }
+        }
+
+        return targetSpot;
+    }
+
+
+    getRandomNeighbour() {
         const neighBours = [this.left_spot, this.right_spot, this.above_spot, this.bottom_spot];
         let chosen = false;
         while (!chosen) {
-            let random = randomInt(0, neighBours.length);
-            if (neighBours[random] != null){
+            let random = randomInt(0, neighBours.length - 1);
+            if (neighBours[random] != null && neighBours[random].available_for_groups) {
                 chosen = neighBours[random];
             }
         }
@@ -82,45 +173,89 @@ export default class Gridspot {
     }
 
     isAvailable() {
-        return this.available;
+        return this.gridItem === null ? true : false;
     }
 
-    isAvailableForGroups(){
-        return this.available_for_groups;
+    get available_for_groups() {
+        if (this.gridItem) {
+            if (contains(this.not_available_types, this.gridItem.type))
+                this.#available_for_groups = false;
+        }
+        return this.#available_for_groups;
     }
 
-    addGroup(group){
-        if (this.isAvailableForGroups()) {
+    set available_for_groups(v) {
+        this.#available_for_groups = v;
+    }
+
+    addGroup(group) {
+        if (this.available_for_groups) {
             const fits = this.checkIfNewGroupFits(group);
-            if (fits){
-                if (group.id === 1) {
-                    console.log(`Found new gridspot for group 1.`);
-                }
+            if (fits) {
+                verbose(`Found new gridspot for ${group.id}.`);
+                verbose(`Found new gridspot for x:${this.x} y:${this.y}.`);
                 this.simulationItems.push(group);
+                this.updateAmounts(group);
+                this.should_flash = true;
                 group.setGridSpot(this);
-                if (this.getCountPeople() >= this.max_peopleAmount) {
-                    this.available_for_groups = false;
-                }
+                group.checkIfReachedGoal();
+                this.determineAvailableForGroups();
                 return true;
             }
         } else {
-            return this.isAvailableForGroups();
+            return this.available_for_groups;
         }
     }
 
-    checkIfNewGroupFits(item){
-        return this.getCountPeople() + item.size <= 7;
-    }
-
-    removeSimulationItem(s){
-        for (let i = 0; i < Object.keys(this.simulationItems).length; i++) {
-            if (this.simulationItems[i] === s) {
-                this.simulationItems.splice(i, 1);
+    determineAvailableForGroups() {
+        if (this.gridItem) {
+            if (this.gridItem.type === "tent") {
+                if (this.simulationItems.actual_length() === 1) {
+                    this.available_for_groups = false;
+                }
+            }
+            if (this.gridItem.type === "toilet") {
+                return this.gridItem.people_amount <= 63;
+            }
+        } else {
+            if (this.getCountPeople() >= this.max_peopleAmount) {
+                this.available_for_groups = false;
             }
         }
     }
 
-    getCountPeople(){
+    updateAmounts(item) {
+        if (this.gridItem) {
+            this.gridItem.people_amount += item.size;
+        } else {
+            this.peopleAmount += item.size;
+        }
+    }
+
+    checkIfNewGroupFits(item) {
+        if (this.gridItem) {
+            if (this.gridItem.type === "tent") {
+                return this.gridItem.people_amount + item.size <= 63;
+            }
+            if (this.gridItem.type === "toilet") {
+                return this.simulationItems.actual_length() + 1 === 1;
+            }
+        } else {
+            return this.getCountPeople() + item.size <= 7;
+        }
+    }
+
+    removeSimulationItem(group) {
+        for (let i = 0; i < this.simulationItems.actual_length(); i++) {
+            if (this.simulationItems[i] === group) {
+                this.simulationItems.splice(i, 1);
+                this.available_for_groups = true;
+                this.peopleAmount -= group.size;
+            }
+        }
+    }
+
+    getCountPeople() {
         let size = 0;
         this.simulationItems.forEach(e => {
             size += e.size;
@@ -128,7 +263,7 @@ export default class Gridspot {
         return size;
     }
 
-    cleanSimulation(){
+    cleanSimulation() {
         this.simulationItems = [];
         this.available = true;
     }
@@ -140,7 +275,7 @@ export default class Gridspot {
             let width = item.width;
             let height = item.height;
 
-            // check if it can be placed. Whichever point of the item you're dragging doesn't matter. It always calculates from the left upper point. 
+            // check if it can be placed. Whichever point of the item you're dragging doesn't matter. It always calculates from the left upper point.
             let canBePlaced = this.canItemBePlaced(width, height);
 
             if (canBePlaced) {
@@ -232,4 +367,41 @@ export default class Gridspot {
         return false;
     }
 
+    get fCost() {
+        return this.gCost + this.hCost;
+    }
+
+    get A_Neighbours() {
+        const neighs = [];
+
+        // left
+        if (this.left_spot) {
+            neighs.push(this.left_spot);
+            if (this.left_spot.above_spot) {
+                neighs.push(this.left_spot.above_spot)
+            }
+            if (this.left_spot.bottom_spot) {
+                neighs.push(this.left_spot.bottom_spot)
+            }
+        }
+
+        // right
+        if (this.right_spot) {
+            neighs.push(this.right_spot);
+            if (this.right_spot.above_spot) {
+                neighs.push(this.right_spot.above_spot)
+            }
+            if (this.right_spot.bottom_spot) {
+                neighs.push(this.right_spot.bottom_spot)
+            }
+        }
+
+        // above
+        if (this.above_spot)
+            neighs.push(this.above_spot);
+        // below
+        if (this.bottom_spot)
+            neighs.push(this.bottom_spot);
+        return neighs;
+    }
 }

@@ -2,6 +2,7 @@ import Group from "./Group";
 import GroupView from "../view/Canvas/GroupView";
 import randomInt from "../helpers/randomInt";
 import randomTrueFalse from "../helpers/randomTrueFalse";
+import {superVerbose, verbose} from "../helpers/logger";
 
 export default class Queue {
 
@@ -11,18 +12,16 @@ export default class Queue {
     removed = [];       // temp
     group_amount = -1;
     active = true;
-    simController;
     regionController;
     previous_group = null;
 
-    group_spawn_limiter = 0;
+    group_spawn_limiter = 50;
     amount_spawned = 0;
     max_groups_in_queue = 7;
 
     constructor(id, regionController) {
         this.id = id;
         this.regionController = regionController;
-        // this.simController = simController;
     }
 
     getGroupModel(id) {
@@ -39,7 +38,8 @@ export default class Queue {
 
     addGroup(amount) {
         this.cleanup();
-        if (Object.keys(this.groups_in_queue).length < this.max_groups_in_queue) {
+        if (this.groups_in_queue.actual_length() < this.max_groups_in_queue) {
+            verbose("Entering add group, groups_in_queue length check succeeded");
             let group;
             this.group_amount += 1;
             let groupId = this.group_amount;
@@ -60,6 +60,7 @@ export default class Queue {
                     console.log("No correct id");
                     break;
             }
+            verbose("Correct lane for queue selected");
             if (this.previous_group !== null) {
                 this.previous_group.setPreviousGroup(group);
             }
@@ -76,18 +77,19 @@ export default class Queue {
      */
     handleGroup(group) {
         if (this.group_spawn_limiter === 0 || this.amount_spawned !== this.group_spawn_limiter) {
-            console.log('Handle group');
+            verbose("Handle group");
             let waitTime = randomInt(1000, 3000);
             setTimeout(() => {
                 group.unpause();
+                this.amount_spawned += 1;
+                if (this.regionController.simulationController)
+                    group.setGridSpot(this.regionController.simulationController.placeGroupInRegion(group));
             }, waitTime);
-            this.amount_spawned += 1;
-            group.setGridSpot(this.regionController.simulationController.placeGroupInRegion(group));
         }
     }
 
     cleanup() {
-        for (let i = 0; i < this.groups_in_queue.length; i++) {
+        for (let i = 0; i < this.groups_in_queue.actual_length(); i++) {
             let g = this.groups_in_queue[i];
             if (g === undefined || g.toBeRemoved === true || g === null) {
                 this.groups_in_queue.splice(i, 1);

@@ -9,6 +9,7 @@ export default class WeatherView {
         const api = document.getElementById("api");
 
         const btn = document.createElement('btn');
+        btn.id = "weatherBtn";
         const text = document.createElement('h2');
         const lat = document.createElement("input");
         const long = document.createElement("input");

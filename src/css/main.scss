@@ -2,15 +2,13 @@
   border: 2px;
   // height: 100%;
   width: 50px;
-  border-left-style: solid;
-  border-right-style: solid;
+  border-style: solid;
+  border-color: black;
   padding: 0px !important;
   margin: 0px !important;
 }
 
 .dropZoneRow {
-  border: 2px;
-  border-style: solid;
   height: 50px;
 }
 
@@ -27,6 +25,13 @@
   background-color: blue;
   color: black;
   background-image: url("../resources/tent.png");
+  background-position: top;
+}
+
+.tentFlash {
+  background-color: blue;
+  color: black;
+  background-image: url("../resources/tent2.png");
   background-position: top;
 }
 
@@ -66,6 +71,13 @@
   background-color: orange;
   color: black;
   background-image: url("../resources/wc.png");
+  background-position: top;
+}
+
+.toiletFlash {
+  background-color: orange;
+  color: black;
+  background-image: url("../resources/wc2.png");
   background-position: top;
 }
 
@@ -121,5 +133,27 @@
   background-color: white;
   background-image: url("../resources/person4.png");
   background-position: top;
+}
+
+.group5 {
+  background-color: white;
+  background-image: url("../resources/person5.png");
+  background-position: top;
+}
+
+.group6 {
+  background-color: white;
+  background-image: url("../resources/person6.png");
+  background-position: top;
+}
+
+.group7 {
+  background-color: white;
+  background-image: url("../resources/person7.png");
+  background-position: top;
+}
+
+.flash {
+  background-color: red;
 }
 

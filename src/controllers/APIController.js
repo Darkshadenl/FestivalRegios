@@ -9,6 +9,7 @@ export default class APIController {
     currentWeatherOnly = true;
 
     weatherView;
+    default_weather = Weather.REGEN;
 
     constructor(mainController){
         this.mainController = mainController;
@@ -37,6 +38,7 @@ export default class APIController {
                 if (res.current.weather[0].main){
                     // console.log(res.current.weather[0]);
                     var value = this.getWeatherType(res.current.weather[0].main)
+                    this.weather = value;
                     return value;
                 }
                 else {
@@ -52,6 +54,7 @@ export default class APIController {
     }
 
     getWeatherType(string){
+        if (this.default_weather) return this.default_weather;
         var returnValue = Weather.NONE;
         switch (string) {
             case 'Clouds':

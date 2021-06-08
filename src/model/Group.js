@@ -1,4 +1,6 @@
 import randomInt from "../helpers/randomInt";
+import {contains, last} from "underscore";
+import {superVerbose} from "../helpers/logger";
 
 export default class Group {
 
@@ -7,7 +9,7 @@ export default class Group {
     x;
     y;
     queue;
-    def_speed = 3;
+    def_speed = 4;
     speed = this.def_speed;
     previous_group = null;  // used for linking groups in queue
     temp_wait_x_range = [];
@@ -17,6 +19,14 @@ export default class Group {
     checked = false;        // queue stuff
     #current_gridSpot = null;
     #previous_gridSpot = false;
+    inTent = false;
+    inToilet = false;
+    inTentIts = 0;
+    inToiletIts = 0;
+
+    path = null;
+    next_spot = 0;
+
 
     constructor(size, x, y, queue, id) {
         this.size = size;
@@ -26,9 +36,44 @@ export default class Group {
         this.id = id;
     }
 
-    shouldIMove(){
-        let shouldI = randomInt(0, 1);
-        return shouldI !== 0;
+    checkIfReachedGoal(){
+        if (this.current_gridSpot === last(this.path)) {
+            this.path = null;
+            this.next_spot = 0;
+        }
+    }
+
+    get current_gridSpot(){
+        return this.#current_gridSpot;
+    }
+
+    shouldIMove(isRain){
+        if (!this.inTent && !this.inToilet){
+            let shouldI;
+            if (isRain)
+                shouldI = true;
+            else
+                shouldI = randomInt(0, 1);
+            return shouldI !== 0;
+        } else {
+            if (this.inTent){
+                this.inTentIts += 1;
+                superVerbose(`In tent its: ${this.inTentIts}`)
+                if (this.inTentIts >= 4) {
+                    this.inTent = false;
+                    this.inTentIts = 0;
+                }
+                return 0;
+            }
+            if (this.inToilet){
+                this.inToiletIts += 1;
+                superVerbose(`In toilet its: ${this.inToiletIts}`)
+                if (this.inToiletIts >= 2) {
+                    this.inToilet = false;
+                }
+                return 0;
+            }
+        }
     }
 
     moveUpdate() {
@@ -91,10 +136,15 @@ export default class Group {
         if (!gridSpot) return;
         this.#previous_gridSpot = this.#current_gridSpot;
         this.#current_gridSpot = gridSpot;
-        // if (this.id == 1) {
-        //     console.log(this.#previous_gridSpot);
-        //     console.log(this.#current_gridSpot);
-        // }
+
+        if (gridSpot.gridItem){
+            if (gridSpot.gridItem.type === "toilet") {
+                this.inToilet = true;
+            }
+            if (gridSpot.gridItem.type === "tent") {
+                this.inTent = true;
+            }
+        }
     }
 
     get previousGridSpot(){
