@@ -95,28 +95,19 @@ export default class Gridspot {
                 if (group.path && group.path.length > 0) {
                     let count = 0;
                     while (!moved) {
-                        try {
-                            let spot = group.path.pop();
-                            moved = spot.addGroup(group);
-                            console.log(`Added ${group.id} to ${spot.id}`);
-                        } catch (e) {
-                            console.log(e);
-                            console.log(group.id);
-                            console.log(group.path);
-                            console.log(group);
-                            console.log(this);
-                            throw "error";
-                        }
+                        let spot = group.path.pop();
+                        moved = spot.addGroup(group);
+
                         if (moved) {
                             this.removeSimulationItem(group);
                             this.should_flash = false;
                             moved_groups.push(group);
                             moved = true;
-                        } else {
+                        } else if (group.path_retries === 0) {
                             group.path = PathFinding(this, this.determineClosestTent(tentPosses));
-                            if (!group.path){
+                            if (!group.path) {
                                 moved = true;
-                                console.log('not movable');
+                                group.path_retries = 1;
                             }
                         }
                         count += 1;
@@ -403,5 +394,21 @@ export default class Gridspot {
         if (this.bottom_spot)
             neighs.push(this.bottom_spot);
         return neighs;
+    }
+
+    CompareTo(nodeToCompare) {
+        let compare = this.fCost.CompareTo(nodeToCompare.fCost);
+        if (compare == 0) {
+            compare = this.hCost.CompareTo(nodeToCompare.hCost);
+        }
+        return -compare;
+    }
+
+    get heapIndex() {
+        return this.#heapIndex;
+    }
+
+    set heapIndex(value) {
+        this.#heapIndex = value;
     }
 }

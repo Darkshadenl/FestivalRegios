@@ -26,6 +26,7 @@ export default class Group {
 
     path = null;
     next_spot = 0;
+    path_retries = 0;
 
 
     constructor(size, x, y, queue, id) {

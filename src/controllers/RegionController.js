@@ -77,6 +77,7 @@ export default class RegionController {
         const spots = this.current_region.gridSpots;
         for (let i = 0; i < spots.length; i++) {
             for (let j = 0; j < spots[i].length; j++) {
+                if (spots[i][j].simulationItems.actual_length() === 0) continue;
                 switch (weather) {
                     case Weather.NONE:
                         this.#moved_groups.push(spots[i][j].moveGroupsRandomly());
