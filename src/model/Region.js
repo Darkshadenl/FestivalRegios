@@ -156,14 +156,14 @@ export default class Region {
         return this.gridSpots[row][col];
     }
 
-    getTentPositions(){
+    getPositions(typeArray){
         const positions = [];
 
         for (let i = 0; i < this.gridSpots.length; i++) {
             for (let j = 0; j < this.gridSpots[i].length; j++) {
                 if (this.gridSpots[i][j].gridItem) {
                     let item = this.gridSpots[i][j].gridItem;
-                    if (item.type === 'tent') {
+                    if (contains(typeArray, item.type)) {
                         if (!contains(positions, item.coordinates))
                             positions.push(item.coordinates);
                     }

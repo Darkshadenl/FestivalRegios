@@ -9,7 +9,7 @@ export default class APIController {
     currentWeatherOnly = true;
 
     weatherView;
-    default_weather = Weather.REGEN;
+    default_weather = Weather.HELDER;
 
     constructor(mainController){
         this.mainController = mainController;

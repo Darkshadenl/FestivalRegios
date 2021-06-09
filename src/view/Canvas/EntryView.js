@@ -1,11 +1,12 @@
 export default class EntryView {
 
-    constructor(width, height, x, y, color) {
+    constructor(width, height, x, y, id) {
+        this.id = id;
         this.width = width;
         this.height = height;
         this.x = x;
         this.y = y;
-        this.color = color;
+        this.color = "red";
     }
 
     draw(c){
@@ -28,7 +29,7 @@ export default class EntryView {
 
         if (clicked_x >= min_x && clicked_x <= max_x &&
         clicked_y >= min_y && clicked_y <= max_y){
-            // change color
+            this.color = this.color === "red" ? "black" : "red";
             return true;
         }
         return false;

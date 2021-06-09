@@ -1,5 +1,5 @@
 import randomInt from "../helpers/randomInt";
-import {contains, forEach} from "underscore";
+import {contains, first, forEach} from "underscore";
 import log, {verbose} from "../helpers/logger";
 import PathFinding from "../helpers/PathFinding";
 
@@ -82,37 +82,26 @@ export default class Gridspot {
         return moved_groups;
     }
 
-    moveGroupsRain(tentPosses) {
+    moveGroups(positions, weatherType) {
         if (this.simulationItems.actual_length === 0) return;
         const moved_groups = [];
         this.simulationItems.forEach(group => {
-            let shouldMove = group.shouldIMove(true);
+            let shouldMove = group.shouldIMove(weatherType);
             if (shouldMove) {
                 let moved = false;
                 if (!group.path) {
-                    group.path = PathFinding(this, this.determineClosestTent(tentPosses));
+                    group.target_spot = this.determineClosestGridItem(positions);
+                    group.path = PathFinding(this, group.target_spot);
                 }
-                if (group.path && group.path.length > 0) {
-                    let count = 0;
-                    while (!moved) {
-                        let spot = group.path.pop();
-                        moved = spot.addGroup(group);
 
-                        if (moved) {
-                            this.removeSimulationItem(group);
-                            this.should_flash = false;
-                            moved_groups.push(group);
-                            moved = true;
-                        } else if (group.path_retries === 0) {
-                            group.path = PathFinding(this, this.determineClosestTent(tentPosses));
-                            if (!group.path) {
-                                moved = true;
-                                group.path_retries = 1;
-                            }
-                        }
-                        count += 1;
-                        if (count === 2)
-                            moved = true;
+                if (group.path && group.path.length > 0) {
+                    let spot = group.path.pop();
+                    moved = spot.addGroup(group);
+                    if (moved) {
+                        console.log('Moved');
+                        this.removeSimulationItem(group);
+                        this.should_flash = false;
+                        moved_groups.push(group);
                     }
                 }
             }
@@ -120,9 +109,9 @@ export default class Gridspot {
         return moved_groups;
     }
 
-    determineClosestTent(tentPosses) {
+    determineClosestGridItem(posses) {
         if (this.target_spot) return;
-        // check all tent objects.
+        // check all objects.
         // select closest one.
         // We'll only check the x val.
 
@@ -131,18 +120,21 @@ export default class Gridspot {
         let targetSpot = null;
         let dist_target_this = 0;
 
-        for (let a = 0; a < tentPosses.length; a++) {
-            for (let t = 0; t < tentPosses[a].length; t++) {
+        for (let a = 0; a < posses.length; a++) {
+            for (let t = 0; t < posses[a].length; t++) {
                 if (!targetSpot) {
-                    targetSpot = tentPosses[a][t];
+                    targetSpot = posses[a][t];
                     dist_target_this = diff(targetSpot, x);
                 } else {
-                    let difference = diff(tentPosses[a][t].x, x);
-                    targetSpot = difference < dist_target_this ? tentPosses[a][t] : targetSpot;
+                    let difference = diff(posses[a][t].x, x);
+                    targetSpot = difference < dist_target_this ? posses[a][t] : targetSpot;
                 }
             }
         }
-
+        if (targetSpot.type !== "tent"){
+            let neighs = [targetSpot.left_spot, targetSpot.right_spot, targetSpot.above_spot, targetSpot.bottom_spot];
+            targetSpot = first(neighs.filter(e => !e.gridItem));
+        }
         return targetSpot;
     }
 
@@ -171,6 +163,9 @@ export default class Gridspot {
         if (this.gridItem) {
             if (contains(this.not_available_types, this.gridItem.type))
                 this.#available_for_groups = false;
+            if (this.gridItem.type === 'tent' && this.gridItem.people_amount !== this.gridItem.max_visitors) {
+                this.#available_for_groups = true;
+            }
         }
         return this.#available_for_groups;
     }
@@ -396,19 +391,4 @@ export default class Gridspot {
         return neighs;
     }
 
-    CompareTo(nodeToCompare) {
-        let compare = this.fCost.CompareTo(nodeToCompare.fCost);
-        if (compare == 0) {
-            compare = this.hCost.CompareTo(nodeToCompare.hCost);
-        }
-        return -compare;
-    }
-
-    get heapIndex() {
-        return this.#heapIndex;
-    }
-
-    set heapIndex(value) {
-        this.#heapIndex = value;
-    }
 }

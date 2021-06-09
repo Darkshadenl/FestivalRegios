@@ -1,6 +1,8 @@
 import QueueView from "../view/Canvas/QueueView";
 import Queue from "../model/Queue";
 import randomInt from "../helpers/randomInt";
+import Weather from "../enums/weather";
+import {pluck} from "underscore";
 
 export default class SimulationController {
 
@@ -22,6 +24,7 @@ export default class SimulationController {
         this.disableBtns();
         this.queueView = new QueueView(this);
         this.regionController.current_region.createQueues(this.available_queues);
+        console.log(this.regionController.current_region.queues);
         this.started = true;
         this.regionController.current_view.changeButton(this.started);
         this.queueView.startSimulationDraw();
@@ -48,10 +51,10 @@ export default class SimulationController {
 
     startRandomPeopleSpawing() {
         if (!this.started) return;
-
-        let queueNr = randomInt(1, this.available_queues);
+        let available_queues = pluck(this.regionController.current_region.queues.filter(q => q.active), 'id');
+        let queueNr = randomInt(0, available_queues.length - 1);
         let randomAmountPeeps = randomInt(1, 4);
-        let queue = this.regionController.current_region.getQueue(queueNr);
+        let queue = this.regionController.current_region.getQueue(available_queues[queueNr]);
         let group = null;
         if (queue)
             group = queue.addGroup(randomAmountPeeps);
@@ -64,8 +67,17 @@ export default class SimulationController {
 
     startMovement(){
         if (!this.started) return;
+        let timeout = 3000;
+        switch (this.regionController.mainController.APIController.weather) {
+            case Weather.REGEN:
+                timeout = 8000
+                break;
+            default:
+                timeout = 3000;
+                break;
+        }
         this.regionController.moveGroups(this.regionController.mainController.APIController.weather);
-        setTimeout(() => { this.startMovement() }, 3000);
+        setTimeout(() => { this.startMovement() }, 8000);
     }
 
     getModel(queueNr, modelNr) {
@@ -91,6 +103,10 @@ export default class SimulationController {
             this.current_amount_people += group.size;
         }
         return gridSpot;
+    }
+
+    disableQueue(id){
+        this.regionController.disableQueue(id);
     }
 
 }

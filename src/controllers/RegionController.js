@@ -3,7 +3,7 @@ import regionView from "../view/regionView.js";
 import SimulationController from "./SimulationController";
 import Weather from "../enums/weather";
 import {verbose} from "../helpers/logger";
-import {isArray} from "underscore";
+import {forEach, isArray} from "underscore";
 
 export default class RegionController {
     #mainController;
@@ -33,7 +33,7 @@ export default class RegionController {
         }
     }
 
-    startSim() {   // TODO simulationController should be linked to region.
+    startSim() {
         if (this.simulationController == null) {
             this.simulationController = new SimulationController(this);
         }
@@ -84,11 +84,13 @@ export default class RegionController {
                         break;
                     case Weather.REGEN:
                         if (!this.tentPosses)
-                            this.tentPosses = this.current_region.getTentPositions();
-                        this.#moved_groups.push(spots[i][j].moveGroupsRain(this.tentPosses));
+                            this.tentPosses = this.current_region.getPositions(["tent"]);
+                        this.#moved_groups.push(spots[i][j].moveGroups(this.tentPosses, Weather.REGEN));
                         break;
                     case Weather.HELDER:
-                        // this.#moved_groups.push(spots[i][j].moveGroupsClear());
+                        if (!this.threePosses)
+                            this.threePosses = this.current_region.getPositions(["hogeBoom", "bredeBoom", "schaduwBoom"]);
+                        this.#moved_groups.push(spots[i][j].moveGroups(this.threePosses, Weather.HELDER));
                         break;
                     default:
                         this.#moved_groups.push(spots[i][j].moveGroupsRandomly());
@@ -202,6 +204,26 @@ export default class RegionController {
         );
     }
 
+    disableQueue(id){
+        let q = this.current_region.queues.filter(q => q.id === id);
+        forEach(q, q => q.active = q.active === false ? q.active = true : q.active = false);
+    }
+
+    getGridSpot(col, row){
+        return this.current_region.getGridSpot(col, row);
+    }
+
+    getCurrentRegionFestivalItemAmount(id){
+        return this.current_region.festivalItemsAmounts[id];
+    }
+
+    setCurrentRegionFestivalItemAmount(value){
+        this.current_region.festivalItemsAmounts[id] = value;
+    }
+
+    removeElementFromRegion(col, row){
+        return this.current_region.removeElement(col, row);
+    }
 
     set current_view(value) {
         this.#current_view = value;

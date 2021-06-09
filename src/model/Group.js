@@ -1,6 +1,7 @@
 import randomInt from "../helpers/randomInt";
 import {contains, last} from "underscore";
 import {superVerbose} from "../helpers/logger";
+import Weather from "../enums/weather";
 
 export default class Group {
 
@@ -27,6 +28,7 @@ export default class Group {
     path = null;
     next_spot = 0;
     path_retries = 0;
+    target_spot;
 
 
     constructor(size, x, y, queue, id) {
@@ -48,10 +50,11 @@ export default class Group {
         return this.#current_gridSpot;
     }
 
-    shouldIMove(isRain){
+    shouldIMove(weatherType){
+        if (this.current_gridSpot === this.target_spot) return false;
         if (!this.inTent && !this.inToilet){
             let shouldI;
-            if (isRain)
+            if (weatherType === Weather.REGEN)
                 shouldI = true;
             else
                 shouldI = randomInt(0, 1);

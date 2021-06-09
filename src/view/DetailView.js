@@ -3,21 +3,21 @@ import {superVerbose} from "../helpers/logger";
 
 export default class DetailView {
 
-    #controller;
+    #regionController;
     #mainDiv;
     #containerDiv;
     #details;
     #gridSpot;
 
     constructor(controller) {
-        this.#controller = controller;
+        this.#regionController = controller;
     }
 
     buildZIndexWindow(data) {
         superVerbose(data);
         this.#disableBackground();
         let xy = extractXYPosition(data.target.id);
-        this.#gridSpot = this.#controller.current_region.getGridSpot(xy.col, xy.row);
+        this.#gridSpot = this.#regionController.getGridSpot(xy.col, xy.row);
 
         const container = document.getElementsByClassName('regionsContainer')[0];
         this.#mainDiv = document.createElement('div');
@@ -92,7 +92,7 @@ export default class DetailView {
         }
         if (valid){
             superVerbose(gridItem);
-            this.#controller.UpdateLocalStorage();
+            this.#regionController.UpdateLocalStorage();
             this.#handleCancel();
         }
     }

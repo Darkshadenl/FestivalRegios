@@ -6,7 +6,8 @@ export default function PathFinding(starting_spot, target_spot) {
     superVerbose('pathfinding');
     let startNode = starting_spot;
     let targetNode = target_spot;
-
+    superVerbose(startNode);
+    superVerbose(targetNode);
     let openSet = [];
     let closedSet = [];
     openSet.push(startNode);
@@ -17,22 +18,22 @@ export default function PathFinding(starting_spot, target_spot) {
         let currentNode = openSet[0];
 
         for (let i = 0; i < openSet.length; i++) {
-
             if (openSet[i].fCost < currentNode.fCost || openSet[i].fCost === currentNode.fCost
                 && openSet[i].hCost < currentNode.hCost) {
                 currentNode = openSet[i];
             }
+            superVerbose('komt in eerste for loop na eerst fcost check');
             openSet = without(openSet, currentNode);
             closedSet.push(currentNode);
 
             if (currentNode === targetNode) {
+                superVerbose('path klaar.');
                 return retracePath(startNode, targetNode);
             }
 
             for (let j = 0; j < currentNode.A_Neighbours.length; j++) {
-
+                superVerbose('tweede for loop');
                 let neighbour = currentNode.A_Neighbours[j];
-
                 if (!neighbour.available_for_groups || contains(closedSet, neighbour)) {
                     continue;
                 }

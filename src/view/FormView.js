@@ -152,9 +152,6 @@ export default class FormView {
           case "Drankkraampjes":
             this.maxPrullenbakken += parseInt(Sizes.surface('drankkraampje') * el.value);
             break;
-          // case "Bomen":
-          //   this.maxPrullenbakken += parseInt(Sizes.surface('boom') * el.value);
-          //   break;
           case "hogeBoom":
             this.maxPrullenbakken += parseInt(Sizes.surface('hogeBoom') * el.value);
             break;

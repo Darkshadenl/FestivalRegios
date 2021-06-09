@@ -33,7 +33,7 @@ export default class WeatherView {
         btn.addEventListener("click", () => {
             // console.log('Values: lat: ' + this.lat.value + ', lon: ' + this.lon.value);
             // controller.update(this.lat.value, this.lon.value);
-
+            // TODO replace defaults
             const long = 5.85462200
             const lat = 51.84286700;
             controller.update(lat, long);

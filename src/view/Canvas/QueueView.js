@@ -27,10 +27,10 @@ export default class QueueView {
 
         this.ctx = canvas.getContext('2d');
         this.entryPoints = [];
-        this.entryPoints.push(new EntryView("30", "40", 330, 5, "red"));
-        this.entryPoints.push(new EntryView("30", "40", 330, 52, "blue"));
-        this.entryPoints.push(new EntryView("30", "40", 330, 100, "green"));
-        this.entryPoints.push(new EntryView("30", "40", 330, 150, "brown"));
+        this.entryPoints.push(new EntryView("30", "40", 330, 5, 1));
+        this.entryPoints.push(new EntryView("30", "40", 330, 52, 2));
+        this.entryPoints.push(new EntryView("30", "40", 330, 100, 3));
+        this.entryPoints.push(new EntryView("30", "40", 330, 150, 4));
 
         this.queue_0_groups = [];
         this.queue_1_groups = [];
@@ -38,7 +38,7 @@ export default class QueueView {
         this.queue_3_groups = [];
     }
 
-    cleanup(){
+    cleanup() {
         const div = document.getElementById("canvasDiv");
         div.childNodes.forEach(e => e.remove());
     }
@@ -122,12 +122,11 @@ export default class QueueView {
         console.log("Coordinate x: " + x,
             "Coordinate y: " + y);
 
+
         this.entryPoints.filter(e => {
             if (e.wasIClicked(x, y, this.ctx)) {
-                // TODO: toggle pause.
-                return e;
+                this.simController.disableQueue(e.id);
             }
         })
-
     }
 }
