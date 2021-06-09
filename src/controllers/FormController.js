@@ -11,7 +11,7 @@ export default class FormController {
 
     showView(regionName, id) {
         this.current_form = new FormView(regionName, id);
-        this.current_form.controller = this;
+        this.current_form.formController = this;
         this.current_form.showView();
     }
 

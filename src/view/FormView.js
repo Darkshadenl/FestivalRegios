@@ -2,7 +2,7 @@ import Sizes from "../enums/sizes"
 
 export default class FormView {
   name;
-  controller;
+  formController;
   formScreen;
   form;
   formContainer;
@@ -45,7 +45,7 @@ export default class FormView {
     // backbtn config
     let backBtn = document.getElementById("backToRegionBtn");
     backBtn.addEventListener("click", () =>
-      this.controller.switchToRegion()
+      this.formController.switchToRegion()
     );
     backBtn.innerText = "Terug naar " + this.name;
 
@@ -190,8 +190,8 @@ export default class FormView {
       allInputs.forEach(e => {
         obj[e.id] = e.value;
       })
-      this.controller.saveData(this.id, obj)
-      this.controller.cleanAndSwitchToRegion();
+      this.formController.saveData(this.id, obj)
+      this.formController.cleanAndSwitchToRegion();
       window.alert('Succesvol opgeslagen');
     }
   }
@@ -234,7 +234,7 @@ export default class FormView {
 
   handleReset() {
     this.hideView();
-    this.controller.showView(this.name, this.name);
+    this.formController.showView(this.name, this.name);
   }
 
   hideView() {

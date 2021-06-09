@@ -3,10 +3,10 @@ import Region from "./Region";
 export default class Festival {
 
     #regions = []
-    controller;
+    regionController;
 
     constructor(amount_regions, controller) {
-        this.controller = controller;
+        this.regionController = controller;
         for (let index = 1; index < amount_regions+1; index++) {
             this.regions.push(new Region(index, 'Regio' + ' ' + index, controller))
         }

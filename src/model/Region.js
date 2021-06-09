@@ -7,7 +7,7 @@ import Queue from "./Queue";
 export default class Region {
     id;
     name;
-    controller;
+    regionController;
     gridSpots = [];
     queues = [];
     filledSpots;        // only used to easily fill grid. Use data from this array to access gridspots
@@ -38,31 +38,6 @@ export default class Region {
         this.buildGridData();
         this.retrieveDataFromLocalStorage();
     }
-
-    // get simulationLedger(){
-    //     return this.#simulationLedger;
-    // }
-    //
-    // set setSimulationLedger(value){
-    //     this.#simulationLedger = value;
-    // }
-    //
-    // addToSimulationLedger(item){
-    //     console.log('Pre add to ledger');
-    //     console.log(this.simulationLedger);
-    //     this.#simulationLedger.push(item);
-    //     console.log('Added item to ledger');
-    //     const ledg = this.simulationLedger;
-    //     console.log({ ledg, item});
-    // }
-    //
-    // removeFromSimLedger(value){
-    //     console.log('Pre remove from ledger');
-    //     console.log(this.simulationLedger);
-    //     this.setSimulationLedger = without(this.simulationLedger, value);
-    //     console.log('Post remove from ledger');
-    //     console.log(this.simulationLedger);
-    // }
 
     buildGridData() {
         for (let y = 0; y < this.rows; y++) {

@@ -2,14 +2,13 @@ import DragDrop from "./DragDrop";
 import extractXYPosition from "../helpers/extractXYPosition"
 import DetailView from "./DetailView";
 import Gridspot from "../model/Gridspot";
-import GridItem from "../model/GridItem";
-import {contains, forEach, without} from "underscore";
+import {contains, forEach, pluck, without} from "underscore";
 import {superVerbose, verbose} from "../helpers/logger";
 
 export default class RegionView {
     element;
     regions;
-    controller;
+    regionController;
     dragDrop;
     rows = 15;
     cols = 15;
@@ -18,34 +17,28 @@ export default class RegionView {
     classes = ["group1", "group2", "group3", "group4", "group5", "group6", "group7"];
 
     constructor(controller) {
-        this.controller = controller;
+        this.regionController = controller;
         this.dragDrop = new DragDrop(controller, this);
     }
 
     buildRegionMenuButtons() {
         let regionMenu = document.getElementById("regionMenu");
         let buttons = [];
-        let viewNames = [];
-
-        let regionModels = this.controller.regions;
-
-        regionModels.forEach((model) => {
-            viewNames.push(model.name);
-        });
+        let viewNames = this.regionController.getRegionNames();
 
         viewNames.forEach((name) => {
             let button = document.createElement("button");
             button.className = "btn btn-info ml-2";
-            button.innerText = name;
+            button.innerText = name.toString();
             button.addEventListener("click", () => {
-                regionModels.forEach((model) => {
-                    if (model.name == button.innerText) {
-                        this.controller.switchRegion(model.id);
+                viewNames.forEach((name) => {
+                    if (name === button.innerText) {
+                        this.regionController.switchRegion(this.regionController.getRegionByName(name).id);  // TODO possible bugs
                     }
                 });
             });
 
-            if (button.innerText == this.controller.current_region.name) {
+            if (button.innerText === this.regionController.getCurrentRegionName()) {
                 button.classList.remove("btn-info");
                 button.classList.add("btn-primary");
             }
@@ -103,8 +96,8 @@ export default class RegionView {
     }
 
     lockRegion() {
-        this.controller.lockCurrentRegion();
-        this.controller.UpdateLocalStorage();
+        this.regionController.lockCurrentRegion();
+        this.regionController.UpdateLocalStorage();
         let pieces = document.getElementById("piecesView");
         let gridpieces = document.getElementById("dropZoneRowContainer");
         let lockbtn = document.getElementById("lockRegioBtn");
@@ -119,7 +112,7 @@ export default class RegionView {
         btn.innerText = "Start sim";
         btn.id = "startSim";
         btn.addEventListener("click", () => {
-            this.controller.startSim()
+            this.regionController.startSim()
         })
         // this.controller.startSim();
         api.appendChild(btn);
@@ -153,7 +146,7 @@ export default class RegionView {
             btn.innerText = "Stop sim";
             btn.id = "stopSim";
             btn.addEventListener('click', () => {
-                this.controller.resetSim()
+                this.regionController.resetSim()
             });
             div.appendChild(btn);
         } else {
@@ -162,7 +155,7 @@ export default class RegionView {
             btn.innerText = "Start sim";
             btn.id = "startSim";
             btn.addEventListener('click', () => {
-                this.controller.startSim()
+                this.regionController.startSim()
             });
             div.appendChild(btn);
         }
@@ -172,7 +165,7 @@ export default class RegionView {
         // check if gridspot has a piece
         const id = element.id;
         const colrow = extractXYPosition(id);
-        const filled = this.controller.current_region.isFilled(colrow.col, colrow.row);
+        const filled = this.regionController.current_region.isFilled(colrow.col, colrow.row);
 
         if (filled instanceof Gridspot) {
             const gridItem = filled.getGridItem();
@@ -192,7 +185,7 @@ export default class RegionView {
         if (this.ZIndexViewShowing) {
             return;
         }
-        let detailView = new DetailView(this.controller);
+        let detailView = new DetailView(this.regionController);
         detailView.buildZIndexWindow(data);
     }
 
@@ -248,12 +241,12 @@ export default class RegionView {
         let configBtn = document.createElement("button");
         configBtn.className = "btn btn-dark";
         configBtn.innerText =
-            "Configureer " + this.controller.current_region.name;
+            "Configureer " + this.regionController.getCurrentRegionName();
         configBtn.id = "configRegioBtn";
         configBtn.addEventListener("click", () =>
-            this.controller.switchToForm(
-                this.controller.current_region.name,
-                this.controller.current_region.id
+            this.regionController.switchToForm(
+                this.regionController.getCurrentRegionName(),
+                this.regionController.getCurrentRegionId(),
             )
         );
         configureContainer.appendChild(configBtn);
@@ -330,16 +323,16 @@ export default class RegionView {
         let container = document.getElementsByClassName("regionsContainer");
         container[0].appendChild(dropZoneContainer);
 
-        this.createPieces();
+        this.regionController.createPieces();
         this.addExistingPieces();
 
-        if (this.controller.current_region.isLocked) {
+        if (this.regionController.isCurrentRegionLocked()) {
             this.lockRegion();
         }
     }
 
     addExistingPieces() {
-        let existingCoordinates = this.controller.current_region.gridSpots;
+        let existingCoordinates = this.regionController.getCurrentRegionGridSpots();
         if (existingCoordinates == null) return;
 
         existingCoordinates.forEach((row) => {
@@ -391,50 +384,45 @@ export default class RegionView {
         new_element.classList.add(classTypeString);
     }
 
-    createPieces() {
+    createPiece(festivalItem, amount) {
         let piecesCol = document.getElementById("piecesView");
+        if (festivalItem === "hogeBoom" || festivalItem === "schaduwBoom" || festivalItem === "bredeBoom") return;
 
-        let amount = 0;
+        let col = document.createElement("div");
+        let puzzlePiece = document.createElement("div");
 
-        for (let x in this.controller.current_region.festivalItemsAmounts) {
-            if (x == "hogeBoom" || x == "schaduwBoom" || x == "bredeBoom") continue;
-            amount++;
-            let col = document.createElement("div");
-            col.classList.add("col");
-
-            let puzzlePiece = document.createElement("div");
-            puzzlePiece.draggable = true;
-            puzzlePiece.innerText = this.controller.current_region.festivalItemsAmounts[x];
-            puzzlePiece.addEventListener(
-                "dragstart",
-                (e) => {
-                    this.dragDrop.dragStart(e);
-                },
-                false
-            );
-            puzzlePiece.addEventListener(
-                "dragend",
-                (e) => {
-                    this.dragDrop.dragEnd(e);
-                },
-                false
-            );
-            this.assignClassToPuzzlePiece(x, puzzlePiece);
-            puzzlePiece.classList.add("puzzlePiece");
-            col.appendChild(puzzlePiece);
-            if (amount === 3) {
-                let row = document.createElement('div');
-                row.classList.add("row");
-                row.id = "piecesView";
-                row.appendChild(col);
-                const pieces = document.getElementById('pieces');
-                pieces.appendChild(row);
-                piecesCol = row;
-                amount = 0;
-            } else {
-                piecesCol.appendChild(col);
-            }
+        col.classList.add("col");
+        puzzlePiece.draggable = true;
+        puzzlePiece.innerText = this.regionController.getCurrentRegionFestivalItemAmount(festivalItem);
+        puzzlePiece.addEventListener(
+            "dragstart",
+            (e) => {
+                this.dragDrop.dragStart(e);
+            },
+            false
+        );
+        puzzlePiece.addEventListener(
+            "dragend",
+            (e) => {
+                this.dragDrop.dragEnd(e);
+            },
+            false
+        );
+        this.assignClassToPuzzlePiece(festivalItem, puzzlePiece);
+        puzzlePiece.classList.add("puzzlePiece");
+        col.appendChild(puzzlePiece);
+        if (amount === 3) {
+            let row = document.createElement('div');
+            row.classList.add("row");
+            row.id = "piecesView";
+            row.appendChild(col);
+            const pieces = document.getElementById('pieces');
+            pieces.appendChild(row);
+            piecesCol = row;
+        } else {
+            piecesCol.appendChild(col);
         }
+
     }
 
     assignClassToPuzzlePiece(x, puzzlePiece) {
@@ -501,7 +489,8 @@ export default class RegionView {
         let xy = this.formattedXY(gridSpot);
         let element = document.getElementById(xy);
         forEach(this.classes, (e) => {
-            element.classList.toggle(e, false); })
+            element.classList.toggle(e, false);
+        })
     }
 
     changeGroupPicLocation(gridSpot, element) {
