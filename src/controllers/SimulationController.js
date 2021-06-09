@@ -23,10 +23,9 @@ export default class SimulationController {
     startSim() {
         this.disableBtns();
         this.queueView = new QueueView(this);
-        this.regionController.current_region.createQueues(this.available_queues);
-        console.log(this.regionController.current_region.queues);
+        this.regionController.createQueues(this.available_queues);
         this.started = true;
-        this.regionController.current_view.changeButton(this.started);
+        this.regionController.changeButton(this.started);
         this.queueView.startSimulationDraw();
         this.startRandomPeopleSpawing();
         this.startMovement();
@@ -51,10 +50,10 @@ export default class SimulationController {
 
     startRandomPeopleSpawing() {
         if (!this.started) return;
-        let available_queues = pluck(this.regionController.current_region.queues.filter(q => q.active), 'id');
+        let available_queues = pluck(this.regionController.activeQueues(), 'id');
         let queueNr = randomInt(0, available_queues.length - 1);
         let randomAmountPeeps = randomInt(1, 4);
-        let queue = this.regionController.current_region.getQueue(available_queues[queueNr]);
+        let queue = this.regionController.getQueue(available_queues[queueNr]);
         let group = null;
         if (queue)
             group = queue.addGroup(randomAmountPeeps);
@@ -83,7 +82,7 @@ export default class SimulationController {
     getModel(queueNr, modelNr) {
         if (queueNr === null) return;
         if (modelNr === null) return;
-        let queue = this.regionController.current_region.getQueue(queueNr);
+        let queue = this.regionController.getQueue(queueNr);
         return queue.getGroupModel(modelNr);
     }
 
@@ -98,7 +97,7 @@ export default class SimulationController {
     placeGroupInRegion(group){
         let gridSpot;
         if (this.max_groups_in_region === 0 || this.groups < this.max_groups_in_region) {
-            gridSpot = this.regionController.current_region.placeGroupRandomlyOnGrid(group);
+            gridSpot = this.regionController.placeGroupROnGrid(group);
             this.groups += 1;
             this.current_amount_people += group.size;
         }

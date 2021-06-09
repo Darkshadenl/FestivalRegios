@@ -163,13 +163,13 @@ export default class DragDrop {
     dragEnd(e) {
         if (this.succesfullPlacement && e.dataTransfer.dropEffect !== "none") {
             // update model
-            let amount = parseInt(this.regionController.getCurrentRegionFestivalItemAmount([e.target.id]));
+            let amount = parseInt(this.regionController.getCurrentRegionFestivalItemAmount(e.target.id));
             amount -= 1;
             this.regionController.setCurrentRegionFestivalItemAmount(e.target.id, amount);
             // update view
             e.target.innerText = amount;
             // disable draggable if 0
-            if (amount == 0) {
+            if (amount < 1) {
                 e.target.draggable = false;
             }
 

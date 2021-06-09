@@ -31,7 +31,7 @@ const Sizes = {
     },
     prullenbak: {
         width: 1,
-        height: 3,
+        height: 1,
     },
     surface: function (category) {
         let cat = category.toString();

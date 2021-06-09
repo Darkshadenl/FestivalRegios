@@ -43,9 +43,16 @@ export default class RegionController {
     resetSim(){
         this.simulationController.stopSim();
         this.#current_view.changeButton(false);
-        // this.cleanGroupsFromGrid();
+        this.cleanGroupsFromGrid();
         this.simulationController = null;
+    }
 
+    changeButton(started){
+        this.#current_view.changeButton(started);
+    }
+
+    activeQueues(){
+        return this.#current_region.queues.filter(q => q.active);
     }
 
     cleanGroupsFromGrid() {
@@ -59,13 +66,8 @@ export default class RegionController {
     }
 
     createPieces() {
-        let amount = 0;
         for (let x in this.#current_region.festivalItemsAmounts) {
-            this.#current_view.createPiece(x, amount);
-            if (amount === 3) {
-                amount = 0;
-            }
-            amount++;
+            this.#current_view.createPiece(x);
         }
     }
 
@@ -165,6 +167,18 @@ export default class RegionController {
         this.#current_view.showRegion();
     }
 
+    createQueues(amount_qs){
+        this.#current_region.createQueues(amount_qs);
+    }
+
+    getQueue(id){
+        return this.#current_region.getQueue(id);
+    }
+
+    placeGroupROnGrid(group){
+        return this.#current_region.placeGroupRandomlyOnGrid(group);
+    }
+
     cleanCurrentRegion() {
         this.#current_region.cleanRegion();
     }
@@ -182,7 +196,7 @@ export default class RegionController {
             Eetkraampjes: festivalItemsAmounts.eetkraampje,
             Tenten: festivalItemsAmounts.tent,
             Toiletten: festivalItemsAmounts.toilet,
-            nameRegion: this.current_region.name,
+            nameRegion: this.#current_region.name,
             Prullenbakken: festivalItemsAmounts.prullenbak,
         };
 
@@ -261,7 +275,11 @@ export default class RegionController {
     }
 
     isCurrentRegionLocked(){
-        return this.#current_region.locked;
+        return this.#current_region.isLocked;
+    }
+
+    isCurrentRegionFilled(col, row){
+        return this.#current_region.isFilled(col, row);
     }
 
     set current_region(value) {
@@ -283,7 +301,6 @@ export default class RegionController {
     get mainController() {
         return this.#mainController;
     }
-
 
     set mainController(value) {
         this.#mainController = value;

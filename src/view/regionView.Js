@@ -135,6 +135,7 @@ export default class RegionView {
         });
 
         lockbtn.innerText = "Regio gelocked";
+        lockbtn.disabled = true;
     }
 
     changeButton(started) {
@@ -165,7 +166,7 @@ export default class RegionView {
         // check if gridspot has a piece
         const id = element.id;
         const colrow = extractXYPosition(id);
-        const filled = this.regionController.current_region.isFilled(colrow.col, colrow.row);
+        const filled = this.regionController.isCurrentRegionFilled(colrow.col, colrow.row);
 
         if (filled instanceof Gridspot) {
             const gridItem = filled.getGridItem();
@@ -256,9 +257,14 @@ export default class RegionView {
         lockBtn.className = "btn btn-warning ml-3";
         lockBtn.id = "lockRegioBtn";
         lockBtn.innerText = "Lock regio";
-        lockBtn.addEventListener("click", () => {
-            this.lockRegion();
-        });
+        if (this.regionController.isCurrentRegionLocked()){
+            lockBtn.innerText = "Regio gelocked";
+        } else {
+            lockBtn.addEventListener("click", () => {
+                this.lockRegion();
+            });
+        }
+
         configureContainer.appendChild(lockBtn);
 
         // create container for grid/dropzone
@@ -384,16 +390,17 @@ export default class RegionView {
         new_element.classList.add(classTypeString);
     }
 
-    createPiece(festivalItem, amount) {
+    createPiece(festivalItem) {
         let piecesCol = document.getElementById("piecesView");
         if (festivalItem === "hogeBoom" || festivalItem === "schaduwBoom" || festivalItem === "bredeBoom") return;
 
         let col = document.createElement("div");
         let puzzlePiece = document.createElement("div");
 
-        col.classList.add("col");
-        puzzlePiece.draggable = true;
-        puzzlePiece.innerText = this.regionController.getCurrentRegionFestivalItemAmount(festivalItem);
+        col.className = "col";
+        let amount = this.regionController.getCurrentRegionFestivalItemAmount(festivalItem);
+        puzzlePiece.innerText = amount;
+        puzzlePiece.draggable = amount > 0;
         puzzlePiece.addEventListener(
             "dragstart",
             (e) => {
@@ -411,18 +418,7 @@ export default class RegionView {
         this.assignClassToPuzzlePiece(festivalItem, puzzlePiece);
         puzzlePiece.classList.add("puzzlePiece");
         col.appendChild(puzzlePiece);
-        if (amount === 3) {
-            let row = document.createElement('div');
-            row.classList.add("row");
-            row.id = "piecesView";
-            row.appendChild(col);
-            const pieces = document.getElementById('pieces');
-            pieces.appendChild(row);
-            piecesCol = row;
-        } else {
-            piecesCol.appendChild(col);
-        }
-
+        piecesCol.appendChild(col);
     }
 
     assignClassToPuzzlePiece(x, puzzlePiece) {
@@ -481,8 +477,6 @@ export default class RegionView {
         let xy = this.formattedXY(gridSpot);
         let element = document.getElementById(xy);
         this.changeGroupPicLocation(gridSpot, element);
-        // gridSpot.moveGroupsRandomly();
-        // this.controller.getCurrentRegion().updateLedger(gridSpots[i][j], newSpot);
     }
 
     cleanupSimItem(gridSpot) {
