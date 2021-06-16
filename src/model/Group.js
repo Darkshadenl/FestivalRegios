@@ -10,7 +10,7 @@ export default class Group {
     x;
     y;
     queue;
-    def_speed = 4;
+    def_speed = 0.7;
     speed = this.def_speed;
     previous_group = null;  // used for linking groups in queue
     temp_wait_x_range = [];
@@ -149,10 +149,6 @@ export default class Group {
                 this.inTent = true;
             }
         }
-    }
-
-    get previousGridSpot(){
-        return this.#previous_gridSpot;
     }
 
     retrieveGroupImageClass(){

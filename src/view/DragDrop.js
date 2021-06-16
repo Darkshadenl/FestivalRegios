@@ -7,6 +7,8 @@ export default class DragDrop {
     deleteBox;
     regionview;
     succesfullPlacement = true;
+    audio = new Audio("../resources/water-droplet.mp3");
+    fail_audio = new Audio("../resources/epicfail.mp3");
 
     classes = ['tent', 'eetkraampje', 'drankkraampje', 'boom', 'toilet', 'prullenbak']
 
@@ -47,7 +49,6 @@ export default class DragDrop {
 
             // place element, return coordinates of other spots to be filled
             let toBeFilledCoordinates = this.regionController.placeElementInRegion(id, colrow['col'], colrow['row']);
-
             e.target.classList.remove("solid-border");
 
             switch (id) {
@@ -67,6 +68,7 @@ export default class DragDrop {
                     this.fillSpots(toBeFilledCoordinates, 'prullenbak');
                     break;
             }
+            this.audio.play();
         } else {
             this.succesfullPlacement = false;
             e.target.classList.remove("solid-border");
@@ -172,9 +174,9 @@ export default class DragDrop {
             if (amount < 1) {
                 e.target.draggable = false;
             }
-
             this.regionController.UpdateLocalStorage();
         } else {
+            this.fail_audio.play();
             this.succesfullPlacement = true;
         }
     }

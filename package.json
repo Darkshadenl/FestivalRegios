@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "build": "webpack",
-    "dev": "webpack-dev-server"
+    "dev": "webpack-dev-server",
+    "test": "cypress open"
   },
   "repository": {
     "type": "git",
@@ -40,6 +41,7 @@
   "dependencies": {
     "@datastructures-js/heap": "^3.0.1",
     "babel-polyfill": "^6.26.0",
+    "cypress": "^7.5.0",
     "got": "^11.8.2",
     "node-fetch": "^2.6.1",
     "underscore": "^1.13.1"

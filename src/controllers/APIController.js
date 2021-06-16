@@ -9,7 +9,7 @@ export default class APIController {
     currentWeatherOnly = true;
 
     weatherView;
-    default_weather = Weather.HELDER;
+    default_weather = null;
 
     constructor(mainController){
         this.mainController = mainController;
@@ -21,10 +21,9 @@ export default class APIController {
             .then((response) => {
                 switch (response){
                     case 'Fail':
-                        console.log('update switch fail!');
+                        window.alert("Check if you've provided correct values");
                         break;
                     default:
-                        console.log('Set weather to: ' + Weather.properties[response].name);
                         this.updateView(Weather.properties[response].name);
                 }
             });
@@ -47,7 +46,6 @@ export default class APIController {
                 }
             })
             .catch(error => {
-                console.log('getWeatherByLatLon(): ' + error);
                 return 'Fail';
             })
             
@@ -90,7 +88,7 @@ export default class APIController {
         }
         var appid = '&appid=' + this.apiKey;
         var returnString = this.openweatherURI + coordinates + exclusions + appid;
-        console.log('APIController: Call with string: ' + returnString);
+        // console.log('APIController: Call with string: ' + returnString);
         return returnString;
     }
 }

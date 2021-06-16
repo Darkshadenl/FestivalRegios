@@ -2,7 +2,7 @@ import Festival from "../model/Festival.js";
 import regionView from "../view/regionView.js";
 import SimulationController from "./SimulationController";
 import Weather from "../enums/weather";
-import {verbose} from "../helpers/logger";
+import {superVerbose, verbose} from "../helpers/logger";
 import {first, forEach, isArray, pluck} from "underscore";
 
 export default class RegionController {
@@ -87,6 +87,7 @@ export default class RegionController {
     }
 
     moveGroups(weather) {
+       this.determineGridItemPositionsOnce();
         const spots = this.#current_region.gridSpots;
         for (let i = 0; i < spots.length; i++) {
             for (let j = 0; j < spots[i].length; j++) {
@@ -96,13 +97,9 @@ export default class RegionController {
                         this.#moved_groups.push(spots[i][j].moveGroupsRandomly());
                         break;
                     case Weather.REGEN:
-                        if (!this.tentPosses)
-                            this.tentPosses = this.#current_region.getPositions(["tent"]);
                         this.#moved_groups.push(spots[i][j].moveGroups(this.tentPosses, Weather.REGEN));
                         break;
                     case Weather.HELDER:
-                        if (!this.threePosses)
-                            this.threePosses = this.#current_region.getPositions(["hogeBoom", "bredeBoom", "schaduwBoom"]);
                         this.#moved_groups.push(spots[i][j].moveGroups(this.threePosses, Weather.HELDER));
                         break;
                     default:
@@ -113,12 +110,19 @@ export default class RegionController {
         }
     }
 
+    determineGridItemPositionsOnce(){
+        if (!this.tentPosses && !this.threePosses){
+            this.tentPosses = this.#current_region.getPositions(["tent"]);
+            this.threePosses = this.#current_region.getPositions(["hogeBoom", "bredeBoom", "schaduwBoom"]);
+            verbose({threes: this.threePosses, tents: this.tentPosses});
+        }
+    }
+
     flashView(movedGroups){
         movedGroups.forEach(a => {
             if (isArray(a)){
                 a.forEach(group => {
                     if (group.gridItem){
-                        verbose('Griditem! Flash!');
                         group.gridItem.coordinates.forEach(c => this.#current_view.flash(c, true));
                     } else {
                         this.#current_view.flash(group.current_gridSpot);
@@ -128,7 +132,6 @@ export default class RegionController {
                 if (a){
                     // A is gridSpot
                     if (a.gridItem){
-                        verbose('Griditem! Flash!');
                         a.gridItem.coordinates.forEach(c => this.#current_view.flash(c, true));
                     } else {
                         this.#current_view.flash(a);

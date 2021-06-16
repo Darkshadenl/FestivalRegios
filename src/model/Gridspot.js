@@ -1,6 +1,6 @@
 import randomInt from "../helpers/randomInt";
 import {contains, first, forEach} from "underscore";
-import log, {verbose} from "../helpers/logger";
+import log, {superVerbose, verbose} from "../helpers/logger";
 import PathFinding from "../helpers/PathFinding";
 
 export default class Gridspot {
@@ -178,8 +178,8 @@ export default class Gridspot {
         if (this.available_for_groups) {
             const fits = this.checkIfNewGroupFits(group);
             if (fits) {
-                verbose(`Found new gridspot for ${group.id}.`);
-                verbose(`Found new gridspot for x:${this.x} y:${this.y}.`);
+                superVerbose(`Found new gridspot for ${group.id}.`);
+                superVerbose(`Found new gridspot for x:${this.x} y:${this.y}.`);
                 this.simulationItems.push(group);
                 this.updateAmounts(group);
                 this.should_flash = true;

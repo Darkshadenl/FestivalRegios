@@ -1,4 +1,4 @@
-const displayLevel = 3;
+const displayLevel = 0;
 
 export default function log(message) {
     if (displayLevel === 1 )

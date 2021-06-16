@@ -3,6 +3,7 @@ import Queue from "../model/Queue";
 import randomInt from "../helpers/randomInt";
 import Weather from "../enums/weather";
 import {pluck} from "underscore";
+import {superVerbose, verbose} from "../helpers/logger";
 
 export default class SimulationController {
 
@@ -11,9 +12,9 @@ export default class SimulationController {
     queueView;
 
     available_queues = 4;
-    max_people = 200;
+    // max_people = 200;
     current_amount_people = 0;
-    max_groups_in_region = 100;
+    max_groups_in_region = 30;
     groups = 0;
 
     constructor(RegionController) {
@@ -69,14 +70,14 @@ export default class SimulationController {
         let timeout = 3000;
         switch (this.regionController.mainController.APIController.weather) {
             case Weather.REGEN:
-                timeout = 8000
+                timeout = 8000;
                 break;
             default:
                 timeout = 3000;
                 break;
         }
         this.regionController.moveGroups(this.regionController.mainController.APIController.weather);
-        setTimeout(() => { this.startMovement() }, 8000);
+        setTimeout(() => { this.startMovement() }, timeout);
     }
 
     getModel(queueNr, modelNr) {
@@ -96,6 +97,7 @@ export default class SimulationController {
 
     placeGroupInRegion(group){
         let gridSpot;
+        superVerbose(`Amount groups: ${this.groups}`);
         if (this.max_groups_in_region === 0 || this.groups < this.max_groups_in_region) {
             gridSpot = this.regionController.placeGroupROnGrid(group);
             this.groups += 1;

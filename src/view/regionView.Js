@@ -13,6 +13,8 @@ export default class RegionView {
     rows = 15;
     cols = 15;
     ZIndexViewShowing = false;
+    dropAudio = new Audio("../resources/drop_sound.mp3");
+    mouseAudio = new Audio("../resources/mouse-click.mp3");
 
     classes = ["group1", "group2", "group3", "group4", "group5", "group6", "group7"];
 
@@ -31,9 +33,10 @@ export default class RegionView {
             button.className = "btn btn-info ml-2";
             button.innerText = name.toString();
             button.addEventListener("click", () => {
+                this.mouseAudio.play();
                 viewNames.forEach((name) => {
                     if (name === button.innerText) {
-                        this.regionController.switchRegion(this.regionController.getRegionByName(name).id);  // TODO possible bugs
+                        this.regionController.switchRegion(this.regionController.getRegionByName(name).id);
                     }
                 });
             });
@@ -44,7 +47,15 @@ export default class RegionView {
             }
             buttons.push(button);
         });
+        let deleteBox = this.BuildDeleteBox();
 
+        buttons.forEach((e) => {
+            regionMenu.appendChild(e);
+        });
+        regionMenu.appendChild(deleteBox);
+    }
+
+    BuildDeleteBox() {
         let deleteBox = document.createElement("div");
         deleteBox.innerText = "Sleep hier naartoe om te verwijderen";
         deleteBox.className = "mt-2 deleteBox";
@@ -56,19 +67,15 @@ export default class RegionView {
             },
             false
         );
-        // deleteBox.addEventListener('dragleave', (e) => { this.#dragDrop.dragLeaveDeleteBox(e) }, false);
         deleteBox.addEventListener(
             "drop",
             (e) => {
+                this.dropAudio.play();
                 this.dragDrop.deleteBoxDrop(e);
             },
             false
         );
-
-        buttons.forEach((e) => {
-            regionMenu.appendChild(e);
-        });
-        regionMenu.appendChild(deleteBox);
+        return deleteBox;
     }
 
     cleanForSwitchToRegion() {
@@ -101,31 +108,31 @@ export default class RegionView {
         let pieces = document.getElementById("piecesView");
         let gridpieces = document.getElementById("dropZoneRowContainer");
         let lockbtn = document.getElementById("lockRegioBtn");
-        const piecesDiv = document.getElementById("pieces");
         const canvasDiv = document.createElement("div");
         canvasDiv.className = "mt-4";
         canvasDiv.id = "canvasDiv";
+        const piecesDiv = document.getElementById("pieces");
         piecesDiv.appendChild(canvasDiv);
-        const api = document.getElementById("api");
-        const btn = document.createElement("btn");
-        btn.className = "ml-4 btn btn-success";
-        btn.innerText = "Start sim";
-        btn.id = "startSim";
-        btn.addEventListener("click", () => {
+        const startSimBtn = document.createElement("btn");
+        startSimBtn.className = "ml-4 btn btn-success";
+        startSimBtn.setAttribute('data-cy', 'startSim');
+        startSimBtn.innerText = "Start sim";
+        startSimBtn.id = "startSim";
+        startSimBtn.addEventListener("click", () => {
             this.regionController.startSim()
-        })
-        // this.controller.startSim();
-        api.appendChild(btn);
-
-        pieces.childNodes.forEach((e) => {
-            if (e.hasChildNodes) {
-                e.childNodes.forEach((f) => {
-                    f.draggable = false;
-                });
-            }
         });
+        const api = document.getElementById("api");
+        api.appendChild(startSimBtn);
 
-        gridpieces.childNodes.forEach((e) => {
+        this.DisableDraggables(pieces);
+        this.disableAndSetupPlacedPieces(gridpieces);
+
+        lockbtn.innerText = "Regio gelocked";
+        lockbtn.disabled = true;
+    }
+
+    disableAndSetupPlacedPieces(gridPieces) {
+        gridPieces.childNodes.forEach((e) => {
             if (e.hasChildNodes) {
                 e.childNodes.forEach((f) => {
                     f.draggable = false;
@@ -133,9 +140,16 @@ export default class RegionView {
                 });
             }
         });
+    }
 
-        lockbtn.innerText = "Regio gelocked";
-        lockbtn.disabled = true;
+    DisableDraggables(pieces) {
+        pieces.childNodes.forEach((e) => {
+            if (e.hasChildNodes) {
+                e.childNodes.forEach((f) => {
+                    f.draggable = false;
+                });
+            }
+        });
     }
 
     changeButton(started) {
@@ -201,6 +215,7 @@ export default class RegionView {
         element.addEventListener(
             "drop",
             (e) => {
+
                 this.dragDrop.dropEvent(e);
             },
             false

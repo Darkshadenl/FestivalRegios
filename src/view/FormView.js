@@ -176,7 +176,7 @@ export default class FormView {
     this.formfields.forEach((e) => {
       if (!e.checkValidity())
         faulty = true;
-    })
+    });
     if (faulty)
       window.alert(
         "Opslaan is niet gelukt. Probeer de waardes naar onder bij te stellen of de lege velden te vullen."
@@ -189,8 +189,8 @@ export default class FormView {
 
       allInputs.forEach(e => {
         obj[e.id] = e.value;
-      })
-      this.formController.saveData(this.id, obj)
+      });
+      this.formController.saveData(this.id, obj);
       this.formController.cleanAndSwitchToRegion();
       window.alert('Succesvol opgeslagen');
     }

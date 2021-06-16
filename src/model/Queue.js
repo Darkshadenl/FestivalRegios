@@ -15,9 +15,12 @@ export default class Queue {
     regionController;
     previous_group = null;
 
-    group_spawn_limiter = 50;
+    group_spawn_limiter = 10;
     amount_spawned = 0;
     max_groups_in_queue = 7;
+
+    desk_waitTime_min = 0;
+    desk_waitTime_max = 3000;
 
     constructor(id, regionController) {
         this.id = id;
@@ -39,7 +42,7 @@ export default class Queue {
     addGroup(amount) {
         this.cleanup();
         if (this.groups_in_queue.actual_length() < this.max_groups_in_queue) {
-            verbose("Entering add group, groups_in_queue length check succeeded");
+            superVerbose("Entering add group, groups_in_queue length check succeeded");
             let group;
             this.group_amount += 1;
             let groupId = this.group_amount;
@@ -60,13 +63,13 @@ export default class Queue {
                     console.log("No correct id");
                     break;
             }
-            verbose("Correct lane for queue selected");
             if (this.previous_group !== null) {
+                verbose({text: `Correct lane for queue ${this.id} selected. Current previous group:`,
+                    group: this.previous_group, text2: `Setting new previous group for queue ${this.id}`, object: group});
                 this.previous_group.setPreviousGroup(group);
             }
-
-            this.groups_in_queue[groupId] = group;
             this.previous_group = group;
+            this.groups_in_queue[groupId] = group;
             return group;
         }
         return null;
@@ -77,8 +80,9 @@ export default class Queue {
      */
     handleGroup(group) {
         if (this.group_spawn_limiter === 0 || this.amount_spawned !== this.group_spawn_limiter) {
-            verbose("Handle group");
-            let waitTime = randomInt(1000, 3000);
+            superVerbose(`Handle group ${group.id}.`);
+            superVerbose(`Amount spawned ${this.amount_spawned}`);
+            let waitTime = randomInt(this.desk_waitTime_min, this.desk_waitTime_max);
             setTimeout(() => {
                 group.unpause();
                 this.amount_spawned += 1;

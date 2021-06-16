@@ -1,6 +1,8 @@
 export default class WeatherView {
 
     controller;
+    lat;
+    long;
 
     constructor(controller) {
         this.controller = controller;
@@ -16,13 +18,18 @@ export default class WeatherView {
 
         lat.id = "latWeather";
         long.id = "longWeather";
+        lat.setAttribute('placeholder', 'Latitude');
         lat.type = "text";
         long.type = "text";
+        long.setAttribute('placeholder', 'Longtitude');
         text.innerText = "No info yet";
         text.id = "infoText";
         text.className = "ml-4";
         btn.innerText = "Wijzig locatie";
         btn.className = "ml-4 btn btn-success";
+
+        this.lat = lat;
+        this.long = long;
 
         api.appendChild(lat);
         api.appendChild(long);
@@ -31,12 +38,11 @@ export default class WeatherView {
         info.appendChild(text);
 
         btn.addEventListener("click", () => {
-            // console.log('Values: lat: ' + this.lat.value + ', lon: ' + this.lon.value);
-            // controller.update(this.lat.value, this.lon.value);
+            controller.update(this.lat.value, this.long.value);
             // TODO replace defaults
-            const long = 5.85462200
-            const lat = 51.84286700;
-            controller.update(lat, long);
+            // const long = 5.85462200;
+            // const lat = 51.84286700;
+            // controller.update(lat, long);
         });
     }
 

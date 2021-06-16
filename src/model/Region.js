@@ -185,7 +185,6 @@ export default class Region {
         this.festivalItemsAmounts.tent = data["Tenten"];
         this.festivalItemsAmounts.eetkraampje = data["Eetkraampjes"];
         this.festivalItemsAmounts.drankkraampje = data["Drankkraampjes"];
-        // this.festivalItemsAmounts.boom = data["Bomen"];
         this.festivalItemsAmounts.hogeBoom = data["hogeBoom"];
         this.festivalItemsAmounts.bredeBoom = data["bredeBoom"];
         this.festivalItemsAmounts.schaduwBoom = data["schaduwBoom"];
@@ -250,19 +249,5 @@ export default class Region {
         }
         this.hasSchaduwBomen = true;
     }
-
-    // updateLedger(originalSpot, newSpot){
-    //     if (newSpot && !contains(this.simulationLedger, newSpot)){
-    //         this.addToSimulationLedger(newSpot);
-    //     }
-    //     if (Object.keys(originalSpot.simulationItems).length === 0) {
-    //         this.removeFromSimLedger(originalSpot);
-    //     }
-    // }
-
-    // removeLedgerItem(){
-    //     let item = this.simulationLedger.pop();
-    //     return item;
-    // }
 
 }

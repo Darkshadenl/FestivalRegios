@@ -1,5 +1,6 @@
 import EntryView from "./EntryView";
 import GroupView from "./GroupView";
+import {superVerbose} from "../../helpers/logger";
 
 export default class QueueView {
 
@@ -18,8 +19,9 @@ export default class QueueView {
         let canvas = document.createElement("canvas");
         canvas.addEventListener("click", (e) => {
             this.determineQueueClicked(e, canvas)
-        })
+        });
         canvas.id = "canvas";
+        canvas.setAttribute('data-cy', 'canvas');
         canvas.setAttribute('width', this.width);
         canvas.setAttribute("height", this.height);
         canvas.setAttribute("style", "border-style: solid; border-color: black;");
@@ -119,9 +121,8 @@ export default class QueueView {
 
         let x = event.clientX - rect.left;
         let y = event.clientY - rect.top;
-        console.log("Coordinate x: " + x,
+        superVerbose("Coordinate x: " + x,
             "Coordinate y: " + y);
-
 
         this.entryPoints.filter(e => {
             if (e.wasIClicked(x, y, this.ctx)) {
